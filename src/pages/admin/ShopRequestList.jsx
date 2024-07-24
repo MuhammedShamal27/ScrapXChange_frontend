@@ -1,77 +1,68 @@
 import React from 'react'
+import {Search,Info} from 'lucide-react'
+import AdminNavBar from '../../componets/admin/AdminNavBar'
+import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import Shop_requests from '../../assets/Shop_requests.png'
-import SA_profile from '../../assets/SA_profile.png'
+import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
 import '../../styles/adminAndShop.css'
-import {LayoutDashboard,House,CircleCheckBig,ChartNoAxesColumn,User} from 'lucide-react'
 
 const ShopRequestList = () => {
   return (
     <>
-        <div className='adminFont flex'>
-            <div>
-                <div className='flex flex-col'>
-                    <h1 className='text-2xl text-blue-950 font-bold m-10'>Scrap X Change</h1>
-                    <h1 className='flex justify-center'><House />Dashboard</h1>
-                    <h1 className='flex justify-center'><CircleCheckBig />Shop Requests</h1>
-                    <h1 className='flex justify-center'><ChartNoAxesColumn />Report</h1>
-                    <h1 className='flex justify-center'><LayoutDashboard />Shop List</h1>
-                    <h1 className='flex m-10 '><User />User List</h1>
-                </div>
-            </div>
-            <div>
-                <div className='flex '>
-                    <h2>Shop Requests</h2>
-                    <div className='flex'>
-                        <input type="Search" />
-                        <p>notfication</p>
-                        <img src={SA_profile} alt="profile_picture" />
+        <div className='adminFont flex bg-bgColor'>
+            <AdminNavBar/>
+            <div className='w-4/5' >
+                <HeadingAndProfile/>
+                <div className='bg-white ml-11 rounded-2xl  '>
+                    <div className='flex justify-between ml-9'>
+                        <h5 className='text-blue-950 font-bold text-2xl m-3'>List</h5>
+                        <div className='flex bg-bgColor rounded-full m-3 justify-between items-center h-7 '>
+                                <Search color="#4318FF" size={20}/>
+                                <input className='bg-bgColor rounded-full text-myBlue' placeholder='Search'/>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div>
-                        <h5>list</h5>
-                        <input type="Search" />
-                    </div>
-                    <div className='flex'>
+                    <div className=' flex  mt-5 text-myBlue px-10 '>
                         <p>Name</p>
-                        <p>Place</p>
-                        <p>Email</p>
-                        <p>Details</p>
+                        <p className='pl-80'>Email</p>
+                        <p className='pl-68p'>Place</p>
+                        <p className='pl-48'>Details</p>
                     </div>
-                    <div className='flex'>
-                        <div className='flex'>
-                            <img src={Shop_requests} alt="profile" />
-                            <p>Shop Name</p>
+                    <div className='flex flex-col mt-5 ml-5 justify-around'>
+                        <div className='flex justify-between m-2 shadow-xl rounded-lg items-center '>
+                            <div className='flex m-3 items-center space-x-3'>
+                                <img src={Shop_requests} alt="profile" />
+                                <p>Shop Name</p>
+                            </div>
+                            <p>old@gmail.com</p>
+                            <p >Kaloor</p>
+                            <p ><Info color="#a3aed0" /></p>
+                            <br/>
                         </div>
-                        <p>Kaloor</p>
-                        <p>old@gmail.com</p>
-                        <p>icon</p>
-                        <br/>
-                        <div className='flex'>
-                            <img src={Shop_requests} alt="profile" />
-                            <p>Shop Name</p>
+                        <div className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
+                            <div className='flex m-3 items-center space-x-3'>
+                                <img src={Shop_requests} alt="profile" />
+                                <p>Shop Name</p>
+                            </div>
+                            <p>old@gmail.com</p>
+                            <p>Kaloor</p>
+                            <p><Info color="#a3aed0" /></p>
+                            <br/>
                         </div>
-                        <p>Kaloor</p>
-                        <p>old@gmail.com</p>
-                        <p>icon</p>
-                        <br/>
-                        <div className='flex'>
-                            <img src={Shop_requests} alt="profile" />
-                            <p>Shop Name</p>
+                        <div className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
+                            <div className='flex m-3 items-center space-x-3'>
+                                <img src={Shop_requests} alt="profile" />
+                                <p>Shop Name</p>
+                            </div>
+                            <p>old@gmail.com</p>
+                            <p>Kaloor</p>
+                            <p><Info color="#a3aed0" /></p>
+                            <br/>
                         </div>
-                        <p>Kaloor</p>
-                        <p>old@gmail.com</p>
-                        <p>icon</p>
-                        <br/>
                     </div>
                 </div>
-            </div>
-            <div className='flex'>
-                <p>1</p>
-                <p>2</p>
-                <p>3</p>
             </div>
         </div>
+        <FooterOfAdminAndShop/>
     </>
   )
 }

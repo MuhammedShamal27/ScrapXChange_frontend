@@ -11,7 +11,11 @@ export default {
         inputBoxBlack:'#222222',
         lightGreen:"#93E14A",
         darkGreen:"#517B29",
-        myBlue:"#4318FF"
+        myBlue:"#4318FF",
+        bgColor:"#F4F7FE"
+      },
+      padding:{
+        '68p':'280px'
       }
     },
   },
