@@ -17,11 +17,14 @@ import UserDetails from "./pages/admin/UserDetails";
 import HeadingAndProfile from "./componets/HeadingAndProfile";
 import ShopDetails from "./pages/admin/ShopDetails";
 import RequestDeatils from "./pages/admin/RequestDeatils";
+import Home from "./pages/user/Home";
+
+
 
 function App() {
   return (
     <>
-      <RequestDeatils/>
+      <Register/>
     </>
   );
 }
