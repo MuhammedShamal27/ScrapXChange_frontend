@@ -6,7 +6,7 @@ import EmailForPasswordReset from "../../pages/user/EmailForPasswordReset"
 import ResetPassword from "../../pages/user/ResetPassword"
 import Login from "../../pages/user/Login"
 import Home from "../../pages/user/Home"
-import shopRouter from "../shop/shopRoutes";
+// import shopRouter from "../shop/shopRoutes";
 
 const appRouter = createBrowserRouter([
     {
@@ -23,26 +23,6 @@ const appRouter = createBrowserRouter([
                 element:<Home/>
             },
             {
-                path:"/Register",
-                element:<Register/>
-            },
-            {
-                path:"/OTP",
-                element:<OTP/>
-            },
-            {
-                path:"/Forget-password",
-                element:<EmailForPasswordReset/>
-            },
-            {
-                path:"/Reset-password",
-                element:<ResetPassword/>
-            },
-            {
-                path:"/Login",
-                element:<Login/>
-            },
-            {
                 path:"Home",
                 element:<Home/>
             },
@@ -51,11 +31,32 @@ const appRouter = createBrowserRouter([
                 element:<Error message="Page Not Found" />
             }
 
-        ]
+        ],
+        
     },
-    shopRouter,
-    adminRouter,
-    adminLoginRouter,
+    {
+        path:"/register",
+        element:<Register/>
+    },
+    {
+        path:"/OTP",
+        element:<OTP/>
+    },
+    {
+        path:"/Forget-password",
+        element:<EmailForPasswordReset/>
+    },
+    {
+        path:"/Reset-password",
+        element:<ResetPassword/>
+    },
+    {
+        path:"/Login",
+        element:<Login/>
+    },
+    // shopRouter,
+    // adminRouter,
+    // adminLoginRouter,
 ])
 
 export default appRouter;
