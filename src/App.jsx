@@ -9,7 +9,7 @@ import ShopLogin from "./pages/shop/ShopLogin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import ShopRequestList from "./pages/admin/ShopRequestList";
 import ScrapList from "./pages/shop/ScrapList";
-import EditScrapDetails from "./pages/shop/EditScrapDetails";
+import EditScrapDetails from "./pages/shop/AddScrap";
 import UserList from "./pages/admin/UserList";
 import ShopList from "./pages/admin/ShopList";
 import UserAndAdminList from "./componets/admin/UserAndAdminList";
@@ -18,13 +18,17 @@ import HeadingAndProfile from "./componets/HeadingAndProfile";
 import ShopDetails from "./pages/admin/ShopDetails";
 import RequestDeatils from "./pages/admin/RequestDeatils";
 import Home from "./pages/user/Home";
+import Protect from "./routes/protect";
+import { Outlet } from "react-router-dom";
 
 
 
 function App() {
   return (
     <>
-      <Register/>
+
+        <Outlet/>
+  
     </>
   );
 }
