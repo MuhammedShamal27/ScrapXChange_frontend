@@ -19,11 +19,7 @@ const appRouter = createBrowserRouter([
         errorElement:<Error message="Something Went Wrong." />,
         children:[
             {
-                path:"/",
-                element:<Home/>
-            },
-            {
-                path:"Home",
+                path:"/home",
                 element:<Home/>
             },
             {
@@ -39,8 +35,12 @@ const appRouter = createBrowserRouter([
         element:<Register/>
     },
     {
-        path:"/OTP",
+        path:"/otp",
         element:<OTP/>
+    },
+    {
+        path:"/home",
+        element:<Home/>
     },
     {
         path:"/Forget-password",
@@ -54,9 +54,7 @@ const appRouter = createBrowserRouter([
         path:"/Login",
         element:<Login/>
     },
-    // shopRouter,
-    // adminRouter,
-    // adminLoginRouter,
+
 ])
 
 export default appRouter;

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000/",
+    baseURL: import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000",
     timeout: 10000,
     headers:{
         'Content-Type' : 'application/json'

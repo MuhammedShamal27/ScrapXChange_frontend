@@ -1,30 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit'
-import userReducer from '../reducers/userReducer'
-import shopReducer from '../reducers/shopReducer'
-import adminReducer from '../reducers/adminReducer'
+import { configureStore } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk';
+import rootReducer from '../reducers/rootReducer';
+
 
 
 const store = configureStore({
-    reducer:{
-        user : userReducer,
-        shop : shopReducer,
-        admin : adminReducer,
+    reducer : rootReducer,
+    middleware : (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 
-    },
-    // middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
-    // middleware:(getDefaultMiddleware) => getDefaultMiddleware,
 })
 
 export default store;
-
-// import { createStore, applyMiddleware, combineReducers } from 'redux';
-// import { thunk } from 'redux-thunk';
-
-
-// const rootReducer = combineReducers({
-//     user:userReducer,
-//     shop:shopReducer,
-//     admin:adminReducer,
-// })
-
-// const store = createStore(rootReducer,applyMiddleware(thunk));
