@@ -62,8 +62,10 @@ const Otp = () => {
         localStorage.setItem('refreshToken',response.refresh);
         
         const userData = await getUserHomeData();
+        localStorage.setItem('user',JSON.stringify(userData));
         dispatch(loginSuccess({ user: userData }));
-        navigate("/home");
+        console.log("is coming")
+        navigate("/");
       } else {
         toast.error("Invalid OTP.");
       }

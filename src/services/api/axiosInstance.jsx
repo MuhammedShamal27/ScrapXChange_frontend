@@ -8,23 +8,25 @@ const axiosInstance = axios.create({
     },
 });
 
-// axiosInstance.interceptors.request.use(
-//     config => {
-//         const token = localStorage.getItem('accessToken');
-//         if (token){
-//             config.headers['Authorization'] = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     error => Promise.reject(error)
-// );
+axiosInstance.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('accessToken');
+        const noAuthRequired = ['/user/register/' , '/user/verify-otp/']
+        if (token && !noAuthRequired.some((url) => config.url.includes(url))){
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    error => Promise.reject(error)
+);
 
-// axiosInstance.interceptors.response.use(
-//     response => response,
-//     error => {
-//         return Promise.reject(error);
-//     }
-// );
+axiosInstance.interceptors.response.use(
+    response => response,
+    error => {
+
+        return Promise.reject(error);
+    }
+);
 
 
 export default axiosInstance

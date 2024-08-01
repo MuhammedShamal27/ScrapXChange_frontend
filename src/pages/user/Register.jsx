@@ -71,13 +71,14 @@ const Register = () => {
       }
     });
 
+    console.log("validation error:",validationErrors)
     setErrors(validationErrors);
 
     console.log("Form Data on Submit:", formData);
     if (Object.keys(validationErrors).length === 0) {
       try {
         console.log("inside")
-        const resultAction = await dispatch(registerUser(formData)).unwrap();
+        const resultAction = await dispatch(registerUser(formData));
         console.log("resultAction", resultAction);
         if (resultAction) {
           localStorage.setItem("userEmail",formData.email);
@@ -162,7 +163,7 @@ const Register = () => {
         </button>
         <p className="text-xs mt-3 text-gray-600 ">
           Already have an account ?{" "}
-          <span className="text-white ml-2 text-xs">Login Now !</span>
+          <span className="text-white ml-2 text-xs">Register Now !</span>
         </p>
       </form>
     </>
