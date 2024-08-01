@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Braces, MoveRight } from "lucide-react";
 import "../../styles/user.css";
 import { useDispatch } from "react-redux";
@@ -6,6 +6,7 @@ import { registerUser } from "../../services/api/user/userApi";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
+import { loginSuccess } from "../../redux/reducers/userReducer";
 
 const Register = () => {
   const dispatch = useDispatch();

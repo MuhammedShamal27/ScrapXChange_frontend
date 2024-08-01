@@ -1,40 +1,29 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const userInitialState = {
-    user : localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
-    token : localStorage.getItem('accessToken') || null,
-    isAuthenticated : !!localStorage.getItem('accessToken'),
+    user: null,
+    token: null,
+    isAuthenticated: false,
+}
 
-};
-
-const userSlice = createSlice ({
-    name : "auth",
-    initialState :userInitialState,
-    reducers : {
-        loginSuccess : (state,action) =>{
-            state.user = action.payload.user;
+const authSlice = createSlice({
+    name: "auth",
+    initialState: userInitialState,
+    reducers: {
+        loginSuccess(state, action) {
             state.token = action.payload.token;
-            state.isAuthenticated = true;
-            localStorage.setItem('user',JSON.stringify(action.payload.user));
-            localStorage.setItem('accessToken',action.payload.token)
+            state.isAuthenticated = true; 
         },
-        updateUser:(state,action) =>{
+        updateUser(state, action) {
             state.user = action.payload.user;
         },
-        logout : (state) => {
-            state.user = null ;
-            state.token = null ;
-            state.isAuthenticated = false ;
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-        },
+        logout(state) {
+            state.user = null;
+            state.token = null;
+            state.isAuthenticated = false; 
+        }
+    }
+})
 
-
-    },
-});
-
-export const {loginSuccess,logout,updateUser} = userSlice.actions;
-export default userSlice.reducer;
-
-
+export const { loginSuccess, logout, updateUser } = authSlice.actions; 
+export default authSlice.reducer;

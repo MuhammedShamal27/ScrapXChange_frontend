@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import { RouterProvider } from "react-router-dom";
 import appRouter from "./routes/user/userRoutes.jsx";
 import { Provider } from "react-redux";
-import store from "./redux/store/store.jsx";
+import { store } from "./redux/store/store.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

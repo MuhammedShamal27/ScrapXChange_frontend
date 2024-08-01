@@ -3,9 +3,9 @@ import { MoveRight } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { verifyOtp, getUserHomeData } from "../../services/api/user/userApi";
-import { loginSuccess } from "../../redux/reducers/userReducer";
 import "../../styles/user.css";
 import { toast } from "sonner";
+import { loginSuccess } from "../../redux/reducers/userReducer";
 
 const Otp = () => {
   const [otp, setOtp] = useState(Array(4).fill(""));
@@ -57,14 +57,30 @@ const Otp = () => {
     }
     try {
       const response = await verifyOtp({ email, otp: otpString });
+      console.log("the response", response);
+    
       if (response.access) {
-        localStorage.setItem('accessToken',response.access);
-        localStorage.setItem('refreshToken',response.refresh);
+        dispatch(loginSuccess({token: response.access }))
+        // console.log("the access token", response.access);
+        // console.log("the refresh token", response.refresh);
+    
+        // Clear previous tokens if any
+        // localStorage.removeItem('accessToken');
+        // localStorage.removeItem('refreshToken');
+    
+        // localStorage.setItem('refreshToken', response.refresh);
+        // console.log("refresh token stored:", localStorage.getItem('refreshToken'));
+    
+        // localStorage.setItem('accessToken', response.access);
+        // console.log("access token stored:", localStorage.getItem('accessToken'));
+    
+        // localStorage.setItem('accessTokenTest', response.access);
+        // console.log("access token test stored:", localStorage.getItem('accessTokenTest'));
+    
+       
+        // localStorage.setItem('user', JSON.stringify(userData));
         
-        const userData = await getUserHomeData();
-        localStorage.setItem('user',JSON.stringify(userData));
-        dispatch(loginSuccess({ user: userData }));
-        console.log("is coming")
+        console.log("is coming");
         navigate("/");
       } else {
         toast.error("Invalid OTP.");

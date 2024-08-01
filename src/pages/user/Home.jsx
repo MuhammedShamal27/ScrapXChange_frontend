@@ -1,14 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout  } from "../../redux/reducers/userReducer";
+import { logout, updateUser  } from "../../redux/reducers/userReducer";
+import { getUserHomeData } from "../../services/api/user/userApi";
 
 const Home = () => {
-  const user = useSelector((state) => state.user.user);
-  console.log(user)
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [user, setUser] =useState();
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = await getUserHomeData();
+      
+      setUser(userData);
+      dispatch(updateUser({user: userData}));
+    };
+    
+    fetchUserData();
+  }, [dispatch, getUserHomeData]);
+  
   const handleLogout = () =>{
     dispatch(logout());
     navigate("/login");

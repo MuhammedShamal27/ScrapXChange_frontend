@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { store } from '../../redux/store/store';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000",
@@ -10,9 +11,13 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     config => {
-        const token = localStorage.getItem('accessToken');
+        const state = store.getState()
+        const token = state.auth.token
+        // const token = localStorage.getItem('token');
+        console.log('pol',token)
         const noAuthRequired = ['/user/register/' , '/user/verify-otp/']
         if (token && !noAuthRequired.some((url) => config.url.includes(url))){
+            console.log('authsensured')
             config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
