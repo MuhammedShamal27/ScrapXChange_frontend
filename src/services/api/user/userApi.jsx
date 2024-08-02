@@ -110,9 +110,21 @@ export const userProfile = async () =>{
     }
 };
 
-export const editProfile = async () =>{
+
+
+export const editProfile = async (formData) =>{
     try{
-        const response = await axiosInstance.put('/user/edit-profile/');
+        const formDataObj = new FormData();
+        for (const key in formData){
+            if (formData[key] !==null){
+                formDataObj.append(key,formData[key]);
+            }
+        }
+        const response = await axiosInstance.put('/user/edit-profile/',formDataObj ,{
+            headers :{
+                'Content-Type' : 'multipart/form-data',
+            },
+        });
         console.log("editProfile",response)
         return response.data
     }catch (error) {
