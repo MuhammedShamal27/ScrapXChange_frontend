@@ -4,7 +4,7 @@ import "../../styles/user.css";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../services/api/user/userApi";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from "react-router-dom";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
 
@@ -72,19 +72,19 @@ const Register = () => {
       }
     });
 
-    console.log("validation error:",validationErrors)
+    console.log("validation error:", validationErrors);
     setErrors(validationErrors);
 
     console.log("Form Data on Submit:", formData);
     if (Object.keys(validationErrors).length === 0) {
       try {
-        console.log("inside")
+        console.log("inside");
         const resultAction = await dispatch(registerUser(formData));
         console.log("resultAction", resultAction);
         if (resultAction) {
-          localStorage.setItem("userEmail",formData.email);
-          navigate("/otp");
-          console.log("is going .")
+          localStorage.setItem("userEmail", formData.email);
+          navigate("/otp", { state: { context: "registration" } });
+          console.log("is going .");
         }
       } catch (err) {
         if (err.email) {
@@ -162,10 +162,12 @@ const Register = () => {
         >
           Login to Your Account <MoveRight size={30} />{" "}
         </button>
-        <p className="text-xs mt-3 text-gray-600 ">
-          Already have an account ?{" "}
-          <span className="text-white ml-2 text-xs">Register Now !</span>
-        </p>
+        <Link to="/login">
+          <p className="text-xs mt-3 text-gray-600 ">
+            Already have an account ?{" "}
+            <span className="text-white ml-2 text-xs">Login Now !</span>
+          </p>
+        </Link>
       </form>
     </>
   );

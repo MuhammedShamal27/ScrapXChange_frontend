@@ -15,7 +15,8 @@ axiosInstance.interceptors.request.use(
         const token = state.auth.token
         // const token = localStorage.getItem('token');
         console.log('pol',token)
-        const noAuthRequired = ['/user/register/' , '/user/verify-otp/' ,'/user/login/', '/user/password-reset-request/', '/user/password-reset']
+        const noAuthRequired = ['/user/register/' , '/user/verify-otp/' ,'/user/login/', '/user/password-reset-request/',
+            '/user/password-otp/', '/user/password-reset']
         if (token && !noAuthRequired.some((url) => config.url.includes(url))){
             console.log('authsensured')
             config.headers['Authorization'] = `Bearer ${token}`;

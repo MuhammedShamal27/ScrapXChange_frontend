@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MoveRight } from "lucide-react";
 import "../../styles/user.css";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link } from "react-router-dom";
 import { loginUser } from "../../services/api/user/userApi";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
@@ -43,7 +43,6 @@ const Login = () => {
 
     console.log("Form data on Change :".formData);
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,21 +55,22 @@ const Login = () => {
     });
 
     setErrors(validationErrors);
-    console.log("the errors",setErrors)
+    console.log("the errors", setErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       try {
         console.log("coming to login");
         const response = await loginUser(formData);
-        console.log("result action",response)
+        console.log("result action", response);
         if (response && response.tokens && response.tokens.access) {
-          console.log('coming into the if condition')
-          dispatch (loginSuccess({token : response.tokens.access}))
+          console.log("coming into the if condition");
+          dispatch(loginSuccess({ token: response.tokens.access }));
           navigate("/");
-        }
-        else{
-          console.error('failed',response)
-          toast.error("Login failed . please check your credential and try again")
+        } else {
+          console.error("failed", response);
+          toast.error(
+            "Login failed . please check your credential and try again"
+          );
         }
       } catch (err) {
         if (err.email) {
@@ -112,18 +112,19 @@ const Login = () => {
             placeholder="8 digit pin"
           />
         </div>
-        <button className="mt-5 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
-        type="submit">
+        <button
+          className="mt-5 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
+          type="submit"
+        >
           Login to Your Account <MoveRight size={30} />{" "}
         </button>
         <p className="text-xs mt-3 text-gray-600 ">
           Don't have an account yet ?{" "}
-          <span className="text-white ml-2 text-xs">Register Now !</span>
+          <Link to="/register">
+            <span className="text-white ml-2 text-xs">Register Now !</span>
+          </Link>
         </p>
-        <button
-          className="p-5 w-3/12 rounded-lg border border-lightGreen text-white mt-5 flex gap-3 items-center"
-          
-        >
+        <button className="p-5 w-3/12 rounded-lg border border-lightGreen text-white mt-5 flex gap-3 items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -136,7 +137,9 @@ const Login = () => {
           </svg>
           Sign in with Google
         </button>
-        <p className="text-white underline mt-3">Forget Password ?</p>
+        <Link to="/email">
+          <p className="text-white underline mt-3">Forget Password ?</p>
+        </Link>
       </form>
     </>
   );

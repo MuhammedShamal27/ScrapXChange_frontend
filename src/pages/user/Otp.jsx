@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MoveRight } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { verifyOtp, getUserHomeData } from "../../services/api/user/userApi";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  verifyOtp,
+  passwordOtp,
+  resendOtp,
+} from "../../services/api/user/userApi";
 import "../../styles/user.css";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
@@ -13,16 +17,19 @@ const Otp = () => {
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const inputRefs = useRef([]);
+  const context = location.state?.context || "registration";
+  console.log('location',context)
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     if (storedEmail) {
       setEmail(storedEmail);
-    }else{
-      toast.error("Email not found. Please retry.")
+    } else {
+      toast.error("Email not found. Please retry.");
     }
-  },[])
+  }, []);
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -51,40 +58,33 @@ const Otp = () => {
       toast.error("Please enter a 4-digit OTP.");
       return;
     }
-    if (!email){
+    if (!email) {
       toast.error("Email is missing.Please try again.");
-      return ;
+      return;
     }
     try {
-      const response = await verifyOtp({ email, otp: otpString });
-      console.log("the response", response);
-    
-      if (response.access) {
-        dispatch(loginSuccess({token: response.access }))
-        // console.log("the access token", response.access);
-        // console.log("the refresh token", response.refresh);
-    
-        // Clear previous tokens if any
-        // localStorage.removeItem('accessToken');
-        // localStorage.removeItem('refreshToken');
-        
-    
-        // localStorage.setItem('refreshToken', response.refresh);
-        // console.log("refresh token stored:", localStorage.getItem('refreshToken'));
-    
-        // localStorage.setItem('accessToken', response.access);
-        // console.log("access token stored:", localStorage.getItem('accessToken'));
-    
-        // localStorage.setItem('accessTokenTest', response.access);
-        // console.log("access token test stored:", localStorage.getItem('accessTokenTest'));
-    
-       
-        // localStorage.setItem('user', JSON.stringify(userData));
-        
-        console.log("is coming");
-        navigate("/");
-      } else {
-        toast.error("Invalid OTP.");
+      if (context === "registration") {
+        const response = await verifyOtp({ email, otp: otpString });
+        console.log("the response", response);
+
+        if (response) {
+          console.log('coming to put the token')
+          dispatch(loginSuccess({ token: response.access }));
+
+          console.log("is coming");
+          navigate("/");
+        } else {
+          toast.error("Invalid OTP.");
+        }
+      } else if (context === "passwordReset") {
+        console.log('coming in to passwordotp')
+        const response = await passwordOtp({ email, otp: otpString });
+        console.log("Password reset otp response",response)
+        if (response) {
+          navigate("/resetPassword");
+        } else {
+          toast.error("Invalid OTP.");
+        }
       }
     } catch (err) {
       console.error("Failed to verify OTP.", err);
@@ -92,12 +92,26 @@ const Otp = () => {
     }
   };
 
+  const handleResendOtp = async (e) =>{
+    e.preventDefault();
+    console.log("Resending OTP to email:", email);
+    try {
+      const response = await resendOtp({ email });
+      console.log("the response coming inside",response)
+      if (response){
+        toast.success("OTP sent successfully.")
+      }else{
+        toast.error("Failed to resend OTP.")
+      }
+    }catch (err){
+      console.log("Failed to resend OTP.",err);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <>
-      <div
-        className="userFont bg-myBlack flex flex-col justify-center items-center h-screen liner rounded-lg"
-        
-      >
+      <div className="userFont bg-myBlack flex flex-col justify-center items-center h-screen liner rounded-lg">
         <h1 className="text-4xl text-white font-semibold">OTP Verification</h1>
         <div className="bg flex mt-10 mb-5 gap-4">
           {error && <p className="text-red-500"> {error}</p>}
@@ -118,12 +132,13 @@ const Otp = () => {
           <p className="text-xs mt-3 text-gray-500 font-bold">00:45</p>
           <p className="text-xs mt-3 text-gray-600 ">
             Don't get OTP yet ?{" "}
-            <span className="text-white ml-2 text-xs">Resend OTP !</span>
+            <span className="text-white ml-2 text-xs" onClick={handleResendOtp}>Resend OTP !</span>
           </p>
         </div>
         <button
           className="mt-3 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
-          type="submit" onClick={handleSubmit}
+          type="submit"
+          onClick={handleSubmit}
         >
           Confirm OTP <MoveRight size={30} />{" "}
         </button>

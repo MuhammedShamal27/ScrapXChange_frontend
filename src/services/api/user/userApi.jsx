@@ -29,8 +29,13 @@ export const verifyOtp = async (otpData) =>{
 }
 
 export const resendOtp = async (email) =>{
-    const response = await axiosInstance.post('/user/resend-otp/',{ email });
-    return response.data;
+    try{
+        const response = await axiosInstance.post('/user/resend-otp/',{ email });
+        return response.data;
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
 }
 
 
@@ -58,6 +63,19 @@ export const emailForResetPassword = async (userData) =>{
     }
 }
 
+export const passwordOtp = async (otpData) =>{
+    try{
+        const response = await axiosInstance.post('/user/password-otp/',otpData);
+        console.log("Api passwordOtp",response.data)
+        return response.data
+    }
+    catch (err) {
+        if (! err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+
 export const resetPassword = async (userData) =>{
     try{
         const response = await axiosInstance.post('/user/password-reset/',userData);
@@ -69,25 +87,6 @@ export const resetPassword = async (userData) =>{
         return Promise.reject(err.response.data);
     }
 }
-// export const loginUser = createAsyncThunk(
-//     'user/login',
-//     async (userData, { rejectWithValue }) => {
-//         try {
-//             const response = await axiosInstance.post('/user/login/', userData);
-//             console.log("API response data:", response.data);
-//             return response.data;
-//         } catch (err) {
-//             console.error('Login error:', err);
-
-//             if (err.response) {
-//                 console.error("Error response data:", err.response.data);
-//                 return rejectWithValue(err.response.data);
-//             } else {
-//                 return rejectWithValue({ detail: "An unexpected error occurred." });
-//             }
-//         }
-//     }
-// );
 
 export const getUserHomeData = async () =>{
     try {
@@ -98,3 +97,26 @@ export const getUserHomeData = async () =>{
         throw error;
     }
 };
+
+
+export const userProfile = async () =>{
+    try {
+        const response = await axiosInstance.get('/user/profile/');
+        console.log("userProfile",response)
+        return response.data
+    }catch (error){
+        console.error("Error fetching user profile data:",error);
+        throw error;
+    }
+};
+
+export const editProfile = async () =>{
+    try{
+        const response = await axiosInstance.put('/user/edit-profile/');
+        console.log("editProfile",response)
+        return response.data
+    }catch (error) {
+        console.error ("Error fetching user profile data:",error);
+        throw error;
+    }
+}

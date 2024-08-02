@@ -7,6 +7,8 @@ import EmailForPasswordReset from "../../pages/user/EmailForPasswordReset"
 import ResetPassword from "../../pages/user/ResetPassword"
 import Login from "../../pages/user/Login"
 import Home from "../../pages/user/Home"
+import UserProfile from '../../pages/user/UserProfile';
+import EditProfile from '../../pages/user/EditProfile';
 
 const userRoutes = createBrowserRouter ([
     {
@@ -19,7 +21,9 @@ const userRoutes = createBrowserRouter ([
             { path: '/otp' , element : <OTP/>},
             { path: '/login' , element : <Login/>},
             { path: '/email' , element : <EmailForPasswordReset/>},
-            { path: "/resetPassword" , element : <ResetPassword/>},
+            { path: '/resetPassword' , element : <ResetPassword/>},
+            { path: '/profile' , element : <UserProfile/>},
+            { path: '/editProfile' , element : <EditProfile/>},
             { path: "*" , element : <Error message = "Page Not Found"/>},
         ]
     }

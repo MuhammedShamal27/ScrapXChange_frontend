@@ -38,7 +38,8 @@ const EmailForPasswordReset = () => {
       const response = await emailForResetPassword({email});
       console.log("Password rest request.",response);
       toast.success("Password reset link sent. Please check your email.")
-      navigate("/resetPassword")
+      localStorage.setItem("userEmail",email);
+      navigate("/otp",{ state: {context: "passwordReset"}})
     }
     catch (err) {
       console.error('Password reset request error:' , err);
