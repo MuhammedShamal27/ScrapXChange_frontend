@@ -33,25 +33,61 @@ export const resendOtp = async (email) =>{
     return response.data;
 }
 
-export const loginUser = createAsyncThunk (
-    'user/login',
-    async ( userData , {rejectWithValue}) =>{
-        try{
-            const response = await axiosInstance.post('/user/login/',userData);
-            console.log('api response'.response)
-            return response.data;
-        }catch (err) {
-            console.error('Login error:',err);
 
-            if (err.response){
-                console.error("Error response data:",err.response.data);
-                return rejectWithValue(err.response.data);
-            }else{
-                return rejectWithValue({detail : `An unexpected error occured.`})
-            }
-        }
+export const loginUser = async (userData) =>{
+    try{
+        const response = await axiosInstance.post('/user/login/',userData);
+        console.log('loginuser api response',response.data)
+        return response.data
     }
-);
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const emailForResetPassword = async (userData) =>{
+    try{
+        const response = await axiosInstance.post('/user/password-reset-request/',userData);
+        console.log('Api emailForResetPassword',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const resetPassword = async (userData) =>{
+    try{
+        const response = await axiosInstance.post('/user/password-reset/',userData);
+        console.log('Api password-reset',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+// export const loginUser = createAsyncThunk(
+//     'user/login',
+//     async (userData, { rejectWithValue }) => {
+//         try {
+//             const response = await axiosInstance.post('/user/login/', userData);
+//             console.log("API response data:", response.data);
+//             return response.data;
+//         } catch (err) {
+//             console.error('Login error:', err);
+
+//             if (err.response) {
+//                 console.error("Error response data:", err.response.data);
+//                 return rejectWithValue(err.response.data);
+//             } else {
+//                 return rejectWithValue({ detail: "An unexpected error occurred." });
+//             }
+//         }
+//     }
+// );
 
 export const getUserHomeData = async () =>{
     try {

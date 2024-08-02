@@ -18,6 +18,8 @@ const userRoutes = createBrowserRouter ([
             { path: '/register' , element : <Register/>},
             { path: '/otp' , element : <OTP/>},
             { path: '/login' , element : <Login/>},
+            { path: '/email' , element : <EmailForPasswordReset/>},
+            { path: "/resetPassword" , element : <ResetPassword/>},
             { path: "*" , element : <Error message = "Page Not Found"/>},
         ]
     }

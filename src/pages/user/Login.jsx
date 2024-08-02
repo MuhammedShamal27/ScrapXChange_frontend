@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/api/user/userApi";
 import { toast } from "sonner";
+import { loginSuccess } from "../../redux/reducers/userReducer";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -55,20 +56,21 @@ const Login = () => {
     });
 
     setErrors(validationErrors);
+    console.log("the errors",setErrors)
 
     if (Object.keys(validationErrors).length === 0) {
       try {
         console.log("coming to login");
-        const resultAction = await dispatch(loginUser(formData));
-        console.log("result action",resultAction)
-        if (loginUser.fulfilled.match(resultAction)) {
-          console.log('giving the accesstoken and user')
-          localStorage.setItem("acccesToken", resultAction.payload.token);
-          localStorage.setItem(
-            "user",
-            JSON.stringify(resultAction.payload.user)
-          );
+        const response = await loginUser(formData);
+        console.log("result action",response)
+        if (response && response.tokens && response.tokens.access) {
+          console.log('coming into the if condition')
+          dispatch (loginSuccess({token : response.tokens.access}))
           navigate("/");
+        }
+        else{
+          console.error('failed',response)
+          toast.error("Login failed . please check your credential and try again")
         }
       } catch (err) {
         if (err.email) {

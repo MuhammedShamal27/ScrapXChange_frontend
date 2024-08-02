@@ -67,6 +67,7 @@ const Otp = () => {
         // Clear previous tokens if any
         // localStorage.removeItem('accessToken');
         // localStorage.removeItem('refreshToken');
+        
     
         // localStorage.setItem('refreshToken', response.refresh);
         // console.log("refresh token stored:", localStorage.getItem('refreshToken'));
