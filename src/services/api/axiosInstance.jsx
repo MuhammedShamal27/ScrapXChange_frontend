@@ -12,14 +12,39 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     config => {
         const state = store.getState()
-        const token = state.auth.token
-        // const token = localStorage.getItem('token');
-        console.log('pol',token)
+        const { auth , admin , shop} = state;
+        // const token = state.admin.token;
+        console.log('Token admin:',admin)
+        console.log('Token shop:',shop)
+        console.log('Token auth:',auth)
+
         const noAuthRequired = ['/user/register/' , '/user/verify-otp/' ,'/user/login/', '/user/password-reset-request/',
-            '/user/password-otp/', '/user/password-reset']
-        if (token && !noAuthRequired.some((url) => config.url.includes(url))){
-            console.log('authsensured')
-            config.headers['Authorization'] = `Bearer ${token}`;
+            '/user/password-otp/', '/user/password-reset','/shop/register/','/scrapxchange_admin/login/']
+            
+
+        const requiresAuth = !noAuthRequired.some(url => config.url.includes(url));
+
+        if (requiresAuth){
+            let token;
+
+            // Determine which token to use based on URL pattern
+            if (config.url.includes('/scrapxchange_admin/')) {
+                token = admin.token;
+                console.log('token inside admin',admin)
+            } else if (config.url.includes('/shop/')) {
+                token = shop.token;
+                console.log('token inside shop',shop)
+            } else if (config.url.includes('/user/')) {
+                token = auth.token;
+                console.log('token inside auth',auth)
+            }
+            console.log('Token:',token)
+
+            if (token){
+
+                console.log('Authorization ensured')
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
         }
         return config;
     },

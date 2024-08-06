@@ -10,6 +10,9 @@ import Home from "../../pages/user/Home"
 import UserProfile from '../../pages/user/UserProfile';
 import EditProfile from '../../pages/user/EditProfile';
 
+import shopRouter from '../shop/shopRoutes';
+import adminRouter from '../admin/adminRoutes';
+
 const userRoutes = createBrowserRouter ([
     {
         path :'/',
@@ -25,8 +28,10 @@ const userRoutes = createBrowserRouter ([
             { path: '/profile' , element : <UserProfile/>},
             { path: '/editProfile' , element : <EditProfile/>},
             { path: "*" , element : <Error message = "Page Not Found"/>},
-        ]
-    }
+        ],
+    },
+    shopRouter,
+    adminRouter,
 ]);
 
 export default userRoutes

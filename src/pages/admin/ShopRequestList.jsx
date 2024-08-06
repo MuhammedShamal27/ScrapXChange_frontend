@@ -1,12 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Search,Info} from 'lucide-react'
 import AdminNavBar from '../../componets/admin/AdminNavBar'
 import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import Shop_requests from '../../assets/Shop_requests.png'
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
 import '../../styles/adminAndShop.css'
+import { ShopRequestList as fetchShopRequests } from '../../services/api/admin/adminApi';
+import { useNavigate } from 'react-router-dom'
 
 const ShopRequestList = () => {
+
+    const [shopRequests, setShopRequests] = useState([]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const loadShopRequests = async () => {
+        try {
+          const response = await fetchShopRequests();
+          setShopRequests(response);
+        } catch (error) {
+          console.error('Failed to fetch shop requests:', error);
+        }
+      };
+  
+      loadShopRequests();
+    }, []);
+    const handleInfoClick = (id) => {
+        navigate(`/admin/shoprequestdetails/${id}`); // Navigate to the details page with the request ID
+      };
+
   return (
     <>
         <div className='adminFont flex bg-bgColor'>
@@ -28,36 +51,21 @@ const ShopRequestList = () => {
                         <p className='pl-48'>Details</p>
                     </div>
                     <div className='flex flex-col mt-5 ml-5 justify-around'>
-                        <div className='flex justify-between m-2 shadow-xl rounded-lg items-center '>
-                            <div className='flex m-3 items-center space-x-3'>
-                                <img src={Shop_requests} alt="profile" />
-                                <p>Shop Name</p>
-                            </div>
-                            <p>old@gmail.com</p>
-                            <p >Kaloor</p>
-                            <p ><Info color="#a3aed0" /></p>
-                            <br/>
-                        </div>
-                        <div className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
-                            <div className='flex m-3 items-center space-x-3'>
-                                <img src={Shop_requests} alt="profile" />
-                                <p>Shop Name</p>
-                            </div>
-                            <p>old@gmail.com</p>
-                            <p>Kaloor</p>
-                            <p><Info color="#a3aed0" /></p>
-                            <br/>
-                        </div>
-                        <div className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
-                            <div className='flex m-3 items-center space-x-3'>
-                                <img src={Shop_requests} alt="profile" />
-                                <p>Shop Name</p>
-                            </div>
-                            <p>old@gmail.com</p>
-                            <p>Kaloor</p>
-                            <p><Info color="#a3aed0" /></p>
-                            <br/>
-                        </div>
+                    {shopRequests.length === 0 ? (
+                <p>No shop requests available.</p>
+              ) : (
+                shopRequests.map((request) => (
+                  <div key={request.id} className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
+                    <div className='flex m-3 items-center space-x-3'>
+                      <img src={Shop_requests} alt="profile" />
+                      <p>{request.shop.name}</p>
+                    </div>
+                    <p>{request.email}</p>
+                    <p>{request.shop.place}</p>
+                    <p><Info color="#a3aed0" onClick={() => handleInfoClick(request.id)} /></p>
+                  </div>
+                ))
+              )}
                     </div>
                 </div>
             </div>

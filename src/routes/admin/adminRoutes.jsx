@@ -1,50 +1,30 @@
-// import AdminLogin from "../../pages/admin/AdminLogin";
-// import AdminHome from "../../pages/admin/AdminHome";
-// import UserList from "../../pages/admin/UserList";
-// import UserDetails from "../../pages/admin/UserDetails";
-// import ShopList from "../../pages/admin/ShopList";
-// import ShopDetails from "../../pages/admin/ShopDetails";
-// import ShopRequestList from "../../pages/admin/ShopRequestList";
-// import RequestDeatils from "../../pages/admin/RequestDeatils";
-// import { Children } from "react";
+import AdminLogin from "../../pages/admin/AdminLogin";
+import AdminHome from "../../pages/admin/AdminHome";
+import UserList from "../../pages/admin/UserList";
+import UserDetails from "../../pages/admin/UserDetails";
+import ShopList from "../../pages/admin/ShopList";
+import ShopDetails from "../../pages/admin/ShopDetails";
+import ShopRequestList from "../../pages/admin/ShopRequestList";
+import RequestDeatils from "../../pages/admin/RequestDeatils";
+import { createBrowserRouter } from "react-router-dom";
+import App from "../../App";
 
-// export const adminRouter ={
-//     path:"/admin",
-//     element:<AdminHome/>,
 
-//     Children:[
-//         {
-//             path:"/admin/",
-//             element:<AdminHome/>
-//         },
-//         {
-//             path:"/admin/userlist",
-//             element:<UserList/>
-//         },
-//         {
-//             path:"/admin/userdetails",
-//             element:<UserDetails/>
-//         },
-//         {
-//             path:"/admin/shoplist",
-//             element:<ShopList/>
-//         },
-//         {
-//             path:"/admin/shopdetails",
-//             element:<ShopDetails/>
-//         },
-//         {
-//             path:"/admin/requestlist",
-//             element:<ShopRequestList/>
-//         },
-//         {
-//             path:"/admin/requestdetails",
-//             element:<RequestDeatils/>
-//         }
-//     ],
-// };
+const adminRouter = 
+    {
+        path : '/admin',
+        element: <App/>,
 
-// export const adminLoginRouter = {
-//     path :"/admin/login",
-//     element:<AdminLogin/>,
-// };
+        // errorElement : <Error message = "Something went wrong"/>,
+
+        children: [
+            { path : 'login' , element: <AdminLogin/> },
+            { path : 'home' , element:<AdminHome/> },
+            { path : 'userlist' , element:<UserList/> },
+            { path : 'userdetails/:id' , element:<UserDetails/>},
+            { path : 'shoplist' , element:<ShopList/> },
+            { path : 'shoprequestlist' , element:<ShopRequestList/> },
+            { path : 'shoprequestdetails/:id' , element:<RequestDeatils/> },
+        ]
+    }
+export default adminRouter;
