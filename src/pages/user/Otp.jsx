@@ -15,12 +15,13 @@ const Otp = () => {
   const [otp, setOtp] = useState(Array(4).fill(""));
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
+  const [timer, setTimer] = useState(60);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const inputRefs = useRef([]);
   const context = location.state?.context || "registration";
-  console.log('location',context)
+
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
@@ -29,7 +30,35 @@ const Otp = () => {
     } else {
       toast.error("Email not found. Please retry.");
     }
+
+    const storedTimer = localStorage.getItem("otpTimer");
+    if (storedTimer){
+      setTimer(Number(storedTimer));
+    }else{
+      localStorage.setItem("otpTimer",60);
+    }
+  
+    return  () =>{
+      localStorage.removeItem("otpTimer");
+    }
+
   }, []);
+
+  useEffect( () => {
+    if (timer <=0) return;
+
+    const timerId = setInterval(() => {
+      setTimer((prev) =>{
+        const newTime = prev-1;
+        localStorage.setItem("otpTimer",newTime);
+        return newTime;
+      })
+    },1000)
+
+    return ()=> clearInterval(timerId)
+  },[timer])
+
+
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -92,6 +121,8 @@ const Otp = () => {
     }
   };
 
+
+
   const handleResendOtp = async (e) =>{
     e.preventDefault();
     console.log("Resending OTP to email:", email);
@@ -100,6 +131,9 @@ const Otp = () => {
       console.log("the response coming inside",response)
       if (response){
         toast.success("OTP sent successfully.")
+
+        setTimer(60);
+        localStorage.setItem("otpTimer",60);
       }else{
         toast.error("Failed to resend OTP.")
       }
@@ -128,12 +162,12 @@ const Otp = () => {
             />
           ))}
         </div>
-        <div className="flex justify-between gap-7">
-          <p className="text-xs mt-3 text-gray-500 font-bold">00:45</p>
-          <p className="text-xs mt-3 text-gray-600 ">
+        <div className="flex justify-between mt-3 items-center gap-7">
+          <p className="text-xs  text-gray-500 font-bold">{` 00:${timer.toString().padStart(2,'0')}`}</p>
+          <p className="text-xs  text-gray-600 ">
             Don't get OTP yet ?{" "}
-            <span className="text-white ml-2 text-xs" onClick={handleResendOtp}>Resend OTP !</span>
           </p>
+          <button className="text-white  text-xs" onClick={handleResendOtp}>Resend OTP !</button>
         </div>
         <button
           className="mt-3 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "

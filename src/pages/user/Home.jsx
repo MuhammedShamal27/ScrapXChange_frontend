@@ -1,85 +1,7 @@
-// import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate ,Link } from "react-router-dom";
-// import { logout, updateUser } from "../../redux/reducers/userReducer";
-// import { getUserHomeData } from "../../services/api/user/userApi";
-
-// const Home = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const [user, setUser] = useState();
-
-//   useEffect(() => {
-//     const fetchUserData = async () => {
-//       const userData = await getUserHomeData();
-
-//       setUser(userData);
-//       dispatch(updateUser({ user: userData }));
-//     };
-
-//     fetchUserData();
-//   }, [dispatch, getUserHomeData]);
-
-//   const handleLogout = () => {
-//     dispatch(logout());
-//     navigate("/login");
-//   };
-
-//   return (
-// <div className="flex flex-col h-screen bg-gray-100">
-//       <header className="bg-white shadow p-4 flex justify-between items-center">
-//         <h1 className="text-xl font-bold">User Home</h1>
-//         {user && (
-//           <div className="flex items-center space-x-4">
-//             <span className="text-gray-700">Welcome, {user.username}!</span>
-//             <button
-//               onClick={handleLogout}
-//               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-//             >
-//               Logout
-//             </button>
-//           </div>
-//         )}
-//       </header>
-//       <main className="flex-1 p-10">
-//         {user ? (
-//           <div className="bg-white shadow rounded-lg p-6">
-//             <h2 className="text-2xl font-bold mb-4">Hello, {user.username}!</h2>
-//             <div className="flex space-x-4">
-//               <Link to="/profile">
-//                 <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-//                   Profile
-//                 </button>
-//               </Link>
-//             </div>
-//           </div>
-//         ) : (
-//           <div>
-//             <p>Please log in.</p>
-//             <Link to="/login">
-//               <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-//                 Go to Login
-//               </button>
-//             </Link>
-//           </div>
-//         )}
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default Home;
-
-import React from "react";
-import logo from "../../assets/logo.png";
-import SA_profile from "../../assets/SA_profile.png";
+import React, { useEffect, useState } from "react";
 import {
-  Bell,
-  Search,
   MoveUpRight,
   SquareArrowUpRight,
-  Twitter,
-  Linkedin,
 } from "lucide-react";
 import "../../styles/user.css";
 import himage1 from "../../assets/himage1.jpeg";
@@ -92,12 +14,39 @@ import second from "../../assets/second.png";
 import third from "../../assets/third.png";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/reducers/userReducer";
+import { getUserHomeData } from "../../services/api/user/userApi";
 
 const Home = () => {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = await getUserHomeData();
+      setUser(userData);
+      dispatch(updateUser({ user: userData }));
+    };
+
+    if (isAuthenticated) {
+      fetchUserData();
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <>
       <div className="userMainFont">
-        <UserNavBar/>
+        <UserNavBar user={user}  />
 
         <div className="text-center m-10 flex flex-col justify-center items-center">
           <h1 className="text-5xl font-bold m-3">
@@ -122,12 +71,12 @@ const Home = () => {
               or electronics to recycle, our experienced team is here to help.
             </h5>
           </div>
-          <button className="flex border items-center border-black rounded-full p-3  mt-7 text-xs  gap-3">
+          <Link to='/shops' className="flex border items-center border-black rounded-full p-3  mt-7 text-xs  gap-3">
             Get Started
             <span className="bg-green-950 rounded-full p-1">
               <MoveUpRight color="#FFFFFF" />
             </span>
-          </button>
+          </Link>
         </div>
         <div className="flex justify-between h-60 w-60 gap-7 items-center mt-20 ml-32 ">
           <img className="h-32 rounded-xl" src={himage1} alt="" />

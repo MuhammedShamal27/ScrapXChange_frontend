@@ -95,22 +95,23 @@ const Login = () => {
           Login to Your Account
         </h1>
         <div className="flex flex-col   h-10 w-3/12 mt-10  mb-20 gap-2">
-          {errors.email && <p className="text-white">{errors.email}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
-          />
-          {errors.password && <p className="text-white">{errors.password}</p>}
+            />
+            {errors.email && <p className="text-red-700 text-xs">{errors.email}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="password"
+            type="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="8 digit pin"
-          />
+            />
+            {errors.password && <p className="text-red-700 text-xs">{errors.password}</p>}
         </div>
         <button
           className="mt-5 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "

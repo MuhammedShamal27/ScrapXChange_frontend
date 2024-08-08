@@ -79,24 +79,36 @@ const Register = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         console.log("inside");
-        const resultAction = await dispatch(registerUser(formData));
+        const resultAction = await registerUser(formData);
         console.log("resultAction", resultAction);
+        console.log("resultAction", resultAction.rejected);
+        console.log("resultAction", resultAction.fulfilled);
+
         if (resultAction) {
           localStorage.setItem("userEmail", formData.email);
           navigate("/otp", { state: { context: "registration" } });
           console.log("is going .");
         }
       } catch (err) {
+        console.log("Registration error:", err);
+        setErrors(err);
+
+        let hasSpecificError = false;
+
         if (err.email) {
-          toast.error(`Email error : ${err.email[0]}`);
+          toast.error(` Email error : ${err.email[0]}`);
+          hasSpecificError = true;
         }
         if (err.phone) {
           toast.error(` Phone error: ${err.phone[0]}`);
+          hasSpecificError = true;
         }
-        if (err.password) {
-          toast.error(`Password error : ${err.password[0]}`);
-        } else {
-          toast.error("An unexpected error occured. Please try again later.");
+        if (err.username) {
+          toast.error(` Username error : ${err.username[0]}`);
+          hasSpecificError = true;
+        }
+        if (!hasSpecificError) {
+        toast.error("An unexpected error occurred. Please try again later.");
         }
       }
     }
@@ -113,31 +125,30 @@ const Register = () => {
         </h1>
         <div className="flex flex-col   h-10 w-10/12 lg:w-3/12 mt-10  mb-20 gap-2">
           <br />
-          {errors.username && <p className="text-white">{errors.username}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="username"
             value={formData.username}
             onChange={handleChange}
             placeholder="Name"
-          />
-          {errors.email && <p className="text-white">{errors.email}</p>}
+            />
+            {errors.username && <p className="text-red-700 text-xs">{errors.username}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
-          />
-          {errors.phone && <p className="text-white">{errors.phone}</p>}
+            />
+            {errors.email && <p className="text-red-700 text-xs">{errors.email}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="Phone"
-          />
-          {errors.password && <p className="text-white">{errors.password}</p>}
+            />
+            {errors.phone && <p className="text-red-700 text-xs">{errors.phone}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="password"
@@ -145,8 +156,8 @@ const Register = () => {
             type="password"
             onChange={handleChange}
             placeholder="8 digit pin"
-          />
-          {errors.confirm_password && <p className="text-white">{errors.confirm_password}</p>}
+            />
+            {errors.password && <p className="text-red-700 text-xs">{errors.password}</p>}
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="confirm_password"
@@ -154,7 +165,8 @@ const Register = () => {
             type="password"
             onChange={handleChange}
             placeholder="Re-enter 8 digit pin"
-          />
+            />
+            {errors.confirm_password && <p className="text-red-700 text-xs">{errors.confirm_password}</p>}
         </div>
         <button
           className="mt-96 bg-green-900  w-10/12 lg:w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "

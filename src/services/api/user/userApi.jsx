@@ -1,22 +1,16 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../axiosInstance";
 
-export const registerUser = createAsyncThunk(
-    'user/register',
-    async (userData, { rejectWithValue }) => {
+export const registerUser = async (userData) => {
         try {
             const response = await axiosInstance.post('/user/register/', userData);
-            console.log("the response data",response.data)
+            console.log("the register response data",response.data)
             return response.data;
         } catch (err) {
-            if (!err.response) {
+            if (!err.response) 
                 throw err;
-            }
-            return rejectWithValue(err.response.data);
+            return Promise.reject(err.response.data);
         }
     }
-);
-
 
 export const verifyOtp = async (otpData) =>{
     try{
@@ -92,9 +86,9 @@ export const getUserHomeData = async () =>{
     try {
         const response = await axiosInstance.get('/user/');
         return response.data
-    } catch (error) {
-        console.error('Error fetching user home data:' ,error);
-        throw error;
+    } catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
     }
 };
 
@@ -104,9 +98,9 @@ export const userProfile = async () =>{
         const response = await axiosInstance.get('/user/profile/');
         console.log("userProfile",response)
         return response.data
-    }catch (error){
-        console.error("Error fetching user profile data:",error);
-        throw error;
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
     }
 };
 
@@ -114,21 +108,16 @@ export const userProfile = async () =>{
 
 export const editProfile = async (formData) =>{
     try{
-        const formDataObj = new FormData();
-        for (const key in formData){
-            if (formData[key] !==null){
-                formDataObj.append(key,formData[key]);
-            }
-        }
-        const response = await axiosInstance.put('/user/edit-profile/',formDataObj ,{
-            headers :{
-                'Content-Type' : 'multipart/form-data',
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
             },
-        });
-        console.log("editProfile",response)
+        };
+        const response = await axiosInstance.put('/user/edit-profile/',formData,config );
+        console.log("the response api of editProfile",response)
         return response.data
-    }catch (error) {
-        console.error ("Error fetching user profile data:",error);
-        throw error;
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
     }
 }

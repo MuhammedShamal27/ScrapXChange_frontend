@@ -20,6 +20,13 @@ export default {
       }
     },
   },
-  plugins: [require('flowbite/plugin'),],
+  plugins: [require('flowbite/plugin'),
+    function ({ addVariant, e }) {
+      addVariant('autofill', '&:-webkit-autofill');
+      addVariant('autofill-hover', '&:-webkit-autofill:hover');
+      addVariant('autofill-focus', '&:-webkit-autofill:focus');
+      addVariant('autofill-active', '&:-webkit-autofill:active');
+    },
+  ],
 }
 

@@ -1,43 +1,67 @@
-  import React from 'react';
-  import { Bell, Search } from 'lucide-react';
-  import profile from '../../assets/SA_profile.png';
-  import logo from '../../assets/logo.png';
+import React from "react";
+import { Bell, Search } from "lucide-react";
+import profile from "../../assets/SA_profile.png";
+import logo from "../../assets/logo.png";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
-  const UserNavBar = () => {
-    return (
-      <div className="flex flex-col sm:flex-row justify-between items-center p-5">
-        <div className="flex gap-3 items-center mb-4 sm:mb-0">
-          <img className="h-8 w-8" src={logo} alt="logo" />
-          <h1 className="font-extrabold text-xl">ScrapXChange</h1>
-        </div>
-        <div className="flex gap-7 mb-4 sm:mb-0">
-          <h3 className="font-semibold">Home</h3>
-          <h3 className="font-semibold">Sell Scrap</h3>
-          <h3 className="font-semibold">About Us</h3>
-        </div>
+const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 
-        <div className="flex gap-7 items-center">
+const UserNavBar = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const navigate = useNavigate();
 
-          <button>Sign Up</button>
-
-          <p className="">
-            <Search size={20} />
-          </p>
-
-          {/* <p className="">
-            <Bell size={20} />
-          </p>
-          <p className="">
-            <Search size={20} />
-          </p>
-          <img
-            className="w-10 h-10"
-            src={profile}
-            alt="profile picture of user"
-          /> */}
-        </div>
-      </div>
-    );
+  const handleSignUp = () => {
+    navigate("/login");
   };
 
-  export default UserNavBar;
+  const goToHome = () => {
+    navigate("/");
+  }
+
+  return (
+    <div className="flex flex-col sm:flex-row justify-between items-center p-5">
+      <div className="flex gap-3 items-center mb-4 sm:mb-0">
+        <img onClick={goToHome} className="h-8 w-8 cursor-pointer" src={logo} alt="logo" />
+        <h1 onClick={goToHome} className="font-extrabold text-xl cursor-pointer">ScrapXChange</h1>
+      </div>
+      <div className="flex gap-7 mb-4 sm:mb-0">
+        <Link className="font-semibold" to='/'>Home</Link>
+        <Link className="font-semibold" to='/shops'>Sell Scrap</Link>
+        <Link className="font-semibold" >About Us</Link>
+      </div>
+
+      <div className="flex gap-7 items-center">
+        {isAuthenticated ? (
+          <>
+            <p className="">
+              <Bell size={20} />
+            </p>
+            <p className="">
+              <Search size={20} />
+            </p>
+            <Link to='/profile'>
+              <img 
+                className="w-10 h-10 cursor-pointer"
+                src={profile}
+                alt="profile picture of user"
+              />
+            </Link>
+          </>
+        ) : (
+          <>
+            <button onClick={handleSignUp} className="bg-black text-white p-3 rounded-3xl text-xs w-24">
+              Sign Up
+            </button>
+
+            <p>
+              <Search size={20} />
+            </p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default UserNavBar;
