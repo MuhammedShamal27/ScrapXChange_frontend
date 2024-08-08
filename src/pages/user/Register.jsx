@@ -113,42 +113,42 @@ const Register = () => {
         </h1>
         <div className="flex flex-col   h-10 w-10/12 lg:w-3/12 mt-10  mb-20 gap-2">
           <br />
-          {errors.username && <p>{errors.username}</p>}
+          {errors.username && <p className="text-white">{errors.username}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="username"
             value={formData.username}
             onChange={handleChange}
             placeholder="Name"
           />
-          {errors.email && <p>{errors.email}</p>}
+          {errors.email && <p className="text-white">{errors.email}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
           />
-          {errors.phone && <p>{errors.phone}</p>}
+          {errors.phone && <p className="text-white">{errors.phone}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="Phone"
           />
-          {errors.password && <p>{errors.password}</p>}
+          {errors.password && <p className="text-white">{errors.password}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="password"
             value={formData.password}
             type="password"
             onChange={handleChange}
             placeholder="8 digit pin"
           />
-          {errors.confirm_password && errors.confirm_password}
+          {errors.confirm_password && <p className="text-white">{errors.confirm_password}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="confirm_password"
             value={formData.confirm_password}
             type="password"

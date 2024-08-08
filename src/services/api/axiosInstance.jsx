@@ -26,8 +26,6 @@ axiosInstance.interceptors.request.use(
 
         if (requiresAuth){
             let token;
-
-            // Determine which token to use based on URL pattern
             if (config.url.includes('/scrapxchange_admin/')) {
                 token = admin.token;
                 console.log('token inside admin',admin)

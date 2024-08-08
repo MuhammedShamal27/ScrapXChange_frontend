@@ -95,17 +95,17 @@ const Login = () => {
           Login to Your Account
         </h1>
         <div className="flex flex-col   h-10 w-3/12 mt-10  mb-20 gap-2">
-          {errors.email && <p>{errors.email}</p>}
+          {errors.email && <p className="text-white">{errors.email}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
           />
-          {errors.password && <p>{errors.password}</p>}
+          {errors.password && <p className="text-white">{errors.password}</p>}
           <input
-            className="text-sm bg-inputBoxBlack p-5 rounded-lg"
+            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="password"
             value={formData.password}
             onChange={handleChange}

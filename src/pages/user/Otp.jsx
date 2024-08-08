@@ -114,10 +114,10 @@ const Otp = () => {
       <div className="userFont bg-myBlack flex flex-col justify-center items-center h-screen liner rounded-lg">
         <h1 className="text-4xl text-white font-semibold">OTP Verification</h1>
         <div className="bg flex mt-10 mb-5 gap-4">
-          {error && <p className="text-red-500"> {error}</p>}
+          {error && <p className="text-white"> {error}</p>}
           {otp.map((digit, index) => (
             <input
-              className="text-sm bg-inputBoxBlack w-11 h-11 rounded-lg border  border-gray-500/50"
+              className="text-sm text-white bg-inputBoxBlack w-11 h-11 rounded-lg border  border-gray-500/50"
               key={index}
               ref={(el) => (inputRefs.current[index] = el)}
               type="text"

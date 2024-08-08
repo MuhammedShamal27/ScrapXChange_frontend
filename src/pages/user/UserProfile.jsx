@@ -26,30 +26,35 @@ const UserProfile = () => {
   }
 
   return (
-    <>
-      <div className="userProfile bg-myBlack p-5 rounded-lg text-white">
-        <h1 className="text-4xl font-semibold mb-5">User Profile</h1>
-        <div className="profile-details">
-        <p><strong>Username:</strong> {profile.username}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
-        <p><strong>Address:</strong> {profile.address}</p>
-        <p><strong>Pincode:</strong> {profile.pincode}</p>
-        <p><strong>Phone:</strong> {profile.phone}</p>
-        <p><strong>Alternative Phone:</strong> {profile.alternative_phone}</p>
+<div className="flex flex-col items-center bg-gray-100 p-6 min-h-screen">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl">
+        <h1 className="text-4xl font-semibold text-gray-800 mb-5">User Profile</h1>
+        <div className="profile-details space-y-4">
+          <p><strong>Username:</strong> {profile.username}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Address:</strong> {profile.address}</p>
+          <p><strong>Pincode:</strong> {profile.pincode}</p>
+          <p><strong>Phone:</strong> {profile.phone}</p>
+          <p><strong>Alternative Phone:</strong> {profile.alternative_phone}</p>
           {profile.profile_picture && (
-            <div className="profile-picture">
+            <div className="profile-picture flex justify-center mt-4">
               <img
                 src={profile.profile_picture}
                 alt="Profile"
-                className="w-32 h-32 rounded-full"
+                className="w-32 h-32 rounded-full shadow-md"
               />
             </div>
           )}
         </div>
+        <div className="mt-6">
+          <Link to="/editProfile">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Edit Profile
+            </button>
+          </Link>
+        </div>
       </div>
-
-      <Link to='/editProfile'>EditProfile</Link>
-    </>
+    </div>
   );
 };
 

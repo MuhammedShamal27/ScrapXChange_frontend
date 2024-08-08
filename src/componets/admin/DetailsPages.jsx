@@ -28,6 +28,7 @@ const DetailsPages = ({ details, type }) => {
   const handleAcceptReject = async (action) => {
     try {
       const response = action === 'accept'
+      console.log(`Action: ${action}, ID: ${details.id}`)
         ? await ShopRequestaccept(details.id)
         : await ShopRequestreject(details.id);
       if (response && response.message) {

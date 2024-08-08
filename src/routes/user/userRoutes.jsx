@@ -12,6 +12,8 @@ import EditProfile from '../../pages/user/EditProfile';
 
 import shopRouter from '../shop/shopRoutes';
 import adminRouter from '../admin/adminRoutes';
+import Shops from '../../pages/user/Shops';
+import ScrapList from '../../pages/user/ScrapList';
 
 const userRoutes = createBrowserRouter ([
     {
@@ -27,6 +29,8 @@ const userRoutes = createBrowserRouter ([
             { path: '/resetPassword' , element : <ResetPassword/>},
             { path: '/profile' , element : <UserProfile/>},
             { path: '/editProfile' , element : <EditProfile/>},
+            { path: '/shops' , element : <Shops/>},
+            { path: '/scraplist' , element : <ScrapList/>},
             { path: "*" , element : <Error message = "Page Not Found"/>},
         ],
     },

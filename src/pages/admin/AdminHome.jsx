@@ -28,25 +28,31 @@ const AdminHome = () => {
   };
 
   return (
-    <div>AdminHome
-        {admin ? (
-          <div>
-            wellcome ,{admin.username}!
-            <button className="bg-red-500" onClick={handleLogout}>
-              {" "}
-              logout{" "}
-            </button>
-            <Link to="/admin/userlist">
-              <button className="bg-slate-500" >
-                {" "}
-                userlist{" "}
-              </button>
-            </Link>
-            <Link to="/admin/shoprequestlist">Shop Request List</Link>
-          </div>
-        ) : (
-          <p>Please log in </p>
-        )}
+    <div className="flex h-screen bg-gray-100">
+      <div className="flex-1">
+        <div admin={admin} handleLogout={handleLogout} ></div>
+        <div className="p-10">
+          {admin ? (
+            <div className="bg-white shadow rounded-lg p-6">
+              <h1 className="text-2xl font-bold mb-4">Welcome, {admin.username}!</h1>
+              <div className="flex space-x-4">
+                <Link to="/admin/userlist">
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    User List
+                  </button>
+                </Link>
+                <Link to="/admin/shoprequestlist">
+                  <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Shop Request List
+                  </button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <p>Please log in.</p>
+          )}
+        </div>
+      </div>
     </div>
 
   );
