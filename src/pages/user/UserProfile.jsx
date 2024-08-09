@@ -70,7 +70,7 @@ const UserProfile = () => {
                 </div>
                 <div className="rounded-xl p-3 shadow ">
                   <p className="text-gray-500">Address</p>
-                  <p className="text-black">{profile.Address}</p>
+                  <p className="text-black">{profile.address}</p>
                 </div>
                 <div className="rounded-xl p-3 shadow ">
                   <p className="text-gray-500">Pincode</p>
