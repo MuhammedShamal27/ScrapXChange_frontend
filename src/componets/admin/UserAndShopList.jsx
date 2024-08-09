@@ -31,7 +31,7 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
             <div className="flex bg-bgColor rounded-full px-4 py-2 items-center">
               <Search color="#7E7E7E" size={20} />
               <input
-                className="bg-bgColor rounded-full text-myBlue pl-3 border-0 focus:outline-none focus:border-none"
+                className="bg-bgColor rounded-full text-myBlue pl-3 border-0 focus:outline-none focus:border-none"   
                 onChange={handleSearchChange}
                 placeholder="Search"
               />
