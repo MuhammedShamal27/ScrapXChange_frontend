@@ -10,7 +10,7 @@ import { ShopRequestDetails } from "../../services/api/admin/adminApi";
 const RequestDeatils = () => {
 
   const { id } = useParams();
-  const [shopDetails, setShopDetails] = useState(null);
+  const [shopRequestDetails, setShopRequestDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,7 +18,7 @@ const RequestDeatils = () => {
     const fetchDetails = async () => {
       try {
         const data = await ShopRequestDetails(id);
-        setShopDetails(data);
+        setShopRequestDetails(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -35,8 +35,12 @@ const RequestDeatils = () => {
     <>
       <div className="adminFont flex bg-bgColor">
         <AdminNavBar />
-        <HeadingAndProfile />
-        <DetailsPages details={shopDetails} type="shop" />
+        <div className="flex flex-col w-full">
+          <HeadingAndProfile />
+          <div className="flex justify-center">
+            <DetailsPages details={shopRequestDetails} type="shopRequest" />
+          </div>
+        </div>
       </div>
       <FooterOfAdminAndShop />
     </>

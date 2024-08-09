@@ -23,6 +23,7 @@ const adminRouter =
             { path : 'userlist' , element:<UserList/> },
             { path : 'userdetails/:id' , element:<UserDetails/>},
             { path : 'shoplist' , element:<ShopList/> },
+            { path : 'shopdetails/:id' , element:<ShopDetails/> },
             { path : 'shoprequestlist' , element:<ShopRequestList/> },
             { path : 'shoprequestdetails/:id' , element:<RequestDeatils/> },
         ]

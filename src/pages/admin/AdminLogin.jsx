@@ -88,12 +88,12 @@ const AdminLogin = () => {
                 <h1 className='absolute left-1/4 text-2xl text-blue-950 font-extrabold mt-7'>Login</h1>
                 <p className='absolute left-1/4 text-xs text-gray-400 mt-16'>Enter your email and password to sign in!</p>
                 <form onSubmit={handleSubmit} className='absolute left-1/4 text-xs grid grid-rows-8 grid-flow-col gap-x-12 mt-24 font-medium'>
-                {errors.email && <p className='text-red-500'> {errors.email} </p>}
+                    {errors.email && <p className='text-red-500'> {errors.email} </p>}
                     <h5 className='mt-4'>Email</h5>
-                    <input type='email' name='email' value={formData.email} onChange={handleChange} className='border rounded-md w-80 h-9 px-5' placeholder='mail@pegasus.com' />
+                    <input type='email' name='email' value={formData.email} onChange={handleChange} className='border rounded-md w-80 h-9 px-5 text-xs' placeholder='mail@pegasus.com' />
                     <h5 className='mt-4'>Password</h5>
                     {errors.password && <p className='text-red-500'> {errors.password} </p>}
-                    <input type='password' name='password' value={formData.password} onChange={handleChange} className='border rounded-md w-80 h-9 px-5' placeholder='Min. 8 characters' />
+                    <input type='password' name='password' value={formData.password} onChange={handleChange} className='border rounded-md w-80 h-9 px-5 text-xs' placeholder='Min. 8 characters' />
                 <button type='submit' className='absolute left-1/4 mt-64 text-xs bg-myBlue text-white w-80 h-9 border rounded-md  '>Sign in</button>
                 </form >
             </div>

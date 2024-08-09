@@ -37,10 +37,14 @@ const UserDetails = () => {
 
   return (
     <>
-      <div className="adminFont flex bg-bgColor  ">
+      <div className="adminFont flex bg-bgColor min-h-screen ">
         <AdminNavBar />
-        <HeadingAndProfile    />
-        <DetailsPages details={userDetails} type="user"  />
+        <div className="flex flex-col w-full">
+          <HeadingAndProfile    />
+          <div className="flex justify-center">
+            <DetailsPages details={userDetails} type="user"  />
+          </div>
+        </div>
       </div>
       <FooterOfAdminAndShop />
     </>

@@ -18,9 +18,11 @@ const ShopRequestList = () => {
       const loadShopRequests = async () => {
         try {
           const response = await fetchShopRequests();
-          setShopRequests(response);
+          setShopRequests(Array.isArray(response) ? response : []);
+          
         } catch (error) {
           console.error('Failed to fetch shop requests:', error);
+          setShopRequests([]);
         }
       };
   
@@ -52,7 +54,7 @@ const ShopRequestList = () => {
                     </div>
                     <div className='flex flex-col mt-5 ml-5 justify-around'>
                     {shopRequests.length === 0 ? (
-                <p>No shop requests available.</p>
+                <p className='text-center font-bold text-2xl m-10'>No Available Requests.</p>
               ) : (
                 shopRequests.map((request) => (
                   <div key={request.id} className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
