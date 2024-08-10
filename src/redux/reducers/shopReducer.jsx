@@ -25,5 +25,5 @@ const shopSlice = createSlice({
     }
 })
 
-export const { loginSuccess, logout, updateshop } = shopSlice.actions; 
+export const { loginSuccess : shopLoginSuccess, logout : shopLogout, updateshop } = shopSlice.actions; 
 export default shopSlice.reducer;

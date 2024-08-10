@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
         console.log('Token auth:',auth)
 
         const noAuthRequired = ['/user/register/' , '/user/verify-otp/' ,'/user/login/', '/user/password-reset-request/',
-            '/user/password-otp/', '/user/password-reset','/shop/register/','/scrapxchange_admin/login/']
+            '/user/password-otp/', '/user/password-reset','/shop/register/','/shop/login/','/scrapxchange_admin/login/']
             
 
         const requiresAuth = !noAuthRequired.some(url => config.url.includes(url));

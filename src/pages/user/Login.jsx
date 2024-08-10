@@ -41,7 +41,7 @@ const Login = () => {
     const errorMessage = validateField(name, value);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMessage }));
 
-    console.log("Form data on Change :".formData);
+    console.log("Form data on Change :",formData);
   };
 
   const handleSubmit = async (e) => {
