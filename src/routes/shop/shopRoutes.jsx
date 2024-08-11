@@ -7,6 +7,8 @@ import AddCategory from "../../pages/shop/AddCategory";
 import ScrapList from "../../pages/shop/ScrapList";
 import AddScrap from "../../pages/shop/AddScrap"; 
 import App from "../../App";
+import EditCategory from "../../pages/shop/EditCategory";
+import EditScrap from "../../pages/shop/EditScrap";
 
 
 
@@ -23,8 +25,10 @@ const shopRouter =
         { path: 'home' , element: <ShopHome/> },
         { path: 'categorylist' , element: <CategoryList/> },
         { path: 'addCategory' , element: <AddCategory/> },
+        { path: 'editCategory/:id' , element: <EditCategory/> },
         { path: 'scraplist' , element: <ScrapList/> },
         { path: 'addScrap' , element: <AddScrap/> },
+        { path: 'editScrap/:id' , element: <EditScrap/> },
     ]
 
     }

@@ -75,20 +75,41 @@ export const addCategory = async (categoryData) => {
     }
 }
 
-
-export const updateCategory = async (id,categoryData) => {
+export const getCategoryById = async (id) => {
     try {
-        const response = await axiosInstance.post (`/shop/category-update/${id}/`,categoryData)
-        console.log("the update category  response data", response.data)
-        return response.data
+        const response = await axiosInstance.get(`/shop/category-detail/${id}/`);
+        console.log("the category response data by id", response.data)
+        return response.data;
     } catch (err) {
-        if (!err.response) {
-            throw err;
-        }
-        console.error("Error response data:",err.response.data);
-        return Promise.reject(err.response.data)
+        console.error("Error fetching category data:", err);
+        throw err;
     }
-}
+};
+
+
+export const updateCategory = async (id, categoryData) => {
+    try {
+      const formData = new FormData();
+      for (const key in categoryData) {
+        formData.append(key, categoryData[key]);
+      }
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+      const response = await axiosInstance.put(`/shop/category-update/${id}/`, formData, config);
+      console.log("The update category response data", response.data);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      console.error("Error response data:", err.response.data);
+      return Promise.reject(err.response.data);
+    }
+  };
+  
 
 
 export const fetchScrapList = async () => {
@@ -124,9 +145,25 @@ export const addScrap = async (scrapData) => {
     }
 }
 
+export const getScrapById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/shop/product-detail/${id}/`);
+        console.log("the scrap response data by id", response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error fetching scrap data:", err);
+        throw err;
+    }
+};
+
 export const updateScrap = async (id,scrapData) => {
     try {
-        const response = await axiosInstance.post (`/shop/product-update/${id}/`,scrapData)
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+        const response = await axiosInstance.put (`/shop/product-update/${id}/`,scrapData,config)
         console.log("the scrap list response data", response.data)
         return response.data
     } catch (err) {

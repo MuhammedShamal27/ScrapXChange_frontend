@@ -61,7 +61,7 @@ const CategoryAndScrapList = ({ list, type }) => {
                 </p>
               </>
             )}
-            <Link className=" flex justify-center">
+            <Link to={type === "category" ? `/shop/editCategory/${item.id}` : `/shop/editScrap/${item.id}` } className=" flex justify-center">
               <Pencil color="#a3aed0" />
             </Link>
           </div>
