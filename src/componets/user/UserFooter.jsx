@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "../../assets/logo.png";
 import { Linkedin,Twitter } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const UserFooter = () => {
   return (
@@ -26,6 +27,7 @@ const UserFooter = () => {
         <div className="m-7 ">
           <h1 className="text-white font-light">Shops</h1>
           <h5 className="text-xs pt-5">Pricing</h5>
+          <Link  className="text-xs pt-5">Become Shop</Link>
           <h5 className="text-xs pt-5">Report</h5>
         </div>
         <div className="m-7 ">

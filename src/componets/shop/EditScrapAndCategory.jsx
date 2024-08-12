@@ -23,6 +23,7 @@ const EditScrapAndCategory = ({ id, type }) => {
   });
   const [imageName, setImageName] = useState("");
   const [categories, setCategories] = useState([]);
+  const [originalImageUrl, setOriginalImageUrl] = useState(null); // Store the original image URL
   const [error, setError] = useState({});
 
   useEffect(() => {
@@ -31,16 +32,18 @@ const EditScrapAndCategory = ({ id, type }) => {
         if (type === "scrap" && id) {
           const data = await getScrapById(id);
           setScrapFormData(data);
-          const imageUrl = data.image; // Assuming `image` contains the full image URL
-          const trimmedImageName = imageUrl.split("/").pop(); // Extract the file name from the URL
+          const imageUrl = data.image;
+          setOriginalImageUrl(imageUrl); // Store the original image URL
+          const trimmedImageName = imageUrl.split("/").pop();
           setImageName(trimmedImageName);
           const categoryList = await fetchCategoryList();
           setCategories(categoryList);
         } else if (type === "category" && id) {
           const data = await getCategoryById(id);
           setCategoryFormData(data);
-          const imageUrl = data.image; // Assuming `image` contains the full image URL
-          const trimmedImageName = imageUrl.split("/").pop(); // Extract the file name from the URL
+          const imageUrl = data.image;
+          setOriginalImageUrl(imageUrl); // Store the original image URL
+          const trimmedImageName = imageUrl.split("/").pop();
           setImageName(trimmedImageName);
         }
       } catch (err) {
@@ -67,25 +70,40 @@ const EditScrapAndCategory = ({ id, type }) => {
     }
 
     if (files) {
-      setImageName(files[0].name); // Update the image name state with the selected file name
+      setImageName(files[0].name);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      if (type === "scrap") {
-        await updateScrap(id, scrapFormData);
-        navigate("/shop/scraplist");
-      } else {
-        await updateCategory(id, categoryFormData);
-        navigate("/shop/categorylist");
-      }
+        // If the category name exists, map it to its corresponding ID
+        if (scrapFormData.category_name && !scrapFormData.category) {
+            const category = categories.find(cat => cat.name === scrapFormData.category_name);
+            if (category) {
+                scrapFormData.category = category.id;
+            } else {
+                throw new Error("Invalid category selected");
+            }
+        }
+
+        console.log('the scrap data', scrapFormData);
+
+        if (type === "scrap") {
+            await updateScrap(id, scrapFormData, originalImageUrl);
+            navigate("/shop/scraplist");
+        } else {
+            console.log('the category data', categoryFormData);
+            await updateCategory(id, categoryFormData, originalImageUrl);
+            navigate("/shop/categorylist");
+        }
     } catch (err) {
-      console.error("Error details:", err);
-      setError(err.response?.data || { global: "An error occurred" });
+        console.error("Error details:", err);
+        setError(err.response?.data || { global: "An error occurred" });
     }
-  };
+};
+
 
   return (
     <div className="bg-white m-10 w-8/12 rounded-2xl">
@@ -105,8 +123,8 @@ const EditScrapAndCategory = ({ id, type }) => {
             type="text"
             placeholder="Name to display"
           />
+          {error.name && <p>{error.name}</p>}
         </div>
-        {error.name && <p>{error.name.toString()}</p>}
 
         {type === "category" && (
           <div className="flex flex-col p-3">
@@ -160,16 +178,25 @@ const EditScrapAndCategory = ({ id, type }) => {
         <div className="flex flex-col p-3">
           <p>Image</p>
           <div className="border rounded-md placeholder:text-xs mt-3">
-            <input type="file" name="image" onChange={handleChange} />
-            <p className="text-gray-500 mt-2">
-              {imageName || "No file chosen"}
-            </p>
+            <input
+              hidden
+              type="file"
+              id="imageUpload"
+              name="image"
+              onChange={handleChange}
+            />
+            <label
+              htmlFor="imageUpload"
+              className="text-gray-500 h-10 text-center cursor-pointer flex items-center justify-center"
+            >
+              {imageName || "Choose Image"}
+            </label>
           </div>
-          {error.image && <p>{error.image}</p>}
+          {error.image && <p className="text-red-700">{error.image}</p>}
         </div>
 
         <button
-          className="text-center rounded-md bg-myBlue text-white m-3 p-3"
+          className="text-center rounded-md bg-myBlue text-white m-3 p-3 h-10 mt-10"
           type="submit"
         >
           Submit

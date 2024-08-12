@@ -6,6 +6,8 @@ function ProtectedRoute  ({ component }) {
 
     const navigate = useNavigate();
     const isToken = useSelector((state) => state.auth.token);
+    // const isToken = useSelector((state) => state.shop.token);
+    // const isToken = useSelector((state) => state.admin.token);
 
 
     useEffect(()=>{

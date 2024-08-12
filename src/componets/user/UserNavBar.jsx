@@ -4,11 +4,13 @@ import profile from "../../assets/SA_profile.png";
 import logo from "../../assets/logo.png";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 
 const UserNavBar = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
   const handleSignUp = () => {
@@ -43,7 +45,7 @@ const UserNavBar = () => {
             <Link to='/profile'>
               <img 
                 className="w-10 h-10 cursor-pointer"
-                src={profile}
+                src={user?.profile_picture ? `${baseURL}${user.profile_picture}` : profile}
                 alt="profile picture of user"
               />
             </Link>

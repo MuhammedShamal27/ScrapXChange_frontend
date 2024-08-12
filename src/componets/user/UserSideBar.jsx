@@ -16,7 +16,7 @@ const UserSideBar = () => {
   return (
     <div className=' bg-white font-semibold'>
         <div className='flex flex-col m-10 gap-y-7'>
-            <Link className='flex   gap-x-5'><House  />Dashboard</Link>
+            <Link to='/' className='flex   gap-x-5'><House  />Dashboard</Link>
             <Link to='/profile' className='flex   gap-x-5'><CircleUserRound  />Profile</Link>
             <Link className='flex   gap-x-5'><ArrowLeftRight  />Xchange</Link>
             <Link className='flex   gap-x-5'><Mail />Message</Link>

@@ -14,7 +14,7 @@ const EditCategory = () => {
     <>
     <div className='adminFont bg-bgColor flex'>
         <ShopNavBar/>
-        <div>
+        <div className='w-4/5 flex flex-col'>
             <HeadingAndProfile/>
             <EditScrapAndCategory type="category" id={id}/>
         </div>

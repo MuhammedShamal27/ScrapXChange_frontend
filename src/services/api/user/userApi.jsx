@@ -106,15 +106,34 @@ export const userProfile = async () =>{
 
 
 
-export const editProfile = async (formData) =>{
+export const editUserProfile = async (formData) =>{
     try{
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        };
-        const response = await axiosInstance.put('/user/edit-profile/',formData,config );
+        console.log('here');
+        
+        const response = await axiosInstance.put('/user/edit-profile/',formData );
         console.log("the response api of editProfile",response)
+        return response.data
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const fetchshops = async (shopsList) => {
+    try {
+        const response = await axiosInstance.get('/user/shops/',shopsList)
+        console.log("the response of shops ",response)
+        return response.data
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const shopScrapList = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/user/shops/${id}/products`)
+        console.log("the response of shops ",response)
         return response.data
     }catch (err) {
         if (!err.response) throw err;

@@ -21,6 +21,7 @@ const UserProfile = () => {
         const userData = await userProfile(token);
         console.log("Profile Picture URL:", userData.profile_picture);
         setProfile(userData);
+        dispatch(updateUser({ user: userData }));
       } catch (error) {
         console.error("Error fetching user profile data:", error);
         toast.error("Failed to load user profile.");

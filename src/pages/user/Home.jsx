@@ -16,7 +16,7 @@ import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/reducers/userReducer";
+import { logout, updateUser } from "../../redux/reducers/userReducer";
 import { getUserHomeData } from "../../services/api/user/userApi";
 
 const Home = () => {
@@ -29,6 +29,7 @@ const Home = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await getUserHomeData();
+      console.log(userData)
       setUser(userData);
       dispatch(updateUser({ user: userData }));
     };
@@ -46,7 +47,7 @@ const Home = () => {
   return (
     <>
       <div className="userMainFont">
-        <UserNavBar user={user}  />
+        <UserNavBar />
 
         <div className="text-center m-10 flex flex-col justify-center items-center">
           <h1 className="text-5xl font-bold m-3">

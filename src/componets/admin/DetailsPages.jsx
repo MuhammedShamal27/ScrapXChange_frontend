@@ -4,6 +4,7 @@ import main_profile from "../../assets/main_profile.png";
 import { ShopBlockUnblock, ShopRequestaccept, ShopRequestreject, UserBlockUnblock } from "../../services/api/admin/adminApi";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const DetailsPages = ({ details, type }) => {
   if (!details) {
@@ -52,6 +53,40 @@ const DetailsPages = ({ details, type }) => {
     }
   };
 
+  const handleAcceptReject = async (action) => {
+    try {
+      let response;
+
+      if (action === 'accept') {
+        response = await ShopRequestaccept(localDetails.id);
+      } else if (action === 'reject') {
+        response = await ShopRequestreject(localDetails.id);
+      }
+
+      if (response && response.message) {
+        toast.success(`${action === 'accept' ? 'Accepted' : 'Rejected'} successfully!`);
+        
+        // Optionally, update the local state or perform other actions
+        setLocalDetails((prevDetails) => ({
+          ...prevDetails,
+          shop: {
+            ...prevDetails.shop,
+            is_verified: action === 'accept',
+          },
+        }));
+
+        // Redirect to another page if needed
+        navigate('/admin/shoprequestlist'); // Replace with the appropriate path
+      } else {
+        throw new Error("Unexpected response format");
+      }
+    } catch (error) {
+      console.error(`Failed to ${action}:`, error);
+      toast.error(`Failed to ${action}: ${error.message}`);
+    }
+  };
+
+
   return (
     <div className="bg-white rounded-2xl ">
       <div className="flex flex-col">
@@ -59,7 +94,9 @@ const DetailsPages = ({ details, type }) => {
           <img className="m-3" src={Background_image} alt="Profile_image" />
           <img
             className="absolute -bottom-7 ml-60 rounded-full"
-            src={details.profile_picture || main_profile}
+            src={details.profile_picture
+              ? `${baseURL}${details.profile_picture}`
+              : main_profile}
             alt=""
           />
         </div>

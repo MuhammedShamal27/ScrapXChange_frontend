@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MoveRight } from "lucide-react";
 import "../../styles/user.css";
 import { useDispatch } from "react-redux";
-import { useNavigate ,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../../services/api/user/userApi";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
@@ -41,7 +41,7 @@ const Login = () => {
     const errorMessage = validateField(name, value);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMessage }));
 
-    console.log("Form data on Change :",formData);
+    console.log("Form data on Change :", formData);
   };
 
   const handleSubmit = async (e) => {
@@ -94,37 +94,50 @@ const Login = () => {
         <h1 className="text-4xl text-white font-semibold">
           Login to Your Account
         </h1>
-        <div className="flex flex-col   h-10 w-3/12 mt-10  mb-20 gap-2">
-          <input
-            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
+
+        <div className="flex flex-col h-auto w-3/12 mt-10 mb-10 gap-4">
+          <div className="flex flex-col gap-1">
+            <input
+              className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
             />
-            {errors.email && <p className="text-red-700 text-xs">{errors.email}</p>}
-          <input
-            className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="8 digit pin"
+            {errors.email && (
+              <p className="text-red-700 text-xs">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <input
+              className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="8 digit pin"
             />
-            {errors.password && <p className="text-red-700 text-xs">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-700 text-xs">{errors.password}</p>
+            )}
+          </div>
         </div>
+
         <button
-          className="mt-5 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
+          className="mt-5 bg-green-900 w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold"
           type="submit"
         >
-          Login to Your Account <MoveRight size={30} />{" "}
+          Login to Your Account <MoveRight size={30} />
         </button>
-        <p className="text-xs mt-3 text-gray-600 ">
-          Don't have an account yet ?{" "}
+
+        <p className="text-xs mt-3 text-gray-600">
+          Don't have an account yet?
           <Link to="/register">
-            <span className="text-white ml-2 text-xs">Register Now !</span>
+            <span className="text-white ml-2 text-xs">Register Now!</span>
           </Link>
         </p>
+
         <button className="p-5 w-3/12 rounded-lg border border-lightGreen text-white mt-5 flex gap-3 items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -138,8 +151,9 @@ const Login = () => {
           </svg>
           Sign in with Google
         </button>
+
         <Link to="/email">
-          <p className="text-white underline mt-3">Forget Password ?</p>
+          <p className="text-white underline mt-3">Forget Password?</p>
         </Link>
       </form>
     </>

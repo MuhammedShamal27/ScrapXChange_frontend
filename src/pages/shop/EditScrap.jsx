@@ -11,7 +11,7 @@ const EditScrap = () => {
     <>
     <div className='adminFont bg-bgColor flex' >
         <ShopNavBar/>
-        <div>
+        <div className='w-4/5 flex flex-col' >
             <HeadingAndProfile/>
             <EditScrapAndCategory type="scrap" id={id}/>
         </div>

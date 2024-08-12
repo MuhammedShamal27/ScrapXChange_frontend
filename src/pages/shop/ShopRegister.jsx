@@ -136,50 +136,152 @@ const ShopRegister = () => {
 
   return (
     <>
-    <div className='adminFont '>
-        <div className='flex'>
-            <div className='w-11/12 mt-7'>
-                <h1 className='text-3xl text-blue-950 font-bold text-center m-3 mb-20'>Scrap X Change</h1>
-                <h1 className='ml-28 text-2xl text-blue-950 font-extrabold'>Register</h1>
-                <p className='ml-28 text-xs text-gray-400 mt-10'>Enter the details give below to become a shop !</p>
-                <form onSubmit={handleSubmit} className='ml-28 text-xs grid grid-rows-10 grid-flow-col   font-medium'>
-                    {errors.username && <p className='text-red-500'> {errors.username} </p>}
-                    <h5 className='mt-4'>Username</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='username' value={formData.username} onChange={handleChange} placeholder='Name of the user' />
-                    {errors.shop_name && <p className='text-red-500'> {errors.shop_name} </p>}
-                    <h5 className='mt-4'>Shop Name</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='shop_name' value={formData.shop_name} onChange={handleChange} placeholder='Name of the shop' />
-                    {errors.shop_license_number && <p className='text-red-500'> {errors.shop_license_number} </p>}
-                    <h5 className='mt-4'>Shop Licences Number</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='shop_license_number' value={formData.shop_license_number} onChange={handleChange} placeholder='Licences Number' />
-                    {errors.address && <p className='text-red-500'> {errors.address} </p>}
-                    <h5 className='mt-4'>Address</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='address' value={formData.address} onChange={handleChange} placeholder='Shop Address' />
-                    {errors.place && <p className='text-red-500'> {errors.place} </p>}
-                    <h5 className='mt-4'>Place</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='place' value={formData.place} onChange={handleChange} placeholder='Location' />
-                    {errors.phone && <p className='text-red-500'> {errors.phone} </p>}
-                    <h5 className='mt-4'>Phone</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='phone' value={formData.phone} onChange={handleChange} placeholder='Mobile number' />
-                    {errors.email && <p className='text-red-500'> {errors.email} </p>}
-                    <h5 className='mt-4'>Email</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='email' value={formData.email} onChange={handleChange} placeholder='mail@pegasus.com' />
-                    {errors.password && <p className='text-red-500'> {errors.password} </p>}
-                    <h5 className='mt-4'>Password</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='password' value={formData.password} onChange={handleChange} placeholder='Min. 8 characters' />
-                    {errors.re_enter_password && <p className='text-red-500'> {errors.re_enter_password} </p>}
-                    <h5 className='mt-4'>Re-Enter Password</h5>
-                    <input className='border rounded-md w-80 h-9 px-5' name='re_enter_password' value={formData.re_enter_password} onChange={handleChange} placeholder='Re-enter Min. 8 characters' />
-                    
-                    <button type='submit' className=' text-xs bg-myBlue text-white w-80 h-9 border rounded-md  '>Request</button>
-                </form>
-            </div>
-            <div >
-                <img className='w-full h-svh' src={register_page_img}/>
-            </div>
-        </div>
+  <div className="adminFont">
+    <div className="flex">
+      <div className="w-11/12 mt-7">
+        <h1 className="text-3xl text-blue-950 font-bold text-center m-3 mb-20">
+          Scrap X Change
+        </h1>
+        <h1 className="ml-28 text-2xl text-blue-950 font-extrabold">Register</h1>
+        <p className="ml-28 text-xs text-gray-400 mt-10">
+          Enter the details given below to become a shop!
+        </p>
+        <form onSubmit={handleSubmit} className="ml-28 text-xs grid grid-flow-row grid-cols-2 gap-2 font-medium">
+          <div className="flex flex-col mt-4">
+            {errors.username && <p className="text-red-500">{errors.username}</p>}
+            <h5>Username</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Name of the user"
+            />
+          </div>
+
+
+          <div className="flex flex-col mt-4">
+            {errors.email && <p className="text-red-500">{errors.email}</p>}
+            <h5>Email</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="mail@pegasus.com"
+            />
+          </div>
+
+          <div className="flex flex-col mt-4">
+            {errors.shop_name && <p className="text-red-500">{errors.shop_name}</p>}
+            <h5>Shop Name</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="shop_name"
+              value={formData.shop_name}
+              onChange={handleChange}
+              placeholder="Name of the shop"
+            />
+          </div>
+
+
+          <div className="flex flex-col mt-4">
+            {errors.shop_license_number && (
+              <p className="text-red-500">{errors.shop_license_number}</p>
+            )}
+            <h5>Shop License Number</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="shop_license_number"
+              value={formData.shop_license_number}
+              onChange={handleChange}
+              placeholder="License Number"
+            />
+          </div>
+
+          <div className="flex flex-col mt-4">
+            {errors.address && <p className="text-red-500">{errors.address}</p>}
+            <h5>Address</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Shop Address"
+            />
+          </div>
+
+          <div className="flex flex-col mt-4">
+            {errors.place && <p className="text-red-500">{errors.place}</p>}
+            <h5>Place</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="place"
+              value={formData.place}
+              onChange={handleChange}
+              placeholder="Location"
+            />
+          </div>
+
+          <div className="flex flex-col mt-4">
+            {errors.phone && <p className="text-red-500">{errors.phone}</p>}
+            <h5>Phone</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Mobile number"
+            />
+          </div>
+
+
+
+
+
+          <div className="flex flex-col mt-4">
+            {errors.password && <p className="text-red-500">{errors.password}</p>}
+            <h5>Password</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5 text-xs"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Min. 8 characters"
+            />
+          </div>
+
+          <div className="flex flex-col mt-4">
+            {errors.re_enter_password && (
+              <p className="text-red-500">{errors.re_enter_password}</p>
+            )}
+            <h5>Re-Enter Password</h5>
+            <input
+              className="border rounded-md w-80 h-9 px-5 text-xs"
+              name="re_enter_password"
+              type="password"
+              value={formData.re_enter_password}
+              onChange={handleChange}
+              placeholder="Re-enter Min. 8 characters"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-8 text-xs bg-myBlue text-white w-80 h-9 border rounded-md"
+          >
+            Request
+          </button>
+        </form>
+      </div>
+      <div>
+        <img className="w-full h-svh" src={register_page_img} />
+      </div>
     </div>
-    </>
+  </div>
+</>
+
   )
 }
 

@@ -30,7 +30,7 @@ const userRoutes = createBrowserRouter ([
             { path: '/profile' , element : <UserProfile/>},
             { path: '/editProfile' , element : <EditProfile/>},
             { path: '/shops' , element : <Shops/>},
-            { path: '/scraplist' , element : <ScrapList/>},
+            { path: '/scraplist/:id' , element : <ScrapList/>},
             { path: "*" , element : <Error message = "Page Not Found"/>},
         ],
     },

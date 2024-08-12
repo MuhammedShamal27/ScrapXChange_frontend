@@ -89,27 +89,31 @@ const ShopLogin = () => {
     };
   return (
     <>
-    <div className='adminFont '>
-        <div className='flex'>
-            <form onSubmit={handleSubmit} className='w-11/12 relative mt-7'>
-                <h1 className='text-3xl text-blue-950 font-bold text-center m-3 mb-20'>Scrap X Change</h1>
-                <h1 className='absolute left-1/4 text-2xl text-blue-950 font-extrabold mt-7'>Login</h1>
-                <p className='absolute left-1/4 text-xs text-gray-400 mt-16'>Enter your email and password to sign in!</p>
-                <div className='absolute left-1/4 text-xs grid grid-rows-8 grid-flow-col gap-x-12 mt-24 font-medium'>
-                    <h5 className='mt-4'>Email</h5>
-                    <input className='border rounded-md w-80 h-9 px-5 text-xs' name='email' value={formData.email} onChange={handleChange} placeholder='mail@pegasus.com' />
-                    {errors.email && <p className='text-red-700'>{errors.email}</p> }
-                    <h5 className='mt-4'>Password</h5>
-                    <input className='border rounded-md w-80 h-9 px-5 text-xs' name='password' type='password' value={formData.password} onChange={handleChange} placeholder='Min. 8 characters' />
-                    {errors.password && <p className='text-red-700'>{errors.password}</p> }
+        <div className='adminFont '>
+            <div className='flex'>
+                <div className='w-11/12'>
+                    <h1 className='text-3xl text-blue-950 font-bold text-center m-7'>Scrap X Change</h1>
+                    <div className='flex flex-col mx-96'>
+                        <h1 className='text-2xl text-blue-950 font-extrabold mt-10 '>Login</h1>
+                        <p className='text-xs text-gray-400 '>Enter your email and password to sign in!</p>
+
+                        <form onSubmit={handleSubmit} className='flex flex-col mt-10 text-xs gap-y-3' >
+                            <h5 className=''>Email</h5>
+                            <input className='border rounded-md w-80 h-9 px-5 text-xs' name='email' value={formData.email} onChange={handleChange} placeholder='mail@pegasus.com' />
+                            {errors.email && <p className='text-red-700'>{errors.email}</p> }
+                            <h5 className=''>Password</h5>
+                            <input className='border rounded-md w-80 h-9 px-5 text-xs' name='password' type='password' value={formData.password} onChange={handleChange} placeholder='Min. 8 characters' />
+                            {errors.password && <p className='text-red-700'>{errors.password}</p> }
+                            <button className='text-xs bg-myBlue text-white w-80 h-9 border rounded-md mt-7' type='submit'>Sign in</button>
+                        </form>
+                    </div>
                 </div>
-                <button className='absolute left-1/4 mt-64 text-xs bg-myBlue text-white w-80 h-9 border rounded-md ' type='submit'>Sign in</button>
-            </form>
-            <div >
-                <img className='w-full h-svh' src={Shop_login_img}/>
+                <div >
+                    <img className='w-full h-svh' src={Shop_login_img}/>
+                </div>
             </div>
+            
         </div>
-    </div>
     </>
   )
 }

@@ -4,7 +4,7 @@ import "../../styles/user.css";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../services/api/user/userApi";
 import { useState } from "react";
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
 
@@ -108,7 +108,7 @@ const Register = () => {
           hasSpecificError = true;
         }
         if (!hasSpecificError) {
-        toast.error("An unexpected error occurred. Please try again later.");
+          toast.error("An unexpected error occurred. Please try again later.");
         }
       }
     }
@@ -123,32 +123,41 @@ const Register = () => {
         <h1 className="text-4xl text-white font-semibold">
           Register Your Account
         </h1>
-        <div className="flex flex-col   h-10 w-10/12 lg:w-3/12 mt-10  mb-20 gap-2">
-          <br />
+
+        <div className="flex flex-col h-auto w-10/12 lg:w-3/12 mt-10 mb-10 gap-4">
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="username"
             value={formData.username}
             onChange={handleChange}
             placeholder="Name"
-            />
-            {errors.username && <p className="text-red-700 text-xs">{errors.username}</p>}
+          />
+          {errors.username && (
+            <p className="text-red-700 text-xs">{errors.username}</p>
+          )}
+
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
-            />
-            {errors.email && <p className="text-red-700 text-xs">{errors.email}</p>}
+          />
+          {errors.email && (
+            <p className="text-red-700 text-xs">{errors.email}</p>
+          )}
+
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="Phone"
-            />
-            {errors.phone && <p className="text-red-700 text-xs">{errors.phone}</p>}
+          />
+          {errors.phone && (
+            <p className="text-red-700 text-xs">{errors.phone}</p>
+          )}
+
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="password"
@@ -156,8 +165,11 @@ const Register = () => {
             type="password"
             onChange={handleChange}
             placeholder="8 digit pin"
-            />
-            {errors.password && <p className="text-red-700 text-xs">{errors.password}</p>}
+          />
+          {errors.password && (
+            <p className="text-red-700 text-xs">{errors.password}</p>
+          )}
+
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
             name="confirm_password"
@@ -165,19 +177,23 @@ const Register = () => {
             type="password"
             onChange={handleChange}
             placeholder="Re-enter 8 digit pin"
-            />
-            {errors.confirm_password && <p className="text-red-700 text-xs">{errors.confirm_password}</p>}
+          />
+          {errors.confirm_password && (
+            <p className="text-red-700 text-xs">{errors.confirm_password}</p>
+          )}
         </div>
+
         <button
-          className="mt-96 bg-green-900  w-10/12 lg:w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
+          className="mt-5 bg-green-900 w-10/12 lg:w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold"
           type="submit"
         >
-          Login to Your Account <MoveRight size={30} />{" "}
+          Register Your Account <MoveRight size={30} />
         </button>
+
         <Link to="/login">
-          <p className="text-xs mt-3 text-gray-600 ">
-            Already have an account ?{" "}
-            <span className="text-white ml-2 text-xs">Login Now !</span>
+          <p className="text-xs mt-3 text-gray-600">
+            Already have an account?
+            <span className="text-white ml-2 text-xs">Login Now!</span>
           </p>
         </Link>
       </form>

@@ -5,7 +5,7 @@ import Edit_profile from "../../assets/Edit_profile.png";
 import "../../styles/user.css";
 import UserFooter from "../../componets/user/UserFooter";
 import { useNavigate } from "react-router-dom";
-import { editProfile, userProfile } from "../../services/api/user/userApi";
+import { editUserProfile, userProfile } from "../../services/api/user/userApi";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
@@ -114,12 +114,15 @@ const EditProfile = () => {
         validationErrors[key] = errorMessage;
       }
     });
-
+  
     setErrors(validationErrors);
-
+  
     if (Object.keys(validationErrors).length === 0) {
       try {
-        await editProfile(formData);
+        console.log('comming')
+        console.log('Form data being submitted:', formData);
+        await editUserProfile(formData);
+        toast.success("Profile updated successfully!");
         navigate("/profile");
       } catch (error) {
         console.log("Error updating user profile data.", error);
@@ -127,6 +130,7 @@ const EditProfile = () => {
       }
     }
   };
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -138,7 +142,7 @@ const EditProfile = () => {
       <div className="userMainFont flex m-7">
         <UserSideBar />
         <div className="flex flex-1 justify-center bg-bgColor p-10 rounded-lg">
-          <div className="bg-white w-full max-w-4xl p-10 rounded-lg shadow-lg">
+          <form onSubmit={handleSubmit} className="bg-white w-full max-w-4xl p-10 rounded-lg shadow-lg">
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-4">
                 <label htmlFor="profilePictureInput" className="cursor-pointer">
@@ -172,7 +176,7 @@ const EditProfile = () => {
                 Update
               </button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold text-xs">Username</label>
@@ -266,8 +270,8 @@ const EditProfile = () => {
               <div className="mt-8">
 
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
       <UserFooter />

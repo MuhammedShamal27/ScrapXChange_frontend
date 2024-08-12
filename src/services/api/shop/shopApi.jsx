@@ -58,12 +58,7 @@ export const fetchCategoryList = async () => {
 
 export const addCategory = async (categoryData) => {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        };
-        const response = await axiosInstance.post ('/shop/category-creation/',categoryData,config)
+        const response = await axiosInstance.post ('/shop/category-creation/',categoryData)
         console.log("the add category  response data", response.data)
         return response.data
     } catch (err) {
@@ -87,18 +82,20 @@ export const getCategoryById = async (id) => {
 };
 
 
-export const updateCategory = async (id, categoryData) => {
+export const updateCategory = async (id, categoryData, originalImageUrl) => {
     try {
       const formData = new FormData();
       for (const key in categoryData) {
-        formData.append(key, categoryData[key]);
+        if (key === 'image') {
+          if (categoryData.image && typeof categoryData.image === 'object') {
+            formData.append(key, categoryData.image);
+          }
+        } else {
+          formData.append(key, categoryData[key]);
+        }
       }
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-      const response = await axiosInstance.put(`/shop/category-update/${id}/`, formData, config);
+  
+      const response = await axiosInstance.put(`/shop/category-update/${id}/`, formData);
       console.log("The update category response data", response.data);
       return response.data;
     } catch (err) {
@@ -128,12 +125,7 @@ export const fetchScrapList = async () => {
 
 export const addScrap = async (scrapData) => {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        };
-        const response = await axiosInstance.post ('/shop/product-creation/',scrapData,config)
+        const response = await axiosInstance.post ('/shop/product-creation/',scrapData)
         console.log("the scrap list response data", response.data)
         return response.data
     } catch (err) {
@@ -156,21 +148,28 @@ export const getScrapById = async (id) => {
     }
 };
 
-export const updateScrap = async (id,scrapData) => {
+
+export const updateScrap = async (id, scrapData, originalImageUrl) => {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        };
-        const response = await axiosInstance.put (`/shop/product-update/${id}/`,scrapData,config)
-        console.log("the scrap list response data", response.data)
-        return response.data
-    } catch (err) {
-        if (!err.response) {
-            throw err;
+      const formData = new FormData();
+      for (const key in scrapData) {
+        if (key === 'image') {
+          if (scrapData.image && typeof scrapData.image === 'object') {
+            formData.append(key, scrapData.image);
+          }
+        } else {
+          formData.append(key, scrapData[key]);
         }
-        console.error("Error response data:",err.response.data);
-        return Promise.reject(err.response.data)
+      }
+  
+      const response = await axiosInstance.put(`/shop/product-update/${id}/`, formData);
+      console.log("The scrap list response data", response.data);
+      return response.data;
+    } catch (err) {
+      if (!err.response) {
+        throw err;
+      }
+      console.error("Error response data:", err.response.data);
+      return Promise.reject(err.response.data);
     }
-}
+  };
