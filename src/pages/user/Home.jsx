@@ -25,6 +25,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+ 
 
   useEffect(() => {
     const fetchUserData = async () => {

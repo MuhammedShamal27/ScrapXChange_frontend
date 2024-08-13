@@ -7,6 +7,16 @@ import { useNavigate } from 'react-router-dom';
 const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
   const navigate = useNavigate();
 
+  const itemsPerPage = 5; // Number of items per page
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Calculate the current items to display
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = list.slice(startIndex, startIndex + itemsPerPage);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(list.length / itemsPerPage);
+
   const handleDetails = (id) => {
     navigate(`/admin/${type === 'users' ? 'userdetails' : 'shopdetails'}/${id}`);
   };
@@ -18,6 +28,18 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
   const handleSearchChange = (e) => {
     console.log('Search Query:', e.target.value);
     setSearchQuery(e.target.value);
+  };
+
+  const handlePrevClick = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -54,7 +76,7 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
             <p className="pl-12">Details</p>
           </div>
           <div className="mt-4 space-y-10">
-            {list.map((item) => (
+            {currentItems.map((item) => (
               <div key={item.id} className="grid grid-cols-4 items-center px-10 text-xs">
                 <div className="flex items-center space-x-4">
                   <img
@@ -68,8 +90,8 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
                   />
                   <p>{type === 'users' ? item.username : item.shop?.shop_name || 'N/A'}</p>
                 </div>
-                <p className=" pl-20">{item.email || 'N/A'}</p>
-                <p className=" pl-16">{type === 'users' ? item.user_profile?.phone : item.shop?.phone || 'N/A'}</p>
+                <p className="pl-20">{item.email || 'N/A'}</p>
+                <p className="pl-16">{type === 'users' ? item.user_profile?.phone : item.shop?.phone || 'N/A'}</p>
                 <button
                   onClick={() => handleDetails(item.id)}
                   className="bg-black text-white rounded-3xl text-xs w-20 font-light ml-10 p-2"
@@ -80,6 +102,24 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
             ))}
           </div>
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4 space-x-3">
+            {currentPage > 1 && (
+              <button onClick={handlePrevClick} className="border rounded-lg bg-white p-2 text-gray-500">
+                Prev
+              </button>
+            )}
+            <p className="border rounded-lg bg-white p-2 text-gray-500">
+              {currentPage}
+            </p>
+            {currentPage < totalPages && (
+              <button onClick={handleNextClick} className="border rounded-lg bg-white p-2 text-gray-500">
+                Next
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </>
   );

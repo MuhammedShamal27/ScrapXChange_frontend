@@ -60,15 +60,21 @@ const ScrapList = () => {
 
 
         <div className='flex justify-around'>
-            <div className='c'>
-                <h1 className='font-medium text-lg'>Selected item</h1>
-                <div className='flex flex-col  '>
-                    <p className='flex justify-between '>Paper <X /></p>
-                    <p className='flex justify-between '>Paper <X /></p>
-                    <p className='flex justify-between '>Paper <X /></p>
-                    <p className='flex justify-between '>Paper <X /></p>
-                    <p className='flex justify-between '>Paper <X /></p>
-
+            <div className=' bg-gray-100 rounded-lg w-1/4'>
+                <h1 className='font-medium text-lg m-7'>Selected item</h1>
+                <div className='flex flex-col m-7 space-y-7'>
+                    <div className='flex  justify-between'>
+                      <p className=''>Paper </p>
+                      <p><X /></p>
+                    </div>
+                    <div className='flex  justify-between'>
+                      <p className=''>Paper </p>
+                      <p><X /></p>
+                    </div>
+                    <div className='flex  justify-between'>
+                      <p className=''>Paper </p>
+                      <p><X /></p>
+                    </div>
                 </div>
             </div>
             <div >
@@ -76,6 +82,27 @@ const ScrapList = () => {
             </div>
             
         </div>
+
+        <div>
+          <div className='grid grid-cols-2 m-7 space-x-7 space-y-7 '>
+            <input className="bg-gray-100 border-0 rounded-lg text-xs p-3" type="text" placeholder="Your Address" />
+            <input className="bg-gray-100 border-0 rounded-lg text-xs p-3" type="text" placeholder="Your Address" />
+            <input className="bg-gray-100 border-0 rounded-lg text-xs p-3" type="text" placeholder="Your Address" />
+            <input className="bg-gray-100 border-0 rounded-lg text-xs p-3" type="text" placeholder="Your Address" />
+          </div>
+          <div className='flex items-center space-x-3'>
+            <input type="checkbox" />
+            <p>Confirm The Above Details</p>
+          </div>
+          <div className='flex justify-evenly'>
+            <p>Notice: The date may vary and be rescheduled when the store can’t 
+              collect on the given day. The rescheduled date will be sent as a notification.</p>
+            <button className='bg-black text-white py-2 px-4 rounded-3xl text-xs'>Submit</button>
+          </div>
+        </div>
+        
+
+
 
         <UserFooter />
       </div>

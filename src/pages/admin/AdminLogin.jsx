@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Shop_login_img from '../../assets/Shop_login_img.png'
 import '../../styles/adminAndShop.css'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { adminLogin } from '../../services/api/admin/adminApi'
 import { loginSuccess } from '../../redux/reducers/userReducer'
@@ -11,11 +11,18 @@ import { adminLoginSuccess } from '../../redux/reducers/adminReducer'
 const AdminLogin = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isAuthenticated = useSelector((state) => state.admin.isAuthenticated);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/admin/home');
+        }
+    }, [isAuthenticated, navigate]);
 
     const validateField = (name, value) => {
         switch (name) {
@@ -65,7 +72,7 @@ const AdminLogin = () => {
                     console.log('coming to if ')
                     console.log('response acees in if',response.access)
                     dispatch(adminLoginSuccess  ({ token: response.access }));
-                    navigate('/admin/home');
+                    navigate('/admin/home',{ replace: true });
                 }
             } catch (err) {
                 if (err.email) {

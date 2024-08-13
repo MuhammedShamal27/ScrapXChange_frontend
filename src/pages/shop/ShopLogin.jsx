@@ -1,21 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Shop_login_img from '../../assets/Shop_login_img.png'
 import '../../styles/adminAndShop.css'
 import { loginShop } from '../../services/api/shop/shopApi';
 import { shopLoginSuccess } from '../../redux/reducers/shopReducer';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const ShopLogin = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isAuthenticated = useSelector((state) => state.shop.isAuthenticated);
     const [errors,setErrors] = useState({});
     const [formData , setFormData] = useState({
         email:"",
         password: "",
     });
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/shop/home');
+        }
+    }, [isAuthenticated, navigate]);
 
     const validateField = (name , value) =>{
         switch (name) {
@@ -68,7 +75,7 @@ const ShopLogin = () => {
                 if (response.tokens && response.tokens.access){
                     console.log("is inside the if condition")
                     dispatch (shopLoginSuccess ({token: response.tokens.access}))
-                    navigate("/shop/home");
+                    navigate("/shop/home",{ replace: true });
                 }
                 else{
                     console.error("failed to response",response)
@@ -104,7 +111,8 @@ const ShopLogin = () => {
                             <h5 className=''>Password</h5>
                             <input className='border rounded-md w-80 h-9 px-5 text-xs' name='password' type='password' value={formData.password} onChange={handleChange} placeholder='Min. 8 characters' />
                             {errors.password && <p className='text-red-700'>{errors.password}</p> }
-                            <button className='text-xs bg-myBlue text-white w-80 h-9 border rounded-md mt-7' type='submit'>Sign in</button>
+                            <Link className='text-xs text-gray-400 text-center' to='/shop/register/'> Don't have an account yet? <span className='text-black'>Register</span> </Link>
+                            <button className='text-xs bg-myBlue text-white w-80 h-9 border rounded-md ' type='submit'>Sign in</button>
                         </form>
                     </div>
                 </div>

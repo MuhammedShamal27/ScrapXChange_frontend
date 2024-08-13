@@ -2,21 +2,20 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
 
-function ProtectedRoute  ({ component }) {
+function ProtectedRoute  ({ children,shop,admin }) {
 
     const navigate = useNavigate();
-    const isToken = useSelector((state) => state.auth.token);
-    // const isToken = useSelector((state) => state.shop.token);
-    // const isToken = useSelector((state) => state.admin.token);
+    const isToken = useSelector((state) => admin ? state.admin.token : shop ? state.shop.token : state.auth.token);
+
 
 
     useEffect(()=>{
         if (!isToken) {
-            navigate("/login");
+            navigate( admin ? '/admin/login' : shop ? '/shop/login' : '/login');
         }
-    },[isToken,navigate]);
+    },[ isToken , navigate , shop , admin ]);
 
-    return isToken ? component :null;
+    return isToken ? children :null;
 }
 
 export default ProtectedRoute;

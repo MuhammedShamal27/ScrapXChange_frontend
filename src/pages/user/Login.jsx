@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MoveRight } from "lucide-react";
 import "../../styles/user.css";
-import { useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { loginUser } from "../../services/api/user/userApi";
 import { toast } from "sonner";
 import { loginSuccess } from "../../redux/reducers/userReducer";
@@ -10,11 +10,20 @@ import { loginSuccess } from "../../redux/reducers/userReducer";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    // Redirect to home if already authenticated
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const validateField = (name, value) => {
     switch (name) {
@@ -65,7 +74,7 @@ const Login = () => {
         if (response && response.tokens && response.tokens.access) {
           console.log("coming into the if condition");
           dispatch(loginSuccess({ token: response.tokens.access }));
-          navigate("/");
+          navigate("/",{ replace: true });
         } else {
           console.error("failed", response);
           toast.error(
@@ -138,7 +147,7 @@ const Login = () => {
           </Link>
         </p>
 
-        <button className="p-5 w-3/12 rounded-lg border border-lightGreen text-white mt-5 flex gap-3 items-center">
+        {/* <button className="p-5 w-3/12 rounded-lg border border-lightGreen text-white mt-5 flex gap-3 items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -150,7 +159,7 @@ const Login = () => {
             <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
           </svg>
           Sign in with Google
-        </button>
+        </button> */}
 
         <Link to="/email">
           <p className="text-white underline mt-3">Forget Password?</p>

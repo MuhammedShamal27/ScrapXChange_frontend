@@ -1,12 +1,10 @@
-export const setTokens = (accessToken,refreshToken) =>{
-    localStorage.setItem('accessToken',accessToken)
-    localStorage.setItem('refreshToken',refreshToken)
-};
-
-export const getAccessToken = () =>localStorage.getItem('accessToken');
-export const getRefreshToken = () =>localStorage.getItem('refreshToken');
-
-export const clearTokens =()=>{
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+const switchRole = (role) => {
+    if (role === 'shop') {
+        navigate('/shop/login', { replace: true });
+    } else if (role === 'user') {
+        navigate('/login', { replace: true });
+    } else if (role === 'admin') {
+        navigate('/admin/login', { replace: true });
+    }
+    // Clear or manage history here if needed
 };

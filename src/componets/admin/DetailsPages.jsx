@@ -93,10 +93,12 @@ const DetailsPages = ({ details, type }) => {
         <div className="flex flex-col relative">
           <img className="m-3" src={Background_image} alt="Profile_image" />
           <img
-            className="absolute -bottom-7 ml-60 rounded-full"
-            src={details.profile_picture
-              ? `${baseURL}${details.profile_picture}`
-              : main_profile}
+            className="absolute -bottom-7 ml-60 rounded-full w-16 h-16"
+            src={
+              type === 'user'
+                ? details.user_profile?.profile_picture
+                : details.shop?.profile_picture || main_profile
+            }
             alt=""
           />
         </div>

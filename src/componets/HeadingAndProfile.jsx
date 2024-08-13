@@ -7,7 +7,7 @@ const HeadingAndProfile = () => {
   return (
     <>
       <div className="flex justify-between ">
-        <h2 className="text-2xl text-blue-950 font-bold m-11">Scrap List</h2>
+        <h2 className="text-2xl text-blue-950 font-bold m-11">ScrapXChange</h2>
         <div className="flex bg-white h-14 w-80 rounded-full space-x-5 items-center mt-7 absolute left-3/4">
           <div className="flex bg-bgColor rounded-full ml-3">
             <Search color="#a3aed0" size={20} />

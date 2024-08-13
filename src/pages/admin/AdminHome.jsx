@@ -4,13 +4,15 @@ import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import '../../styles/adminAndShop.css'
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
 import {adminHome} from '../../services/api/admin/adminApi'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 
 const AdminHome = () => {
 
   const [admin, setAdmin] = useState(null);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -25,6 +27,8 @@ const AdminHome = () => {
 
     fetchAdminData();
   }, [dispatch]);
+
+
 
   return (
     <>
