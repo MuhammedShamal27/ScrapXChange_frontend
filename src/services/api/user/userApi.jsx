@@ -132,8 +132,19 @@ export const fetchshops = async (shopsList) => {
 
 export const shopScrapList = async (id) => {
     try {
-        const response = await axiosInstance.get(`/user/shops/${id}/products`)
+        const response = await axiosInstance.get(`/user/shops/${id}/products/`)
         console.log("the response of shops ",response)
+        return response.data
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const collectionRequest = async (formData) => {
+    try {
+        const response = await axiosInstance.post('/user/scrap-collection-request/',formData)
+        console.log("the response of scrap collection  shops ",response)
         return response.data
     }catch (err) {
         if (!err.response) throw err;

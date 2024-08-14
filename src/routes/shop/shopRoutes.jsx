@@ -10,6 +10,9 @@ import App from "../../App";
 import EditCategory from "../../pages/shop/EditCategory";
 import EditScrap from "../../pages/shop/EditScrap";
 import ProtectedRoute from "../ProtectedRoute";
+import ScrapRequest from "../../pages/shop/ScrapRequest";
+import ScrapRequestDetails from "../../pages/shop/ScrapRequestDetails";
+import TodayPendings from "../../pages/shop/TodayPendings";
 
 
 const shopRouter = 
@@ -50,28 +53,20 @@ const shopRouter =
             path: 'editScrap/:id',
             element: <ProtectedRoute shop><EditScrap /></ProtectedRoute>
         },
+        {
+            path: 'scrapRequests',
+            element: <ProtectedRoute shop><ScrapRequest/></ProtectedRoute>
+        },
+        {
+            path: 'scrapRequestDetails',
+            element: <ProtectedRoute shop><ScrapRequestDetails/></ProtectedRoute>
+        },
+        {
+            path: 'todaysPending',
+            element: <ProtectedRoute shop><TodayPendings/></ProtectedRoute>
+        }
     ]
 };
-
-    // {
-    //     path: '/shop',
-    //     element: <App/>,
-
-    //     errorElement: <Error message="Something went wrong"/>,
-    
-    // children: [
-    //     { path: 'register' , element: <ShopRegister/> },
-    //     { path: 'login' , element: <ShopLogin/> },
-    //     { path: 'home' , element: <ShopHome/> },
-    //     { path: 'categorylist' , element: <CategoryList/> },
-    //     { path: 'addCategory' , element: <AddCategory/> },
-    //     { path: 'editCategory/:id' , element: <EditCategory/> },
-    //     { path: 'scraplist' , element: <ScrapList/> },
-    //     { path: 'addScrap' , element: <AddScrap/> },
-    //     { path: 'editScrap/:id' , element: <EditScrap/> },
-    // ]
-
-    // }
 
 
 export default shopRouter;
