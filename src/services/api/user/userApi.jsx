@@ -100,6 +100,7 @@ export const userProfile = async () =>{
         return response.data
     }catch (err) {
         if (!err.response) throw err;
+        console.log('the error in the catch',err.response.data)
         return Promise.reject(err.response.data);
     }
 };

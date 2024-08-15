@@ -4,11 +4,12 @@ import main_profile from "../../assets/main_profile.png";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
 import { userProfile } from "../../services/api/user/userApi";
+import {toast} from 'sonner'
 import "../../styles/user.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserSideBar from "../../componets/user/UserSideBar";
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
+import { baseURL } from "../../utils/constant";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -21,10 +22,9 @@ const UserProfile = () => {
         const userData = await userProfile(token);
         console.log("Profile Picture URL:", userData.profile_picture);
         setProfile(userData);
-        dispatch(updateUser({ user: userData }));
       } catch (error) {
-        console.error("Error fetching user profile data:", error);
         toast.error("Failed to load user profile.");
+        console.error("Error fetching user profile data:", error);
       }
     };
     fetchProfile();

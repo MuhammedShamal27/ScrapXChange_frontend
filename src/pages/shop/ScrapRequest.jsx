@@ -33,7 +33,9 @@ const ScrapRequest = () => {
                                 <td>15/08/2024</td>
                                 <td>Kochi</td>
                                 <td>987457</td>
-                                <button className=''><Info color="#a3aed0" /></button>
+                                <div>
+                                    <button className=''><Info color="#a3aed0" /></button>
+                                </div>
                             </tr>
                         </tbody>
                     </table>

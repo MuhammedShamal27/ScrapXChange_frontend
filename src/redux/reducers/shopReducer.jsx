@@ -10,11 +10,11 @@ const shopSlice = createSlice({
     name: "shop",
     initialState: shopInitialState,
     reducers: {
-        loginSuccess(state, action) {
+        shopLoginSuccess(state, action) {
             state.token = action.payload.token;
             state.isAuthenticated = true; 
         },
-        updateShop(state, action) {
+        shopLogout(state, action) {
             state.shop = action.payload.user;
         },
         logout(state) {
@@ -25,5 +25,5 @@ const shopSlice = createSlice({
     }
 })
 
-export const { loginSuccess : shopLoginSuccess, logout : shopLogout, updateshop } = shopSlice.actions; 
+export const { shopLoginSuccess , updateshop , shopLogout } = shopSlice.actions; 
 export default shopSlice.reducer;
