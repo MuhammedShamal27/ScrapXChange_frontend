@@ -58,15 +58,16 @@ export const fetchCategoryList = async () => {
 
 export const addCategory = async (categoryData) => {
     try {
-        const response = await axiosInstance.post ('/shop/category-creation/',categoryData)
-        console.log("the add category  response data", response.data)
-        return response.data
+        console.log('is going to backend', categoryData);
+        const response = await axiosInstance.post('/shop/category-creation/', categoryData);
+        console.log("the add category response data", response.data);
+        return response.data;
     } catch (err) {
         if (!err.response) {
             throw err;
         }
-        console.error("Error response data:",err.response.data);
-        return Promise.reject(err.response.data)
+        console.error("Error response data:", err.response.data);
+        return Promise.reject(err.response.data);
     }
 }
 

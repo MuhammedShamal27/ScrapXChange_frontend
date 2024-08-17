@@ -14,10 +14,10 @@ const shopSlice = createSlice({
             state.token = action.payload.token;
             state.isAuthenticated = true; 
         },
-        shopLogout(state, action) {
+        updateshop(state, action) {
             state.shop = action.payload.user;
         },
-        logout(state) {
+        shopLogout(state) {
             state.shop = null;
             state.token = null;
             state.isAuthenticated = false; 

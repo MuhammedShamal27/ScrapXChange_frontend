@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { store } from '../../redux/store/store';
+import { adminLoginSuccess, adminLogout } from '../../redux/reducers/adminReducer';
+import { shopLoginSuccess, shopLogout } from '../../redux/reducers/shopReducer';
+import { loginSuccess, logout } from '../../redux/reducers/userReducer';
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000",
@@ -52,11 +55,56 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     response => response,
-    error => {
+    async error => {
+        const originalRequest = error.config;
+        const state = store.getState();
+        const { auth, admin, shop } = state;
+        let refreshToken;
+        let refreshEndpoint;
+        let loginSuccessAction;
+        let logoutAction;
+
+        if (originalRequest.url.includes('/scrapxchange_admin/')) {
+            refreshToken = admin.token;
+            refreshEndpoint = '/scrapxchange_admin/token/refresh/';
+            loginSuccessAction = adminLoginSuccess;
+            logoutAction = adminLogout;
+        } else if (originalRequest.url.includes('/shop/')) {
+            refreshToken = shop.token;
+            refreshEndpoint = '/shop/token/refresh/';
+            loginSuccessAction = shopLoginSuccess;
+            logoutAction = shopLogout;
+        } else if (originalRequest.url.includes('/user/')) {
+            refreshToken = auth.token;
+            refreshEndpoint = '/user/token/refresh/';
+            loginSuccessAction = loginSuccess;
+            logoutAction = logout;
+        }
+
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const response = await axiosInstance.post(refreshEndpoint, {
+                    refresh: refreshToken
+                });
+
+                const newAccessToken = response.data.access;
+
+                store.dispatch(loginSuccessAction({ token: newAccessToken }));
+
+                originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+                return axiosInstance(originalRequest);
+            } catch (err) {
+                store.dispatch(logoutAction());
+                return Promise.reject(err);
+            }
+        }
 
         return Promise.reject(error);
     }
 );
 
 
-export default axiosInstance
+export default axiosInstance;

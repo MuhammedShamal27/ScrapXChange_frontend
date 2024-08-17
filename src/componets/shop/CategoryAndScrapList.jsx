@@ -117,7 +117,7 @@ const CategoryAndScrapList = ({ list, type }) => {
         </div>
       </div>
       {totalPages > 1 && (
-        <div className="flex justify-end rounded-lg bg-white w-24 ml-20 mt-4 space-x-3 text-black">
+        <div className="flex justify-center rounded-lg bg-white w-2/12  ml-20 mt-4 space-x-3 text-black">
           {currentPage > 1 && (
             <button onClick={handlePrevClick} className=" rounded-lg p-2 text-gray-500">
               Prev |

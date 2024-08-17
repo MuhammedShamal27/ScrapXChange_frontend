@@ -19,7 +19,6 @@ const Login = () => {
   });
 
   useEffect(() => {
-    // Redirect to home if already authenticated
     if (isAuthenticated) {
       navigate("/", { replace: true });
     }

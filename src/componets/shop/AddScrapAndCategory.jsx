@@ -101,15 +101,19 @@ const AddScrapAndCategory = ({ type }) => {
       try {
         let response;
         if (type === "scrap") {
+          console.log('ivan')
           response = await addScrap(scrapFormData);
           navigate("/shop/scraplist");
         } else {
+          console.log('ivanalla')
+          console.log('categoryformData is sending ',categoryFormData)
           response = await addCategory(categoryFormData);
           navigate("/shop/categorylist");
         }
       } catch (err) {
-        console.error("Submission error:", err);
-        setErrors(err);
+        
+        console.error(err.name);
+        setErrors({name: err.name[0] });
       }
     } else {
       setErrors(validationErrors);

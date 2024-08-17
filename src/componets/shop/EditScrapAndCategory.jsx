@@ -7,6 +7,7 @@ import {
   updateScrap,
 } from "../../services/api/shop/shopApi";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const EditScrapAndCategory = ({ id, type }) => {
   const navigate = useNavigate();
@@ -76,34 +77,29 @@ const EditScrapAndCategory = ({ id, type }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     try {
-        // If the category name exists, map it to its corresponding ID
-        if (scrapFormData.category_name && !scrapFormData.category) {
-            const category = categories.find(cat => cat.name === scrapFormData.category_name);
-            if (category) {
-                scrapFormData.category = category.id;
-            } else {
-                throw new Error("Invalid category selected");
-            }
-        }
-
-        console.log('the scrap data', scrapFormData);
-
-        if (type === "scrap") {
-            await updateScrap(id, scrapFormData, originalImageUrl);
-            navigate("/shop/scraplist");
-        } else {
-            console.log('the category data', categoryFormData);
-            await updateCategory(id, categoryFormData, originalImageUrl);
-            navigate("/shop/categorylist");
-        }
+      if (type === "scrap") {
+        await updateScrap(id, scrapFormData, originalImageUrl);
+        navigate("/shop/scraplist");
+      } else {
+        await updateCategory(id, categoryFormData, originalImageUrl);
+        navigate("/shop/categorylist");
+      }
     } catch (err) {
-        console.error("Error details:", err);
-        setError(err.response?.data || { global: "An error occurred" });
+      console.error("Error details:", err);
+  
+      if (err.name) {
+        setError({ name: err.name });
+        toast.error(err.name); // Show the error as a toast notification
+      } else {
+        const errorMessages = Object.values(err).flat();
+        errorMessages.forEach((message) => {
+          toast.error(message); // Show each error message as a toast notification
+        });
+      }
     }
-};
-
+  };
+  
 
   return (
     <div className="bg-white m-10 w-8/12 rounded-2xl">
@@ -123,7 +119,7 @@ const EditScrapAndCategory = ({ id, type }) => {
             type="text"
             placeholder="Name to display"
           />
-          {error.name && <p>{error.name}</p>}
+          {error.name && <p className="text-red-700">{error.name}</p>}
         </div>
 
         {type === "category" && (
@@ -137,7 +133,7 @@ const EditScrapAndCategory = ({ id, type }) => {
               type="text"
               placeholder="Description"
             />
-            {error.description && <p>{error.description}</p>}
+            {error.description && <p className="text-red-700">{error.description}</p>}
           </div>
         )}
         {type === "scrap" && (
@@ -152,7 +148,7 @@ const EditScrapAndCategory = ({ id, type }) => {
                 type="text"
                 placeholder="Price"
               />
-              {error.price && <p>{error.price}</p>}
+              {error.price && <p className="text-red-700">{error.price}</p>}
             </div>
             <div className="flex flex-col p-3">
               <p>Category</p>
@@ -171,7 +167,7 @@ const EditScrapAndCategory = ({ id, type }) => {
                   </option>
                 ))}
               </select>
-              {error.category && <p>{error.category}</p>}
+              {error.category && <p className="text-red-700">{error.category}</p>}
             </div>
           </>
         )}

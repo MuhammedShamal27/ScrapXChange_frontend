@@ -103,7 +103,7 @@ const ScrapList = () => {
       toast("Please select a date.");
       return;
     }
-    if (!formDetails.name || !formDetails.address || !formDetails.landmark || !formDetails.pincode || !formDetails.phone || !formDetails.upi || !formDetails.confirmDetails) {
+    if (!formDetails.name || !formDetails.address || !formDetails.landmark || !formDetails.pincode || !formDetails.phone || !formDetails.upi ) {
       toast("Please fill all the required details.");
       return;
     }
@@ -111,10 +111,14 @@ const ScrapList = () => {
     const formData = {
       ...formDetails,
       date_requested: selectedDate.format('YYYY-MM-DD'), // Format date as needed
-      items: selectedItems.map(item => item.id),
+      products: selectedItems.map(item => item.id),
+      shop: id,
     };
+    
 
     try {
+      
+      console.log('the form data',formData)
       const response = await collectionRequest(formData);
       console.log("the response", response);
       setShowSuccessModal(true);
@@ -135,6 +139,7 @@ const ScrapList = () => {
           <div className="px-4 sm:px-10 lg:px-20 py-10">
             {hasProducts ? (
               categories.map(category => (
+                category.products.length > 0 &&(
                 <div key={category.id} className="m-10">
                   <h1 className="text-2xl font-semibold mb-4 text-center">{category.name}</h1>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 m-7 w-6/12">
@@ -153,6 +158,7 @@ const ScrapList = () => {
                     ))}
                   </div>
                 </div>
+                )
               ))
             ) : (
               <div className="text-center py-20 rounded-lg shadow-lg">

@@ -144,6 +144,9 @@ export const shopScrapList = async (id) => {
 
 export const collectionRequest = async (formData) => {
     try {
+
+        
+        console.log('the data sending ',formData)
         const response = await axiosInstance.post('/user/scrap-collection-request/',formData)
         console.log("the response of scrap collection  shops ",response)
         return response.data
