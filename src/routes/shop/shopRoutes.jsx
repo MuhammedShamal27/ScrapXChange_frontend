@@ -58,7 +58,7 @@ const shopRouter =
             element: <ProtectedRoute shop><ScrapRequest/></ProtectedRoute>
         },
         {
-            path: 'scrapRequestDetails',
+            path: 'scrapRequestDetails/:id',
             element: <ProtectedRoute shop><ScrapRequestDetails/></ProtectedRoute>
         },
         {

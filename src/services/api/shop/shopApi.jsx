@@ -174,3 +174,57 @@ export const updateScrap = async (id, scrapData, originalImageUrl) => {
       return Promise.reject(err.response.data);
     }
   };
+
+
+export const getScrapRequests = async () => {
+    try {
+        const response = await axiosInstance.get(`/shop/scrap-requests/`);
+        console.log("the scrap request response data", response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error fetching scrap data:", err);
+        throw err;
+    }
+};
+
+
+export const getScrapRequestDetails = async (id) => {
+    try{
+        const response = await axiosInstance.get(`/shop/scrap-request-details/${id}/`);
+        console.log("the scrap request details response data",response.data)
+        return response.data
+    }catch (err){
+        console.error("Error fetching request details.",err);
+        throw err;
+    }
+}
+
+export const scheduleRequest = async (id) => {
+    try{
+        const response = await axiosInstance.post (`/shop/schedule-request/${id}/`);
+        return response.data
+    }catch (err) {
+        console.error("Error while sheduling .",err);
+        throw err;
+    }
+}
+
+export const reScheduleRequest = async (id) => {
+    try{
+        const response = await axiosInstance.post (`/shop/reschedule-request/${id}/`);
+        return response.data
+    }catch (err) {
+        console.error("Error while scheduling .",err);
+        throw err;
+    }
+}
+
+export const rejectRequest = async (id,reason) => {
+    try {
+        const response = await axiosInstance.post(`/shop/reject-request/${id}/`,{reason})
+        return response.data
+    }catch (err) {
+        console.error("Error while rejceting .",err);
+        throw err;
+    }
+}

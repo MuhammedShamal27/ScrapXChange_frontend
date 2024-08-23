@@ -94,7 +94,7 @@ const ScrapList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validation checks
+
     if (selectedItems.length === 0) {
       toast("Please select items");
       return;
@@ -110,7 +110,7 @@ const ScrapList = () => {
 
     const formData = {
       ...formDetails,
-      date_requested: selectedDate.format('YYYY-MM-DD'), // Format date as needed
+      date_requested: selectedDate.format('YYYY-MM-DD'), 
       products: selectedItems.map(item => item.id),
       shop: id,
     };
