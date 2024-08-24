@@ -209,9 +209,9 @@ export const scheduleRequest = async (id) => {
     }
 }
 
-export const reScheduleRequest = async (id) => {
+export const reScheduleRequest = async (id,date) => {
     try{
-        const response = await axiosInstance.post (`/shop/reschedule-request/${id}/`);
+        const response = await axiosInstance.post (`/shop/reschedule-request/${id}/`,{ scheduled_date: date });
         return response.data
     }catch (err) {
         console.error("Error while scheduling .",err);
@@ -225,6 +225,29 @@ export const rejectRequest = async (id,reason) => {
         return response.data
     }catch (err) {
         console.error("Error while rejceting .",err);
+        throw err;
+    }
+}
+
+
+export const todayPendings = async() => {
+    try{
+        const response = await axiosInstance.get('/shop/today-pendings/')
+        console.log(response.data)
+        return response.data
+    }catch (err){
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const getPendingDetails = async(id) => {
+    try{
+        const response = await axiosInstance.get(`/shop/pending-details/${id}`)
+        console.log(response.data)
+        return response.data
+    }catch (err){
+        console.error("Error while taking data",err);
         throw err;
     }
 }

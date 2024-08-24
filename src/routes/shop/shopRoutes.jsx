@@ -13,6 +13,7 @@ import ProtectedRoute from "../ProtectedRoute";
 import ScrapRequest from "../../pages/shop/ScrapRequest";
 import ScrapRequestDetails from "../../pages/shop/ScrapRequestDetails";
 import TodayPendings from "../../pages/shop/TodayPendings";
+import ScrapCollection from "../../pages/shop/ScrapCollection";
 
 
 const shopRouter = 
@@ -64,6 +65,10 @@ const shopRouter =
         {
             path: 'todaysPending',
             element: <ProtectedRoute shop><TodayPendings/></ProtectedRoute>
+        },
+        {
+            path: 'scrapCollection',
+            element: <ProtectedRoute shop><ScrapCollection/></ProtectedRoute>
         }
     ]
 };

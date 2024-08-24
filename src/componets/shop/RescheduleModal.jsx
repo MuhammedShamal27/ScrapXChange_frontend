@@ -10,14 +10,23 @@ const RescheduleModal = ({isOpen, id, onClose}) => {
     const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(null);
 
-    const handleReShedule = async () => {
+    const handleReShedule = async (e) => {
+        e.preventDefault();
+        const date=selectedDate.format('YYYY-MM-DD')
         try {
-            const response = await reScheduleRequest(id);
+            console.log(date)
+            const response = await reScheduleRequest(id,date);
             toast("Scheduled successfully.");
             onClose(); 
             navigate("/shop/scrapRequests");
         } catch (err) {
             console.error("Error while scheduling.", err);
+            if (err.response && err.response.data) {
+                const errorMessage = err.response.data.scheduled_date?.[0] || "Error occurred while scheduling.";
+                toast.error(errorMessage);  
+            } else {
+                toast.error("An unexpected error occurred.");
+            }
         }
     };
 
