@@ -251,3 +251,15 @@ export const getPendingDetails = async(id) => {
         throw err;
     }
 }
+
+export const scrapCollected = async(id,formData) => {
+    try{
+        console.log('the data comming',formData)
+        const response = await axiosInstance.post(`/shop/scrap-collected/${id}/`,formData)
+        console.log(response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
