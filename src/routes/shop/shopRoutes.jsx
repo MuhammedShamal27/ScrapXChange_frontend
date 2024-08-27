@@ -72,7 +72,7 @@ const shopRouter =
             element: <ProtectedRoute shop><ScrapCollection/></ProtectedRoute>
         },
         {
-            path: 'confirm',
+            path: 'confirm/:id',
             element: <ProtectedRoute shop><ScrapCollectioinConfirmation/></ProtectedRoute>
         }
     ]

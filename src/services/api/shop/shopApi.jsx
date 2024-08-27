@@ -263,3 +263,49 @@ export const scrapCollected = async(id,formData) => {
         throw err;
     }
 }
+
+export const ConfirmCollection = async(id) => {
+    try{
+        const response = await axiosInstance.get(`/shop/confirm-collection/${id}/`)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const PaymentCash = async(id) => {
+    try{
+        const response = await axiosInstance.post(`/shop/payment-cash/${id}/`)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const PaymentRazorpay = async(id) => {
+    try{
+        console.log('here is also comming')
+        const response = await axiosInstance.post(`/shop/create-razorpay-order/${id}/`)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const VerifyPayment = async(paymentData) => {
+    try{
+        console.log('here is also comming',paymentData)
+        const response = await axiosInstance.post('/shop/verify-payment/',paymentData)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}

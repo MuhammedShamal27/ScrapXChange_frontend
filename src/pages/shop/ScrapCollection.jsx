@@ -4,7 +4,7 @@ import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
 import { Pencil } from 'lucide-react'
 import todaypending from '../../assets/todaypending.png'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchScrapList, scrapCollected } from '../../services/api/shop/shopApi'
 import { toast } from 'sonner'
 
@@ -15,6 +15,7 @@ const ScrapCollection = () => {
     const [productsList, setProductsList] = useState([]);
     const [error,setError] = useState();
     const [formData,setFormData] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async ()  => {
@@ -47,6 +48,8 @@ const ScrapCollection = () => {
             const Data={id,formData}
             const response = await scrapCollected(id,Data);
             console.log('the response', response);
+            const t_id = response.id;  
+            navigate(`/shop/confirm/${t_id}/`)
         } catch (err) {
             console.error('Error while submitting data', err);
             toast.error('Submission failed');
