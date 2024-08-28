@@ -31,11 +31,23 @@ const ScrapCollection = () => {
         fetchProducts();
     },[]);
 
+    useEffect(() => {
+
+        const savedData = JSON.parse(localStorage.getItem('formData')) || [];
+        setFormData(savedData);
+    }, []);
+
     const handleAddProduct = (e) => {
         e.preventDefault()
         if (product && quantity) {
+            if (isNaN(quantity) || parseInt(quantity) <= 0) {
+                toast.error('Quantity must be a positive integer');
+                return;
+            }
             const selectedProduct = productsList.find(p => p.id === parseInt(product));
-            setFormData([...formData, { id: selectedProduct.id,name: selectedProduct.name, quantity }]);
+            const newFormData = [...formData, { id: selectedProduct.id, name: selectedProduct.name, quantity }];
+            setFormData(newFormData);
+            localStorage.setItem('formData', JSON.stringify(newFormData));
             setProduct('');
             setQuantity('');
         }
@@ -43,12 +55,17 @@ const ScrapCollection = () => {
         
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (formData.length === 0) {
+            toast.error('At least one product must be added');
+            return;
+        }
         try {
             console.log('formData', formData,id);
             const Data={id,formData}
             const response = await scrapCollected(id,Data);
             console.log('the response', response);
             const t_id = response.id;  
+            localStorage.removeItem('formData');
             navigate(`/shop/confirm/${t_id}/`)
         } catch (err) {
             console.error('Error while submitting data', err);

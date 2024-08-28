@@ -95,11 +95,7 @@ const ScrapRequestDetails = () => {
                     src={Background_image}
                     alt="Profile_image"
                   />
-                  <img
-                    className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 rounded-full w-14 h-14"
-                    src=""
-                    alt="Profile"
-                  />
+ 
                 </div>
                 <h1 className="text-center text-blue-950 text-base m-7 font-semibold">
                   {requestDetails.name}

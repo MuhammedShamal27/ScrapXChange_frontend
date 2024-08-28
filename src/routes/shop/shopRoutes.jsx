@@ -15,6 +15,7 @@ import ScrapRequestDetails from "../../pages/shop/ScrapRequestDetails";
 import TodayPendings from "../../pages/shop/TodayPendings";
 import ScrapCollection from "../../pages/shop/ScrapCollection";
 import ScrapCollectioinConfirmation from "../../pages/shop/ScrapCollectioinConfirmation";
+import Invoice from "../../pages/shop/Invoice";
 
 
 const shopRouter = 
@@ -74,6 +75,10 @@ const shopRouter =
         {
             path: 'confirm/:id',
             element: <ProtectedRoute shop><ScrapCollectioinConfirmation/></ProtectedRoute>
+        },
+        {
+            path: 'invoice',
+            element: <ProtectedRoute shop><Invoice/></ProtectedRoute>
         }
     ]
 };

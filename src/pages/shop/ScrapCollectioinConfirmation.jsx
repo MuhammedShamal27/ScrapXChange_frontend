@@ -3,24 +3,22 @@ import ShopNavBar from '../../componets/shop/ShopNavBar';
 import HeadingAndProfile from '../../componets/HeadingAndProfile';
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ConfirmCollection, PaymentCash, PaymentRazorpay } from '../../services/api/shop/shopApi';
+import { ConfirmCollection, PaymentCash, PaymentRazorpay, VerifyPayment } from '../../services/api/shop/shopApi';
 import success from '../../assets/success.png'
-import RazorPayButton from '../../componets/shop/RazorPayButton';
+import {loadRazorpayScript} from '../../utils/razorpay'
 
 const ScrapCollectioinConfirmation = () => {
   const { id } = useParams();
   const [transaction, setTransaction] = useState(null);
   const [error, setError] = useState(null);
-  const [payment,setPayment] = useState(null);
+  const [payment, setPayment] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const navigate = useNavigate(); 
-  const [orderId, setOrderId] = useState('');
-  const [amount, setAmount] = useState(0);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchCollectionReport = async () => {
       try {
-        const response = await ConfirmCollection(id); 
+        const response = await ConfirmCollection(id);
         console.log('the response ', response);
         setTransaction(response);
       } catch (err) {
@@ -36,16 +34,15 @@ const ScrapCollectioinConfirmation = () => {
   }
 
   if (!transaction) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
-  // Ensure that transaction.transaction_products is defined before attempting to map over it
   const products = transaction.transaction_products || [];
-  console.log('the products',products)
+  console.log('the products', products);
 
   const handleCash = async () => {
     try {
-      const response = await PaymentCash(id); 
+      const response = await PaymentCash(id);
       setPayment(response);
       setModalVisible(true);
     } catch (err) {
@@ -54,28 +51,67 @@ const ScrapCollectioinConfirmation = () => {
     }
   };
 
-
   const handleRazorpaySuccess = () => {
     setModalVisible(true);
   };
 
   const handleRazorpayFailure = () => {
-      setError('Payment verification failed. Please try again.');
+    setError('Payment verification failed. Please try again.');
   };
 
   const initiateRazorpayPayment = async () => {
     try {
-        const totalAmount = parseFloat(transaction.total_price) * 100; // amount in paise
-        console.log('Initiating Razorpay payment...');
-        const response = await PaymentRazorpay(id);
-        console.log('Razorpay order creation response:', response);
+      const totalAmount = parseFloat(transaction.total_price) * 100; 
+      console.log('Initiating Razorpay payment...');
+      const response = await PaymentRazorpay(id);
+      console.log('Razorpay order creation response:', response);
 
-        const { order_id, amount: razorAmount } = response;
-        setOrderId(order_id);
-        setAmount(razorAmount);
+      const { order_id, amount: razorAmount } = response;
+
+      const res = await loadRazorpayScript();
+
+      if (!res) {
+        console.error('Razorpay SDK failed to load. Check your internet connection.');
+        alert('Razorpay SDK failed to load. Are you online?');
+        return;
+      }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorAmount.toString(),
+        currency: 'INR',
+        order_id: order_id,
+        handler: async function (response) {
+          try {
+            const verifyResponse = await VerifyPayment(response);
+            if (verifyResponse.status === 'success') {
+              handleRazorpaySuccess();
+            } else {
+              handleRazorpayFailure();
+            }
+          } catch (err) {
+            console.error('Error during payment verification:', err);
+            handleRazorpayFailure();
+          }
+        },
+        prefill: {
+          name: 'Customer Name',
+          email: 'customer@example.com',
+          contact: '9999999999',
+        },
+        notes: {
+          address: 'Shop Address',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-        console.error('Error creating Razorpay order:', error);
-        setError('Failed to initiate Razorpay payment.');
+      console.error('Error creating Razorpay order:', error);
+      setError('Failed to initiate Razorpay payment.');
     }
   };
 
@@ -125,14 +161,6 @@ const ScrapCollectioinConfirmation = () => {
                 </div>
               </div>
             </div>
-            {orderId && (
-                <RazorPayButton
-                    orderId={orderId}
-                    amount={amount}
-                    onSuccess={handleRazorpaySuccess}
-                    onFailure={handleRazorpayFailure}
-                />
-            )}
           </div>
         </div>      
       </div>
@@ -154,7 +182,6 @@ const ScrapCollectioinConfirmation = () => {
         </div>
       </div>
     )}
-
     </>
   );
 };

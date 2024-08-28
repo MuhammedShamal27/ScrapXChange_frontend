@@ -40,6 +40,8 @@ const ScrapList = () => {
     fetchCategories();
   }, [id]);
 
+  
+
   const validateField = (name, value) => {
     switch (name) {
       case "name":
@@ -124,7 +126,21 @@ const ScrapList = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Error submitting request", error);
-      toast("Failed to submit request");
+
+
+      if (error && typeof error === 'object') {
+        Object.keys(error).forEach(key => {
+          if (Array.isArray(error[key])) {
+            error[key].forEach(message => {
+              toast(message);
+            });
+          } else {
+            toast("An unexpected error occurred.");
+          }
+        });
+      } else {
+        toast("Failed to submit request");
+      }
     }
   };
 

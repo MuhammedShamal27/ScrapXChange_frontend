@@ -64,8 +64,8 @@ const ScrapRequest = () => {
                                 </tr>
                             ))
                         ) : (
-                            <tr>
-                                <td colSpan="5" className='p-4 text-center'>No requests found</td>
+                            <tr className='flex justify-center'>
+                                <td colSpan="5" className='p-4 font-semibold text-2xl'>! No New requests found.</td>
                             </tr>
                         )}
                         </tbody>
