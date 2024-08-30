@@ -25,7 +25,7 @@ const ShopNavBar = () => {
                 <Link to='' className='flex ml-9 mt-7 gap-x-5'><User color="#a3aed0" />User List</Link>
                 <Link to='/shop/categorylist' className='flex ml-9 mt-7 gap-x-5'><LayoutDashboard color="#a3aed0" />Category List</Link>
                 <Link to='/shop/scraplist' className='flex ml-9 mt-7 gap-x-5'><ScrollText color="#a3aed0" />Scrap List</Link>
-                <Link to='' className='flex ml-9 mt-7 gap-x-5'><MessageSquareMore color="#a3aed0" />Messages</Link>
+                <Link to='/shop/shopChat' className='flex ml-9 mt-7 gap-x-5'><MessageSquareMore color="#a3aed0" />Messages</Link>
                 <Link onClick={handleLogout} className='flex ml-9 mt-7 gap-x-5'><LogOut color="#a3aed0" />LogOut</Link>
             </div>
         </div>

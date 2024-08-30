@@ -309,3 +309,40 @@ export const VerifyPayment = async(paymentData) => {
         throw err;
     }
 }
+
+
+export const chatRooms = async(user_id, shop_id) => {
+    try{
+        console.log('here is also comming')
+        const response = await axiosInstance.post('/shop/chatrooms/',{user: user_id,shop: shop_id})
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const chatRoomMessages = async(room_id) => {
+    try{
+        console.log('here is also comming')
+        const response = await axiosInstance.get(`/shop/chatrooms/${room_id}/messages/`)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
+export const sendMessage = async(room_id, sender_id, receiver_id, message) => {
+    try{
+        console.log('here is also comming')
+        const response = await axiosInstance.post('/shop/messages/',{ room: room_id,sender: sender_id,receiver: receiver_id,message: message})
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}

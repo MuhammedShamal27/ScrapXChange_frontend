@@ -155,3 +155,51 @@ export const collectionRequest = async (formData) => {
         return Promise.reject(err.response.data);
     }
 }
+
+export const fetchAllShop = async (searchQuery) => {
+    try {
+        console.log('the data sending ')
+        const response = await axiosInstance.get('/user/all-shop/',{
+            params: { search: searchQuery }
+        })
+        console.log("the response of scrap collection  shops ",response)
+        return response.data
+    }catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const createOrFetchChatRoom = async (shopId) => {
+    try {
+        const response = await axiosInstance.post(`/user/chatroom/${shopId}/`);
+        console.log('the response of createOrFetchChatRoom',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while creating or fetching chat room", err);
+        throw err;
+    }
+};
+
+
+export const fetchMessages = async (roomId) => {
+    try {
+        const response = await axiosInstance.get(`/user/chatroom/${roomId}/messages/`);
+        console.log('the response of fetchMessages',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while fetching messages", err);
+        throw err;
+    }
+};
+
+export const sendMessage = async (messageData) => {
+    try {
+        const response = await axiosInstance.post(`/user/chatroom/${messageData.room_id}/messages/`, messageData);
+        console.log('the response of sendMessage',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};

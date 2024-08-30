@@ -16,6 +16,7 @@ import TodayPendings from "../../pages/shop/TodayPendings";
 import ScrapCollection from "../../pages/shop/ScrapCollection";
 import ScrapCollectioinConfirmation from "../../pages/shop/ScrapCollectioinConfirmation";
 import Invoice from "../../pages/shop/Invoice";
+import ShopChat from "../../pages/shop/ShopChat";
 
 
 const shopRouter = 
@@ -79,6 +80,10 @@ const shopRouter =
         {
             path: 'invoice',
             element: <ProtectedRoute shop><Invoice/></ProtectedRoute>
+        },
+        {
+            path: 'shopChat',
+            element: <ProtectedRoute shop><ShopChat/></ProtectedRoute>
         }
     ]
 };

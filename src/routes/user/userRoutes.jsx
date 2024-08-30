@@ -15,6 +15,7 @@ import adminRouter from '../admin/adminRoutes';
 import Shops from '../../pages/user/Shops';
 import ScrapList from '../../pages/user/ScrapList';
 import ProtectedRoute from '../ProtectedRoute';
+import UserChat from '../../pages/user/UserChat';
 
 
 
@@ -26,20 +27,24 @@ const userRoutes = createBrowserRouter([
         children: [
 
             {
-                element: <ProtectedRoute><UserProfile /></ProtectedRoute>,
                 path: '/profile',
+                element: <ProtectedRoute><UserProfile /></ProtectedRoute>,
             },
             {
-                element: <ProtectedRoute><EditProfile /></ProtectedRoute>,
                 path: '/editProfile',
+                element: <ProtectedRoute><EditProfile /></ProtectedRoute>,
             },
             {
-                element: <ProtectedRoute><Shops /></ProtectedRoute>,
                 path: '/shops',
+                element: <ProtectedRoute><Shops /></ProtectedRoute>,
             },
             {
-                element: <ProtectedRoute><ScrapList /></ProtectedRoute>,
                 path: '/scraplist/:id',
+                element: <ProtectedRoute><ScrapList /></ProtectedRoute>,
+            },
+            {
+                path: '/userChat',
+                element: <ProtectedRoute><UserChat /></ProtectedRoute>,
             },
             {   path: '/' , 
                 element : <Home/> },
@@ -63,6 +68,7 @@ const userRoutes = createBrowserRouter([
                 path: '/resetPassword',
                 element: <ResetPassword />,
             },
+            
         ],
     },
     shopRouter,

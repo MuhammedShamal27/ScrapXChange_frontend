@@ -19,7 +19,7 @@ const UserSideBar = () => {
             <Link to='/' className='flex   gap-x-5'><House  />Dashboard</Link>
             <Link to='/profile' className='flex   gap-x-5'><CircleUserRound  />Profile</Link>
             <Link className='flex   gap-x-5'><ArrowLeftRight  />Xchange</Link>
-            <Link className='flex   gap-x-5'><Mail />Message</Link>
+            <Link to='/userChat' className='flex   gap-x-5'><Mail />Message</Link>
             <Link onClick={handleLogout} className='flex   gap-x-5'><LogOut />Logout</Link>
         </div>
     </div>

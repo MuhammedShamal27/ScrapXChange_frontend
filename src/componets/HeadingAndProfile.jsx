@@ -11,7 +11,7 @@ const HeadingAndProfile = () => {
         <div className="flex bg-white h-14 w-80 rounded-full space-x-5 items-center mt-7 absolute left-3/4">
           <div className="flex bg-bgColor rounded-full ml-3 p-1 items-center">
             <Search color="#a3aed0" size={20} />
-            <input className="bg-bgColor rounded-full" placeholder="Search" />
+            <input className="bg-bgColor rounded-full border-none outline-none" placeholder="Search" />
           </div>
           <p>
             <Bell color="#a3aed0" size={20} />
