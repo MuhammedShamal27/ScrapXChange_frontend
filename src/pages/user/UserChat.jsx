@@ -5,12 +5,14 @@ import UserFooter from '../../componets/user/UserFooter';
 import "../../styles/user.css";
 import { Phone, Search, SendHorizontal } from 'lucide-react';
 import SA_profile from "../../assets/SA_profile.png";
-import { createOrFetchChatRoom, fetchAllShop, fetchMessages, sendMessage } from '../../services/api/user/userApi';
+import { createOrFetchChatRoom, fetchAllShop, fetchMessages, fetchUserChatRooms, sendMessage } from '../../services/api/user/userApi';
 
 const UserChat = ({ user }) => {
     const [shops, setShops] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedShop, setSelectedShop] = useState(null);
+    const [chatRoom, setChatRoom] = useState(null);
+    const [chatRooms, setChatRooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
 
@@ -28,6 +30,19 @@ const UserChat = ({ user }) => {
         fetchShops();
     }, [searchQuery]);
 
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const rooms = await fetchUserChatRooms();
+                setChatRooms(rooms);
+            } catch (error) {
+                console.log('Error fetching chat rooms', error);
+            }
+        };
+        fetchInitialData();
+    }, []);
+
+    
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
         setSelectedShop(null); // Clear selected shop when searching
@@ -37,24 +52,49 @@ const UserChat = ({ user }) => {
         try {
             const chatRoom = await createOrFetchChatRoom(shop.id);
             console.log('the response of the chatroom',chatRoom)
+            console.log('the response of the chatroom id',chatRoom.id)
             setSelectedShop(shop);
+            setChatRoom(chatRoom);
             setSearchQuery(''); // Clear the search query to hide other shops
 
             // Fetch messages for the selected chat room
             const response = await fetchMessages(chatRoom.id);
+            console.log('the response of the fetchMessages',response)
             setMessages(response);
+
+                    // Update chat rooms list
+        setChatRooms((prevRooms) => {
+            const exists = prevRooms.find((room) => room.id === chatRoom.id);
+            if (!exists) {
+                return [...prevRooms, chatRoom];
+            }
+            return prevRooms;
+        });
 
         } catch (error) {
             console.error('Error creating or fetching chat room', error);
         }
     };
 
+    
+    const handleExistingChatClick = async (room) => {
+        try {
+            console.log('the room of shop',room.shop)
+            setSelectedShop(room.shop);
+            setChatRoom(room);
+            setMessages(await fetchMessages(room.id));
+        } catch (error) {
+            console.error('Error fetching messages for existing chat room', error);
+        }
+    };
+    
+
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
 
         try {
             const messageData = {
-                room_id: selectedShop.chatRoomId,
+                room_id: chatRoom.id,
                 receiver_id: selectedShop.id, // Assuming the receiver is the shop
                 message: newMessage
             };
@@ -97,25 +137,37 @@ const UserChat = ({ user }) => {
                                     <img src={SA_profile} alt="" className="w-12 h-12 rounded-full mr-3" />
                                     <div className="flex-1">
                                         <div className="flex justify-between items-center mb-1">
-                                            <h1 className="font-semibold">{shop.username}</h1>
+                                            <h1 className="font-semibold">{shop.shop_name}</h1>
                                             <p className="text-gray-500 text-xs">1:00 PM</p>
                                         </div>
                                         <p className="text-gray-500">Message</p>
                                     </div>
                                 </div>
                             ))}
-                            {!searchQuery && selectedShop && (
-                                <div className="flex items-center py-2">
-                                    <img src={SA_profile} alt="" className="w-12 h-12 rounded-full mr-3" />
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <h1 className="font-semibold">{selectedShop.username}</h1>
-                                            <p className="text-gray-500 text-xs">1:00 PM</p>
+
+                            <div className="mb-4">
+                                <h2 className="font-semibold mb-2">Your Chats</h2>
+                                {chatRooms.length > 0 ? (
+                                    chatRooms.map((room) => (
+                                        <div
+                                            key={room.id}
+                                            className={`flex items-center py-2 cursor-pointer ${selectedShop?.id === room.shop.id ? 'bg-gray-200' : ''}`}
+                                            onClick={() => handleExistingChatClick(room)}
+                                        >
+                                            <img src={SA_profile} alt="" className="w-12 h-12 rounded-full mr-3" />
+                                            <div className="flex-1">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <h1 className="font-semibold">{room.shop.shop_name}</h1>
+                                                    <p className="text-gray-500 text-xs">1:00 PM</p>
+                                                </div>
+                                                <p className="text-gray-500">Last message snippet...</p>
+                                            </div>
                                         </div>
-                                        <p className="text-gray-500">Message</p>
-                                    </div>
-                                </div>
-                            )}
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 text-sm">No existing chats.</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Right Side - Chat Area */}
@@ -126,7 +178,7 @@ const UserChat = ({ user }) => {
                                         <div className="flex items-center">
                                             <img src={SA_profile} alt="" className="w-12 h-12 rounded-full mr-3" />
                                             <div>
-                                                <h1 className="font-semibold">{selectedShop.username}</h1>
+                                                <h1 className="font-semibold">{selectedShop.shop_name}</h1>
                                                 <p className="text-gray-500 text-xs">Online</p>
                                             </div>
                                         </div>
@@ -136,14 +188,20 @@ const UserChat = ({ user }) => {
                                         </div>
                                     </div>
                                     <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
-                                        {messages.map((msg) => (
-                                            <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
-                                                <div className={`p-3 rounded-lg ${msg.sender_id === user.id ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
-                                                    {msg.message}
+                                        {Array.isArray(messages) && messages.map((msg) => (
+                                            msg && msg.id ? (
+                                                <div key={msg.id} className={`flex ${msg.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}>
+                                                    <div className={`p-3 rounded-lg ${msg.sender_id === user?.id ? 'bg-bgColor' : 'bg-gray-700 text-black'}`}>
+                                                        {msg.message}
+                                                        <span className="text-xs text-gray-600 ml-7">
+                                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ) : null
                                         ))}
                                     </div>
+
                                     <div className="flex items-center border rounded-full p-3">
                                         <input
                                             className="border-none outline-none flex-grow bg-transparent"

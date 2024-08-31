@@ -15,6 +15,7 @@ const Shops = () => {
     const fetchShopsData = async () => {
       try {
         const response = await fetchshops();
+        console.log('the response',response)
         setShops(response);
       } catch (error) {
         console.error('Error fetching shops:', error);

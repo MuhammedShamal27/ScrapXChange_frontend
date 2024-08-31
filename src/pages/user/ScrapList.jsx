@@ -40,8 +40,6 @@ const ScrapList = () => {
     fetchCategories();
   }, [id]);
 
-  
-
   const validateField = (name, value) => {
     switch (name) {
       case "name":
@@ -96,7 +94,7 @@ const ScrapList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // Validation checks
     if (selectedItems.length === 0) {
       toast("Please select items");
       return;
@@ -126,26 +124,11 @@ const ScrapList = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Error submitting request", error);
-
-
-      if (error && typeof error === 'object') {
-        Object.keys(error).forEach(key => {
-          if (Array.isArray(error[key])) {
-            error[key].forEach(message => {
-              toast(message);
-            });
-          } else {
-            toast("An unexpected error occurred.");
-          }
-        });
-      } else {
-        toast("Failed to submit request");
-      }
+      toast("Failed to submit request");
     }
   };
 
-  const hasProducts = categories.some(category => category.products.length > 0);
-
+  const hasProducts = categories.some(category => Array.isArray(category.products) && category.products.length > 0);
   return (
     <>
       <div className="flex flex-col min-h-screen">

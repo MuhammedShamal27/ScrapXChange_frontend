@@ -311,10 +311,10 @@ export const VerifyPayment = async(paymentData) => {
 }
 
 
-export const chatRooms = async(user_id, shop_id) => {
+export const fetchAllUsers = async() => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.post('/shop/chatrooms/',{user: user_id,shop: shop_id})
+        const response = await axiosInstance.get('/shop/fetch-users/')
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -323,10 +323,10 @@ export const chatRooms = async(user_id, shop_id) => {
     }
 }
 
-export const chatRoomMessages = async(room_id) => {
+export const shopCreateOrFetchChatRoom = async(UserId) => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.get(`/shop/chatrooms/${room_id}/messages/`)
+        const response = await axiosInstance.post(`/shop/chatroom/${UserId}/`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -335,10 +335,10 @@ export const chatRoomMessages = async(room_id) => {
     }
 }
 
-export const sendMessage = async(room_id, sender_id, receiver_id, message) => {
+export const shopFetchMessages = async(roomId) => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.post('/shop/messages/',{ room: room_id,sender: sender_id,receiver: receiver_id,message: message})
+        const response = await axiosInstance.get(`/shop/chatroom/${roomId}/messages/`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -346,3 +346,14 @@ export const sendMessage = async(room_id, sender_id, receiver_id, message) => {
         throw err;
     }
 }
+
+export const shopSendMessage = async (messageData) => {
+    try {
+        const response = await axiosInstance.post(`/shop/chatroom/${messageData.room_id}/messages/`, messageData);
+        console.log('the response of sendMessage',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};

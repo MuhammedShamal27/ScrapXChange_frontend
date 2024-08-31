@@ -170,10 +170,25 @@ export const fetchAllShop = async (searchQuery) => {
     }
 }
 
+
+
+export const fetchUserChatRooms = async () => {
+    try {
+        const response = await axiosInstance.get('/user/chatrooms/');
+        console.log("the response of fetchUserChatRooms ",response)
+        return response.data;
+    } catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+};
+
+
 export const createOrFetchChatRoom = async (shopId) => {
     try {
         const response = await axiosInstance.post(`/user/chatroom/${shopId}/`);
-        console.log('the response of createOrFetchChatRoom',response.data)
+        console.log('the response of fetchMessages',response.data)
+
         return response.data;
     } catch (err) {
         console.error("Error while creating or fetching chat room", err);
