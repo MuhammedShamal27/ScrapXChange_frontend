@@ -44,7 +44,7 @@ const UserNavBar = () => {
             </p>
             <Link to='/profile'>
               <img 
-                className="w-10 h-10 cursor-pointer"
+                className="w-10 h-10 cursor-pointer rounded-full"
                 src={user?.profile_picture ? `${baseURL}${user.profile_picture}` : profile}
                 alt="profile picture of user"
               />

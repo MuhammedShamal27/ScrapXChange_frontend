@@ -5,14 +5,31 @@ import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop';
 import { Search, SendHorizontal, Phone } from 'lucide-react';
 import SA_profile from "../../assets/SA_profile.png";
 import { fetchAllUsers, shopCreateOrFetchChatRoom, shopFetchMessages, shopSendMessage } from '../../services/api/shop/shopApi';
+import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
 
 const ShopChat = () => {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUser, setSelectedUser] = useState(null);
     const [chatRoom, setChatRoom] = useState(null);
+    const [chatRooms, setChatRooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const token = useSelector((state)=> state.shop.token)
+
+    let shop = null
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token);
+            shop = decodedToken.user_id;
+            console.log('the shop id after decode ',shop)
+            console.log('the decoeded Token', decodedToken)
+
+        } catch (error) {
+            console.error ('Invalid Token:',error);
+        }
+    }
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -110,13 +127,18 @@ const ShopChat = () => {
                                         </div>
                                     </div>
                                     <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
-                                        {Array.isArray(messages) && messages.map((msg) => (
-                                            <div key={msg.id} className={`flex ${msg.sender_id === selectedUser?.id ? 'justify-end' : 'justify-start'}`}>
-                                                
-                                                <p className={`p-3 rounded-lg max-w-xs ${msg.sender_id === selectedUser?.id ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>{msg.message}</p>
-
+                                    {Array.isArray(messages) && messages.map((msg) => (
+                                        msg && msg.id ? (
+                                            <div key={msg.id} className={`flex ${msg.sender === shop ? 'justify-end' : 'justify-start'}`}>
+                                                <div className={`p-3 rounded-lg ${msg.sender === shop ? 'bg-gray-300 text-black shadow-2xl' : 'bg-bgColor text-black shadow-2xl'}`}>
+                                                    {msg.message}
+                                                    <span className="text-xs text-black ml-7">
+                                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        ))}
+                                        ) : null
+                                    ))}
                                     </div>
                                     <div className="flex items-center border rounded-full p-3">
                                         <input
