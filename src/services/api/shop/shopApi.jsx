@@ -311,10 +311,12 @@ export const VerifyPayment = async(paymentData) => {
 }
 
 
-export const fetchAllUsers = async() => {
+export const fetchAllUsers = async(searchQuery) => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.get('/shop/fetch-users/')
+        const response = await axiosInstance.get('/shop/all-users/',{
+            params: { search: searchQuery }
+        })
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -323,33 +325,48 @@ export const fetchAllUsers = async() => {
     }
 }
 
-export const shopCreateOrFetchChatRoom = async(UserId) => {
-    try{
-        console.log('here is also comming')
-        const response = await axiosInstance.post(`/shop/chatroom/${UserId}/`)
-        console.log('the response',response.data)
-        return response.data
-    }catch (err) {
-        console.error("Error while taking data",err);
-        throw err;
-    }
-}
-
-export const shopFetchMessages = async(roomId) => {
-    try{
-        console.log('here is also comming')
-        const response = await axiosInstance.get(`/shop/chatroom/${roomId}/messages/`)
-        console.log('the response',response.data)
-        return response.data
-    }catch (err) {
-        console.error("Error while taking data",err);
-        throw err;
-    }
-}
-
-export const shopSendMessage = async (messageData) => {
+export const fetchshopChatRooms = async () => {
     try {
-        const response = await axiosInstance.post(`/shop/chatroom/${messageData.room_id}/messages/`, messageData);
+        const response = await axiosInstance.get('/shop/userchatrooms/');
+        console.log("the response of fetchshopChatRooms ",response)
+        return response.data;
+    } catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+};
+
+export const shopCreateOrFetchChatRoom = async (userId) => {
+    try {
+        const response = await axiosInstance.post(`/shop/userchatroom/${userId}/`);
+        console.log('the response of fetchMessages',response.data)
+
+        return response.data;
+    } catch (err) {
+        console.error("Error while creating or fetching chat room", err);
+        throw err;
+    }
+};
+
+export const shopFetchMessages = async (roomId) => {
+    try {
+        const response = await axiosInstance.get(`/shop/userchatroom/${roomId}/messages/`);
+        console.log('the response of fetchMessages',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while fetching messages", err);
+        throw err;
+    }
+};
+
+
+export const shopSendMessage = async (formData) => {
+    try {
+        console.log('the formdata inside the user api',formData)
+        const roomId = formData.get('room_id');
+        console.log('the formdata inside the user api',roomId)
+
+        const response = await axiosInstance.post(`/shop/userchatroom/${roomId}/messages/`, formData);
         console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {

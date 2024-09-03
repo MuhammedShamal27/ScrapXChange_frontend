@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserSideBar from "../../componets/user/UserSideBar";
 import UserFooter from "../../componets/user/UserFooter";
 import "../../styles/user.css";
-import { Phone, Search, SendHorizontal } from "lucide-react";
+import { Camera, CircleStop, Mic, Paperclip, Phone, Search, SendHorizontal, Video } from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
 import {
   createOrFetchChatRoom,
@@ -23,6 +23,13 @@ const UserChat = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [showMediaOptions, setShowMediaOptions] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const audioRef = useRef(null);
+  const fileInputRef = useRef(null);
   const token = useSelector((state) => state.auth.token);
 
   let user = null;
@@ -41,6 +48,7 @@ const UserChat = () => {
       try {
         if (searchQuery) {
           const response = await fetchAllShop(searchQuery);
+          console.log('the all shopps fetched',response)
           setShops(response);
         }
       } catch (error) {
@@ -69,35 +77,27 @@ const UserChat = () => {
 
   const handleShopClick = async (shop) => {
     try {
-      const chatRoom = await createOrFetchChatRoom(shop.shop.id);
-      console.log("the response of the chatroom", chatRoom);
-      console.log("the response of the chatroom id", chatRoom.id);
-
-      setSelectedShop(shop.shop);
-      console.log('the selected shop ',shop)
-      setChatRoom(chatRoom);
-      console.log('the chat room',chatRoom)
-      setSearchQuery(""); // Clear the search query to hide other shops
+        const chatRoom = await createOrFetchChatRoom(shop.shop.id);
+        setSelectedShop(shop.shop);       
+        setChatRoom(chatRoom);
+        console.log("the chat room", chatRoom);
+        setSearchQuery(""); // Clear the search query to hide other shops
 
       // Fetch messages for the selected chat room
       const response = await fetchMessages(chatRoom.id);
       console.log("the response of the fetchMessages", response);
       setMessages(response);
 
-      // Update chat rooms list
-    //   console.log('the room that exist before',prevRooms)
-      console.log('the room that exist ',chatRooms)
-      console.log('the room',chatRoom)
 
       setChatRooms((prevRooms) => {
-        console.log('Before Update:', prevRooms);
+        console.log("Before Update:", prevRooms);
         const exists = prevRooms.some((room) => room.id === chatRoom.id);
         if (!exists) {
-            const updatedRooms = [...prevRooms, chatRoom];
-            console.log('After Update:', updatedRooms);
+          const updatedRooms = [...prevRooms, chatRoom];
+          console.log("After Update:", updatedRooms);
           return [...prevRooms, chatRoom];
         }
-        console.log('No Update Needed:', prevRooms);
+        console.log("No Update Needed:", prevRooms);
         return prevRooms;
       });
     } catch (error) {
@@ -107,7 +107,10 @@ const UserChat = () => {
 
   const handleExistingChatClick = async (room) => {
     try {
+      console.log("the room of shop", room);
       console.log("the room of shop", room.shop);
+      console.log("the room of shop", room.shop.user);
+      
       setSelectedShop(room.shop);
       setChatRoom(room);
       setMessages(await fetchMessages(room.id));
@@ -117,24 +120,102 @@ const UserChat = () => {
   };
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === '' && !selectedFile && !audioBlob) return;
 
-    try {
-      const messageData = {
-        room_id: chatRoom.id,
-        receiver_id: selectedShop.id, // Assuming the receiver is the shop
-        message: newMessage,
+    try{
+
+        const formData = new FormData();
+        formData.append('room_id', chatRoom.id);
+        formData.append('receiver_id', selectedShop.user);
+        console.log('the selected shop id',selectedShop.user)
+        formData.append('message', newMessage);
+        
+        if (selectedFile) {
+            formData.append('file', selectedFile);
+        }
+
+        if (audioBlob) {
+            formData.append('audio', audioBlob, 'audio.webm');
+        }
+
+        for (let pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
+        }
+        
+        
+        
+            console.log("the response from the formData", formData);
+    
+            const response = await sendMessage(formData);
+            console.log('the response sending ',response)
+            setMessages([...messages, response]);
+            setNewMessage('');
+            setSelectedFile(null); // Reset the selected file after sending
+            setAudioBlob(null);
+    }
+    catch(error){
+        console.error("Error sending message:", error);
+    }
+
+};
+
+
+    const handlePaperclipClick = () => {
+        setShowMediaOptions(!showMediaOptions);
+    };
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+    const handleIconClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleMicClick = () => {
+        if (isRecording) {
+          mediaRecorder.stop();
+          console.log('the recodering is stopped',mediaRecorder)
+        } else {
+          startRecording();
+        }
       };
 
-      console.log("the response", messageData);
-      const response = await sendMessage(messageData);
-      setMessages([...messages, response]); // Append the new message to the list
-      setNewMessage(""); // Clear the input field
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-  
+    const startRecording = () => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+            console.log('started the audio recording')
+            const recorder = new MediaRecorder(stream);
+            setMediaRecorder(recorder);
+            recorder.ondataavailable = event => {
+                setAudioBlob(event.data);
+                setIsRecording(false);
+            };
+            recorder.start();
+            setMediaRecorder(recorder);     
+            setIsRecording(true);
+            
+            })
+            .catch(error => {
+            console.error("Error accessing microphone", error);
+            });
+    };
+
+    useEffect(() => {
+        if (mediaRecorder) {
+          mediaRecorder.onstop = async () => {
+            setIsRecording(false);
+            if (audioBlob) {
+              console.log('Audio Blob:', audioBlob);
+              await handleSendMessage();
+            }
+          };
+        }
+      }, [mediaRecorder]);
+    
+
   return (
     <>
       <UserNavBar />
@@ -176,20 +257,23 @@ const UserChat = () => {
                   </div>
                 ))}
 
-{!searchQuery && (
+              {!searchQuery && (
                 <div className="mb-4">
                   <h2 className="font-semibold mb-2">Your Chats</h2>
                   {chatRooms.length > 0 ? (
                     chatRooms.map((room) => {
-                      const lastMessage = room.messages.length > 0
-                        ? room.messages[room.messages.length - 1]
-                        : null;
+                      const lastMessage =
+                        room.messages.length > 0
+                          ? room.messages[room.messages.length - 1]
+                          : null;
 
                       return (
                         <div
                           key={room.id}
                           className={`flex items-center py-2 cursor-pointer ${
-                            selectedShop?.id === room.shop.id ? "bg-gray-200" : ""
+                            selectedShop?.id === room.shop.id
+                              ? "bg-gray-200"
+                              : ""
                           }`}
                           onClick={() => handleExistingChatClick(room)}
                         >
@@ -204,13 +288,21 @@ const UserChat = () => {
                                 {room.shop.shop_name}
                               </h1>
                               <p className="text-gray-500 text-xs">
-                              {lastMessage ? new Date(lastMessage.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
+                                {lastMessage
+                                  ? new Date(
+                                      lastMessage.timestamp
+                                    ).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : ""}
                               </p>
                             </div>
                             <p className="text-gray-500">
-                              {lastMessage ? lastMessage.message : "No messages yet"}
+                              {lastMessage
+                                ? lastMessage.message
+                                : "No messages yet"}
                             </p>
-                            
                           </div>
                         </div>
                       );
@@ -249,27 +341,30 @@ const UserChat = () => {
                     {Array.isArray(messages) &&
                       messages.map((msg) =>
                         msg && msg.id ? (
-                          <div
-                            key={msg.id}
-                            className={`flex ${
-                              msg.sender === user
-                                ? "justify-end"
-                                : "justify-start"
-                            }`}
-                          >
-                            <div
-                              className={`p-3 rounded-lg ${
-                                msg.sender === user
-                                  ? "bg-gray-300 text-black shadow-2xl"
-                                  : "bg-bgColor text-black shadow-2xl"
-                              }`}
-                            >
+                          <div key={msg.id}className={`flex ${ msg.sender === user ? "justify-end" : "justify-start"}`} >
+                            <div className={`p-3 rounded-lg ${msg.sender === user
+                                  ? "bg-gray text-black shadow-2xl"
+                                  : "bg-bgColor text-black shadow-2xl"   }`}  >
                               {msg.message}
-                              <span className="text-xs text-black ml-7">
-                                {new Date(msg.timestamp).toLocaleTimeString(
-                                  [],
-                                  { hour: "2-digit", minute: "2-digit" }
+                              {msg.image && (
+                                    <img
+                                    src={`http://127.0.0.1:8000${msg.image}`}
+                                    alt="image"
+                                    className="max-w-xs mt-2 rounded-lg"
+                                    />
                                 )}
+                              {msg.video && (
+                                <video src={`http://127.0.0.1:8000${msg.video}`}
+                                       controls
+                                       className="max-w-xs mt-2 rounded-lg" />
+                              )}
+                              {msg.audio && (
+                                <audio src={`http://127.0.0.1:8000${msg.audio}`}
+                                       controls
+                                       />
+                              )}
+                              <span className="text-xs text-black ml-7">
+                                {new Date(msg.timestamp).toLocaleTimeString( [],{ hour: "2-digit", minute: "2-digit" } )}
                               </span>
                             </div>
                           </div>
@@ -277,18 +372,39 @@ const UserChat = () => {
                       )}
                   </div>
 
-                  <div className="flex items-center border rounded-full p-3">
-                    <input
-                      className="border-none outline-none flex-grow bg-transparent"
-                      placeholder="Write something here..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <SendHorizontal
-                      size={20}
-                      className="text-blue-500 cursor-pointer"
-                      onClick={handleSendMessage}
-                    />
+                  <div className="flex items-center border rounded-full relative gap-3">
+                    <div>
+                        <Paperclip color="#a3aed0" onClick={handlePaperclipClick} className="cursor-pointer" />
+
+                        {showMediaOptions && (
+                            <div className="absolute bottom-full mb-2 flex space-x-2 bg-bgColor h-10 w-20 items-center p-2 shadow-2xl rounded-lg">
+                                <Camera  color="#a3aed0" className="cursor-pointer" onClick={handleIconClick} /> 
+                                <Video color="#a3aed0" className="cursor-pointer" onClick={handleIconClick}/>
+                            </div>
+                        )}
+
+                        <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+
+                    </div>  
+                        <input
+                        className="border-none outline-none flex-grow bg-transparent"
+                        placeholder="Write something here..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        />
+                        {newMessage.trim() === "" && !isRecording && !showMediaOptions ?  (
+                            <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleMicClick}>
+                                <Mic color="#ffffff" />
+                            </div>
+                        ) : isRecording ? (
+                            <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleMicClick}>
+                                <CircleStop color="#ffffff" />
+                            </div>
+                        ) : (
+                            <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleSendMessage}>
+                                <SendHorizontal color="#ffffff" />
+                            </div>
+                        )}
                   </div>
                 </>
               ) : (

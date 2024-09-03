@@ -208,9 +208,13 @@ export const fetchMessages = async (roomId) => {
     }
 };
 
-export const sendMessage = async (messageData) => {
+export const sendMessage = async (formData) => {
     try {
-        const response = await axiosInstance.post(`/user/chatroom/${messageData.room_id}/messages/`, messageData);
+        console.log('the formdata inside the user api',formData)
+        const roomId = formData.get('room_id');
+        console.log('the formdata inside the user api',roomId)
+
+        const response = await axiosInstance.post(`/user/chatroom/${roomId}/messages/`, formData);
         console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {
@@ -218,3 +222,5 @@ export const sendMessage = async (messageData) => {
         throw err;
     }
 };
+
+
