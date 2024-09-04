@@ -63,6 +63,14 @@ const UserChat = () => {
       try {
         const rooms = await fetchUserChatRooms();
         setChatRooms(rooms);
+        localStorage.setItem('chatRooms', JSON.stringify(rooms));
+        const savedChatRoom = JSON.parse(localStorage.getItem('chatRoom'));
+        const savedMessages = JSON.parse(localStorage.getItem('messages'));
+        if (savedChatRoom && savedMessages) {
+          setChatRoom(savedChatRoom);
+          setMessages(savedMessages);
+          setSelectedShop(savedChatRoom.shop);
+        }
       } catch (error) {
         console.log("Error fetching chat rooms", error);
       }
@@ -83,23 +91,28 @@ const UserChat = () => {
         console.log("the chat room", chatRoom);
         setSearchQuery(""); // Clear the search query to hide other shops
 
+        localStorage.setItem('chatRoom', JSON.stringify(chatRoom));
+        localStorage.setItem('selectedShop', JSON.stringify(shop.shop));
+
       // Fetch messages for the selected chat room
       const response = await fetchMessages(chatRoom.id);
       console.log("the response of the fetchMessages", response);
       setMessages(response);
 
+      localStorage.setItem('messages', JSON.stringify(response));
 
-      setChatRooms((prevRooms) => {
-        console.log("Before Update:", prevRooms);
-        const exists = prevRooms.some((room) => room.id === chatRoom.id);
-        if (!exists) {
-          const updatedRooms = [...prevRooms, chatRoom];
-          console.log("After Update:", updatedRooms);
-          return [...prevRooms, chatRoom];
-        }
-        console.log("No Update Needed:", prevRooms);
-        return prevRooms;
-      });
+
+      // setChatRooms((prevRooms) => {
+      //   console.log("Before Update:", prevRooms);
+      //   const exists = prevRooms.some((room) => room.id === chatRoom.id);
+      //   if (!exists) {
+      //     const updatedRooms = [...prevRooms, chatRoom];
+      //     console.log("After Update:", updatedRooms);
+      //     return [...prevRooms, chatRoom];
+      //   }
+      //   console.log("No Update Needed:", prevRooms);
+      //   return prevRooms;
+      // });
     } catch (error) {
       console.error("Error creating or fetching chat room", error);
     }
@@ -114,13 +127,17 @@ const UserChat = () => {
       setSelectedShop(room.shop);
       setChatRoom(room);
       setMessages(await fetchMessages(room.id));
+
+          // Save selected chat room and messages to local storage
+    localStorage.setItem('chatRoom', JSON.stringify(room));
+    localStorage.setItem('messages', JSON.stringify(messages));
     } catch (error) {
       console.error("Error fetching messages for existing chat room", error);
     }
   };
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === '' && !selectedFile && !audioBlob) return;
+  const handleSendMessage = async (blob = null) => {
+    if (newMessage.trim() === '' && !selectedFile && !blob) return;
 
     try{
 
@@ -134,8 +151,10 @@ const UserChat = () => {
             formData.append('file', selectedFile);
         }
 
-        if (audioBlob) {
-            formData.append('audio', audioBlob, 'audio.webm');
+        if (blob) {
+          formData.append('audio', blob, 'audio.webm');
+        } else if (audioBlob) {
+          formData.append('audio', audioBlob, 'audio.webm');
         }
 
         for (let pair of formData.entries()) {
@@ -189,12 +208,13 @@ const UserChat = () => {
             console.log('started the audio recording')
             const recorder = new MediaRecorder(stream);
             setMediaRecorder(recorder);
-            recorder.ondataavailable = event => {
-                setAudioBlob(event.data);
+            recorder.ondataavailable = async(event) => {
+                const blob = event.data;
+                setAudioBlob(blob );
                 setIsRecording(false);
+                await handleSendMessage(blob);
             };
             recorder.start();
-            setMediaRecorder(recorder);     
             setIsRecording(true);
             
             })
@@ -213,8 +233,24 @@ const UserChat = () => {
             }
           };
         }
-      }, [mediaRecorder]);
+      }, [mediaRecorder, audioBlob]);
     
+      useEffect(() => {
+        const savedChatRoom = JSON.parse(localStorage.getItem('chatRoom'));
+        const savedMessages = JSON.parse(localStorage.getItem('messages'));
+        const savedChatRooms = JSON.parse(localStorage.getItem('chatRooms'));
+      
+        if (savedChatRooms) {
+          setChatRooms(savedChatRooms);
+        }
+      
+        if (savedChatRoom && savedMessages) {
+          setChatRoom(savedChatRoom);
+          setMessages(savedMessages);
+          setSelectedShop(savedChatRoom.shop);
+        }
+      }, []);
+      
 
   return (
     <>

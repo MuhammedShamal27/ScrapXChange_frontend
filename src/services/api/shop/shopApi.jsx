@@ -348,7 +348,7 @@ export const shopCreateOrFetchChatRoom = async (userId) => {
     }
 };
 
-export const shopFetchMessages = async (roomId) => {
+export const fetchShopMessages = async (roomId) => {
     try {
         const response = await axiosInstance.get(`/shop/userchatroom/${roomId}/messages/`);
         console.log('the response of fetchMessages',response.data)
