@@ -5,7 +5,6 @@ import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
 import {Search,SendHorizontal,Phone,Paperclip,Camera,Video,Mic,CircleStop,} from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
 import { fetchAllUsers, fetchshopChatRooms, fetchShopMessages, shopCreateOrFetchChatRoom, shopSendMessage } from "../../services/api/shop/shopApi";
-import { fetchMessages } from "../../services/api/user/userApi";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 
@@ -24,6 +23,8 @@ const ShopChat = () => {
   const audioRef = useRef(null);
   const fileInputRef = useRef(null);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const socketRef = useRef(null);
 
   const token = useSelector((state) => state.shop.token);
 
@@ -31,9 +32,7 @@ const ShopChat = () => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      console.log('the token',decodedToken)
       shop = decodedToken.user_id; 
-      console.log("the user id id", shop);
     } catch (error) {
       console.error("Invalid token:", error);
     }
@@ -133,13 +132,12 @@ const startRecording = () => {
         console.log('started the audio recording')
         const recorder = new MediaRecorder(stream);
         setMediaRecorder(recorder);
-        recorder.ondataavailable = async(event) => {
-            const blob=event.data;
-            setAudioBlob(blob);
+        recorder.ondataavailable = event => {
+            setAudioBlob(event.data);
             setIsRecording(false);
-            await handleSendMessage(blob);
         };
         recorder.start();
+        setMediaRecorder(recorder);     
         setIsRecording(true);
         
         })
@@ -158,11 +156,11 @@ useEffect(() => {
         }
       };
     }
-  }, [mediaRecorder, audioBlob]);
+  }, [mediaRecorder]);
 
 
-  const handleSendMessage = async (blob = null) => {
-    if (newMessage.trim() === '' && !selectedFile && !blob) return;
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === '' && !selectedFile && !audioBlob) return;
 
     try{
 
@@ -176,11 +174,45 @@ useEffect(() => {
             formData.append('file', selectedFile);
         }
 
-        if (blob) {
-          formData.append('audio', blob, 'audio.webm');
-        } else if (audioBlob) {
-          formData.append('audio', audioBlob, 'audio.webm');
+        if (audioBlob) {
+            formData.append('audio', audioBlob, 'audio.webm');
         }
+    // Prepare the message payload
+    const messagePayload = {
+      message: newMessage,
+      room_id: chatRoom.id,
+      sender_id: shop,
+      receiver_id: selectedUser.id,
+    };
+
+    // Check if the WebSocket is open before sending a message
+    if (
+      socketRef.current &&
+      isSocketConnected &&
+      socketRef.current.readyState === WebSocket.OPEN
+    ) {
+      console.log("Sending message via WebSocket:", messagePayload);
+      socketRef.current.send(JSON.stringify(messagePayload));
+    } else {
+      console.error("WebSocket is not connected. Message not sent.");
+      return;
+    }
+
+            // Check if the WebSocket is open before sending a message
+    // if (socketRef.current && isSocketConnected && socketRef.current.readyState === WebSocket.OPEN) {
+    //   socketRef.current.send(
+    //     JSON.stringify({
+    //       message: newMessage,
+    //       room_id: chatRoom.id,
+    //       sender_id: shop,
+    //       receiver_id: selectedUser.id,
+    //     })
+    //   );
+    // } else {
+    //   console.error("WebSocket is not connected. Message not sent.");
+    //   return;
+    // }
+
 
         for (let pair of formData.entries()) {
             console.log(`${pair[0]}: ${pair[1]}`);
@@ -192,16 +224,72 @@ useEffect(() => {
     
             const response = await shopSendMessage(formData);
             console.log('the response sending ',response)
+
+
+            // setMessages((prevMessages) => {
+            //   const messageIds = new Set(prevMessages.map(msg => msg.id));
+            //   const filteredMessages = [...prevMessages, response].filter(msg => !messageIds.has(msg.id));
+            //   console.log('the filtered messages',filteredMessages)
+            //   return filteredMessages;
+            // });
             setMessages([...messages, response]);
             setNewMessage('');
             setSelectedFile(null); // Reset the selected file after sending
             setAudioBlob(null);
+
+
     }
     catch(error){
         console.error("Error sending message:", error);
     }
 
 };
+
+useEffect(() => {
+  if (chatRoom) {
+    // const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsEndpoint = `ws://127.0.0.1:8000/ws/chat/${chatRoom.id}/`;
+    socketRef.current = new WebSocket(wsEndpoint);
+
+    console.log("Attempting WebSocket connection to:", wsEndpoint);
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connection opened!");
+      setIsSocketConnected(true);  // Set the connection status to true when the WebSocket opens
+    };
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('the data shows',data)
+      // setMessages((prevMessages) => [...prevMessages, data]);
+        // Add log to check if messages are being updated correctly
+        setMessages((prevMessages) => {
+          // Check for duplicates
+          const isDuplicate = prevMessages.some(msg => msg.id === data.id);
+          if (isDuplicate) {
+            console.log('Duplicate message detected:', data);
+            return prevMessages;
+          }
+          console.log('Adding new message:', data);
+          return [...prevMessages, data];
+        });
+    };
+
+    socketRef.current.onclose = () => {
+      console.log("WebSocket connection closed!");
+      setIsSocketConnected(false);  // Reset the connection status when closed
+    };
+
+    socketRef.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      console.log("Closing WebSocket connection.");
+      socketRef.current.close();
+    };
+  }
+}, [chatRoom]);
 
 
   return (
@@ -316,9 +404,9 @@ useEffect(() => {
                     </div>
                     <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
                     {Array.isArray(messages) &&
-                      messages.map((msg) =>
-                        msg && msg.id ? (
-                          <div key={msg.id}className={`flex ${ msg.sender === shop ? "justify-end" : "justify-start"}`} >
+                      messages.map((msg,index) =>
+                        
+                          <div key={index}className={`flex ${ msg.sender === shop ? "justify-end" : "justify-start"}`} >
                             <div className={`p-3 rounded-lg ${msg.sender === shop ? "bg-bgColor text-black shadow-2xl"
                                   : "bg-gray text-black shadow-2xl"   }`}  >
                               {msg.message}
@@ -344,7 +432,7 @@ useEffect(() => {
                               </span>
                             </div>
                           </div>
-                        ) : null
+                        
                       )}
                     </div>
     

@@ -10,7 +10,7 @@ function ProtectedRoute  ({ children,shop,admin }) {
 
 
     useEffect(()=>{
-        console.log("Token in ProtectedRoute:", isToken);
+        // console.log("Token in ProtectedRoute:", isToken);
         if (!isToken) {
             navigate( admin ? '/admin/login' : shop ? '/shop/login' : '/login');
         }
