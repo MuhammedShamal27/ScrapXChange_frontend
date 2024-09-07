@@ -2,12 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import ShopNavBar from "../../componets/shop/ShopNavBar";
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
-import {Search,SendHorizontal,Phone,Paperclip,Camera,Video,Mic,CircleStop,} from "lucide-react";
+import {Search} from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
-import { fetchAllUsers, fetchshopChatRooms, fetchShopMessages, shopCreateOrFetchChatRoom, shopSendMessage } from "../../services/api/shop/shopApi";
-import { jwtDecode } from "jwt-decode";
-import { useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { fetchAllUsers, fetchshopChatRooms, shopCreateOrFetchChatRoom } from "../../services/api/shop/shopApi";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const ShopChat = () => {
   const [users, setUsers] = useState([]);
@@ -15,20 +13,7 @@ const ShopChat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatRoom, setChatRoom] = useState(null);
   const [chatRooms, setChatRooms] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const audioRef = useRef(null);
-  const fileInputRef = useRef(null);
-  const [showMediaOptions, setShowMediaOptions] = useState(false);
-  const [isSocketConnected, setIsSocketConnected] = useState(false);
-  const socketRef = useRef(null);
-
-  const token = useSelector((state) => state.shop.token);
-
+  const navigate = useNavigate();
 
 
 
@@ -75,10 +60,6 @@ const ShopChat = () => {
         setSelectedUser(user)
         setChatRoom(chatRoom)
         setSearchQuery("");
-
-        const response = await fetchShopMessages(chatRoom.id)
-        console.log('the messages sended and recived',response)
-        setMessages(response)
     }catch(error){
         console.error('some error happend while creating or fetching.',error)
     }
@@ -87,10 +68,14 @@ const ShopChat = () => {
   const handleExistingChatClick = async (room) => {
     try {
       console.log("the room of shop", room);
-      
+
       setSelectedUser(room.user);
       setChatRoom(room);
-      setMessages(await fetchShopMessages(room.id));
+      console.log('the chat that is navigating',chatRoom)
+      setTimeout(() => {
+        navigate(`/shop/shopChat/messages/${room.id}`);
+      }, 0);
+
     } catch (error) {
       console.error("Error fetching messages for existing chat room", error);
     }
@@ -132,23 +117,10 @@ const ShopChat = () => {
             {!searchQuery && (
                 <div className="mb-4">
                   <h2 className="font-semibold mb-2">Your Chats</h2>
-                  {chatRooms.length > 0 ? (
-                    chatRooms.map((room) => {
-                      const lastMessage =
-                        room.messages.length > 0
-                          ? room.messages[room.messages.length - 1]
-                          : null;
-
+                  {chatRooms.length > 0 ? (chatRooms.map((room) => {
                       return (
-                        <div
-                          key={room.id}
-                          className={`flex items-center py-2 cursor-pointer ${
-                            selectedUser?.id === room.user.id
-                              ? "bg-gray-200"
-                              : ""
-                          }`}
-                          onClick={() => handleExistingChatClick(room)}
-                        >
+                        <div key={room.id} className={`flex items-center py-2 cursor-pointer ${
+                            selectedUser?.id === room.user.id? "bg-gray-200": ""}`}onClick={() => handleExistingChatClick(room)}>
                           <img
                             src={room.user.User_profile.profile_picture}
                             alt=""
@@ -156,38 +128,22 @@ const ShopChat = () => {
                           />
                           <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
-                              <h1 className="font-semibold">
-                                {room.user.username}
-                              </h1>
+                              <h1 className="font-semibold">{room.user.username}</h1>
                               <p className="text-gray-500 text-xs">
-                                {lastMessage
-                                  ? new Date(
-                                      lastMessage.timestamp
-                                    ).toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })
-                                  : ""}
                               </p>
                             </div>
-                            <p className="text-gray-500">
-                              {lastMessage
-                                ? lastMessage.message
-                                : "No messages yet"}
-                            </p>
+                            <p className="text-gray-500"> </p>
                           </div>
                         </div>
                       );
                     })
-                  ) : (
-                    <p className="text-gray-500 text-sm">No existing chats.</p>
-                  )}
+                  ) : (<p className="text-gray-500 text-sm">No existing chats.</p>)}
                 </div>
               )}
             </div>
 
             {/* Right Side - Chat Area */}
-            <Outlet/>
+            <Outlet context={{ selectedUser, chatRoom }}/>
           </div>
         </div>
       </div>

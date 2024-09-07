@@ -17,6 +17,7 @@ import ScrapCollection from "../../pages/shop/ScrapCollection";
 import ScrapCollectioinConfirmation from "../../pages/shop/ScrapCollectioinConfirmation";
 import Invoice from "../../pages/shop/Invoice";
 import ShopChat from "../../pages/shop/ShopChat";
+import { ShopMessageBox } from "../../componets/shop/ShopMessageBox";
 
 
 const shopRouter = 
@@ -83,7 +84,13 @@ const shopRouter =
         },
         {
             path: 'shopChat',
-            element: <ProtectedRoute shop><ShopChat/></ProtectedRoute>
+            element: <ProtectedRoute shop><ShopChat/></ProtectedRoute>,
+            children : [
+                {
+                    path :'Messages/:roomId',
+                    element : <ProtectedRoute shop><ShopMessageBox/></ProtectedRoute>,
+                }
+            ]
         }
     ]
 };
