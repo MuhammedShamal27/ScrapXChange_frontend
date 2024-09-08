@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { shopSendMessage } from "../../services/api/shop/shopApi";
 
 export const ShopMessageBox = () => {
   const { roomId } = useParams();
@@ -103,59 +104,84 @@ export const ShopMessageBox = () => {
       socket.current.off("receive_message", handleMessage); // Cleanup listener
     };
   }, []); // Empty dependency array because you only want this to run once
-  
-  
-  
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
+    // useEffect(() => {
+    //     if (socket.current) {
+    //     // Listen for new messages
+    //     socket.current.on("new_message", (messageData) => {
+    //         if (messageData.room_id === chatRoom.id) {
+    //         // Update the chat messages state with the new message
+    //         setMessages((prevMessages) => [...prevMessages, messageData.message]);
+    //         }
+    //     });
+    
+    //     // Cleanup listener when component unmounts
+    //     return () => {
+    //         socket.current.off("new_message");
+    //     };
+    //     }
+    // }, [socket.current, chatRoom.id]);
+    
+    const handleSendMessage = async () => {
+        if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
+      
+        try {
+          let messagePayload = {
+            message: newMessage,
+            room_id: chatRoom.id,
+            sender_id: shop,
+            receiver_id: selectedUser.id,
+          };
+      
+          // Handle file sending via API
+          if (selectedFile || audioBlob) {
+            const formData = new FormData();
+            formData.append("room_id", chatRoom.id);
+            formData.append("receiver_id", selectedUser.id);
+            formData.append("message", newMessage);
+      
+            if (selectedFile) {
+              formData.append("file", selectedFile);
+            }
+      
+            if (audioBlob) {
+              formData.append("audio", audioBlob, "audio.webm");
+            }
+      
+            // Send the file via API and get the response
+            const response = await shopSendMessage(formData); // API call
+            console.log('the response comming for shop send message',response)
 
-    try {
-        
-      const formData = new FormData();
-      formData.append("room_id", chatRoom.id);
-      formData.append("receiver_id", selectedUser.id);
-      console.log("the selected user id", selectedUser.id);
-      formData.append("message", newMessage);
-
-      if (selectedFile) {
-        formData.append("file", selectedFile);
-      }
-
-      if (audioBlob) {
-        formData.append("audio", audioBlob, "audio.webm");
-      }
-      // Prepare the message payload
-      const messagePayload = {
-        message: newMessage,
-        room_id: chatRoom.id,
-        sender_id: shop,
-        receiver_id: selectedUser.id,
+            // Add the file URL to the WebSocket payload based on response
+            if (response.image) {
+              messagePayload.image = response.image;
+            }
+            if (response.video) {
+              messagePayload.video = response.video;
+            }
+            if (response.audio) {
+                console.log('is audio')
+              messagePayload.audio = response.audio;
+            }
+      
+            // Reset file and audio input after sending
+            setSelectedFile(null);
+            setAudioBlob(null);
+          }
+      
+          // WebSocket send logic
+          if (socket.current && socket.current.connected) {
+            socket.current.emit("send_message", messagePayload);
+          } else {
+            console.error("Socket.IO is not connected. Message not sent.");
+          }
+      
+          setNewMessage(""); // Clear the message input
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
       };
-      console.log("Message payload::", messagePayload);
-      console.log("WebSocket state:", socket.current); // 0: CONNECTING, 1: OPEN, 2: CLOSING, 3: CLOSED
-      console.log("WebSocket state connected:", socket.current.connected);
-      // Check if the Socket.IO connection is open before sending a message
-      if (socket.current && socket.current.connected) {
-        console.log("Socket.IO is connected, sending message");
-        socket.current.emit("send_message", messagePayload);
-      } else {
-        console.error("Socket.IO is not connected. Message not sent.");
-      }
-
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
-    //   setMessages((prevMessages) => [...prevMessages, messagePayload]);
-      console.log("Message added to state",messages);
-      setNewMessage("");
-      setSelectedFile(null); // Reset the selected file after sending
-      setAudioBlob(null);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+      
 
   const handlePaperclipClick = () => {
     setShowMediaOptions(!showMediaOptions);
