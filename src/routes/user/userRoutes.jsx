@@ -16,6 +16,7 @@ import ScrapList from '../../pages/user/ScrapList';
 import ProtectedRoute from '../ProtectedRoute';
 import UserChat from '../../pages/user/UserChat';
 import UserMessageBox from '../../componets/user/UserMessageBox';
+import UserAudioCall from '../../componets/user/UserAudioCall';
 
 
 
@@ -49,6 +50,10 @@ const userRoutes = createBrowserRouter([
                     {
                         path: 'messages/:roomId',
                         element: <ProtectedRoute><UserMessageBox /></ProtectedRoute>,
+                    },
+                    {
+                        path: 'audioCall/:roomId',
+                        element: <ProtectedRoute><UserAudioCall /></ProtectedRoute>,
                     },
                 ],
             },

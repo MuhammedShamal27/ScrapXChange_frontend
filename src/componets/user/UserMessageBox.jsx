@@ -16,6 +16,8 @@ import { fetchMessages, sendMessage } from "../../services/api/user/userApi";
 import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { Outlet,useNavigate } from "react-router-dom";
+
 
 const UserMessageBox = () => {
   const { roomId } = useParams();
@@ -32,6 +34,8 @@ const UserMessageBox = () => {
   const token = useSelector((state) => state.auth.token);
   const socket = useRef();
   const scrollRef = useRef();
+  const navigate = useNavigate();
+
   let user = null;
   if (token) {
     try {
@@ -229,6 +233,28 @@ const UserMessageBox = () => {
     }
   }, [mediaRecorder]);
 
+  //---audio call
+
+  const handleAudioCallClick = async () => {
+    const peerConnection = new RTCPeerConnection();
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    localStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localStream);
+    });
+    
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    const offerData = { offer, from: user, roomId };
+    
+    // Emit the offer to the backend
+    socket.current.emit("call_user", offerData);
+
+    // Navigate to the audio call page and pass the offer data via state
+    navigate(`/userChat/audioCall/${roomId}`, { state: { offerData } });
+};
+
   return (
     <div className="flex flex-col flex-grow">
       {selectedShop ? (
@@ -246,7 +272,8 @@ const UserMessageBox = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <Phone color="#a3aed0" size={20} />
+                <Outlet />
+                <Phone  color="#a3aed0" size={20} onClick={handleAudioCallClick} />
               <Search color="#a3aed0" size={20} />
             </div>
           </div>

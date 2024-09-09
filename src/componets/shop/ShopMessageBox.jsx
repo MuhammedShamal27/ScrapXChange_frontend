@@ -15,8 +15,9 @@ import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { fetchShopMessages, shopSendMessage } from "../../services/api/shop/shopApi";
+import { Outlet,useNavigate } from "react-router-dom";
 
-export const ShopMessageBox = () => {
+const ShopMessageBox = () => {
   const { roomId } = useParams();
   const { selectedUser, chatRoom } = useOutletContext();
   const [messages, setMessages] = useState([]);
@@ -29,6 +30,7 @@ export const ShopMessageBox = () => {
   const fileInputRef = useRef(null);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const socket = useRef();
+  const navigate = useNavigate();  
   const token = useSelector((state) => state.shop.token);
   const scrollRef = useRef();
 
@@ -230,6 +232,31 @@ export const ShopMessageBox = () => {
     }
   }, [mediaRecorder]);
 
+
+  //audio call
+
+  const handleAudioCallClick = async () => {
+    const peerConnection = new RTCPeerConnection();
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    localStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localStream);
+    });
+    
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    const offerData = { offer, from: shop, roomId };
+    
+    // Emit the offer to the backend
+    socket.current.emit("call_user", offerData);
+
+    // Navigate to the audio call page and pass the offer data via state
+    navigate(`/shop/shopChat/audioCall/${roomId}`, { state: { offerData } });
+};
+
+  
+
   return (
     <div className="flex flex-col flex-grow">
       {selectedUser ? (
@@ -247,7 +274,9 @@ export const ShopMessageBox = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <Phone color="#a3aed0" size={20} />
+
+              <Outlet />
+              <Phone  color="#a3aed0" size={20} onClick={handleAudioCallClick} />
               <Search color="#a3aed0" size={20} />
             </div>
           </div>
@@ -341,3 +370,7 @@ export const ShopMessageBox = () => {
     </div>
   );
 };
+
+
+
+export default ShopMessageBox;

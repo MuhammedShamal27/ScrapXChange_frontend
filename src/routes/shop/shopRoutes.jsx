@@ -17,7 +17,8 @@ import ScrapCollection from "../../pages/shop/ScrapCollection";
 import ScrapCollectioinConfirmation from "../../pages/shop/ScrapCollectioinConfirmation";
 import Invoice from "../../pages/shop/Invoice";
 import ShopChat from "../../pages/shop/ShopChat";
-import { ShopMessageBox } from "../../componets/shop/ShopMessageBox";
+import ShopMessageBox from "../../componets/shop/ShopMessageBox";
+import ShopAudioCall from "../../componets/shop/ShopAudioCall";
 
 
 const shopRouter = 
@@ -89,6 +90,10 @@ const shopRouter =
                 {
                     path :'Messages/:roomId',
                     element : <ProtectedRoute shop><ShopMessageBox/></ProtectedRoute>,
+                },
+                {
+                    path :'audioCall/:roomId',
+                    element : <ProtectedRoute shop><ShopAudioCall/></ProtectedRoute>,
                 }
             ]
         }
