@@ -1,20 +1,20 @@
-import { jwtDecode } from "jwt-decode";
-import {
-  Camera,
-  CircleStop,
-  Mic,
-  Paperclip,
-  Phone,
-  Search,
-  SendHorizontal,
-  Video,
-} from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import {
+    Camera,
+    CircleStop,
+    Mic,
+    Paperclip,
+    Phone,
+    Search,
+    SendHorizontal,
+    Video,
+} from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { shopSendMessage } from "../../services/api/shop/shopApi";
+import { fetchShopMessages, shopSendMessage } from "../../services/api/shop/shopApi";
 
 export const ShopMessageBox = () => {
   const { roomId } = useParams();
@@ -47,21 +47,28 @@ export const ShopMessageBox = () => {
   }, [messages]);
 
 
-
+    // Fetch old messages when the component mounts
+    useEffect(() => {
+        if (roomId) {
+          fetchShopMessages(roomId).then((fetchedMessages) => {
+            setMessages(fetchedMessages);
+          }).catch((err) => console.error("Error fetching messages:", err));
+        }
+      }, [roomId]);
 
   useEffect(() => {
-    if (!chatRoom?.id) return;
+    if (!roomId) return;
 
     let reconnectInterval;
 
 
-    console.log("Attempting WebSocket connection to:", chatRoom.id);
+    console.log("Attempting WebSocket connection to:", roomId);
     // Establish WebSocket connection using native WebSocket
     // socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'],});
     socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'], debug: true });
 
     console.log("WebSocket reference:", socket.current);
-    socket.current.emit('join_room', { room_id: chatRoom.id, shop_id: shop });
+    socket.current.emit('join_room', { room_id: roomId, shop_id: shop });
 
     // Listen for connection event
     socket.current.on("connect", () => {
@@ -72,6 +79,7 @@ export const ShopMessageBox = () => {
     // Handle Socket.IO error event
     socket.current.on("connect_error", (error) => {
         console.error("Socket.IO connection error:", error);
+        clearInterval(reconnectInterval);
       });
 
     // Handle disconnection and automatic reconnection
@@ -88,7 +96,7 @@ export const ShopMessageBox = () => {
       socket.current.disconnect(); // Clean up WebSocket connection
       clearInterval(reconnectInterval);
     };
-  }, [chatRoom.id]);
+  }, [roomId]);
 
   useEffect(() => {
     if (!socket.current) return;
@@ -105,22 +113,6 @@ export const ShopMessageBox = () => {
     };
   }, []); // Empty dependency array because you only want this to run once
 
-    // useEffect(() => {
-    //     if (socket.current) {
-    //     // Listen for new messages
-    //     socket.current.on("new_message", (messageData) => {
-    //         if (messageData.room_id === chatRoom.id) {
-    //         // Update the chat messages state with the new message
-    //         setMessages((prevMessages) => [...prevMessages, messageData.message]);
-    //         }
-    //     });
-    
-    //     // Cleanup listener when component unmounts
-    //     return () => {
-    //         socket.current.off("new_message");
-    //     };
-    //     }
-    // }, [socket.current, chatRoom.id]);
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
@@ -128,7 +120,7 @@ export const ShopMessageBox = () => {
         try {
           let messagePayload = {
             message: newMessage,
-            room_id: chatRoom.id,
+            room_id: roomId,
             sender_id: shop,
             receiver_id: selectedUser.id,
           };
@@ -136,7 +128,7 @@ export const ShopMessageBox = () => {
           // Handle file sending via API
           if (selectedFile || audioBlob) {
             const formData = new FormData();
-            formData.append("room_id", chatRoom.id);
+            formData.append("room_id", roomId);
             formData.append("receiver_id", selectedUser.id);
             formData.append("message", newMessage);
       

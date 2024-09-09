@@ -9,11 +9,11 @@ import {
   SendHorizontal,
   Video,
 } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 import { useRef } from "react";
 import SA_profile from "../../assets/SA_profile.png";
 import { fetchMessages, sendMessage } from "../../services/api/user/userApi";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 
@@ -33,7 +33,6 @@ const UserMessageBox = () => {
   const socket = useRef();
   const scrollRef = useRef();
   let user = null;
-
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
@@ -47,15 +46,21 @@ const UserMessageBox = () => {
     scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
-    if (!chatRoom || !chatRoom.id) {
-      console.log("No chat room selected or chatRoom is undefined.");
-      return; // Exit if chatRoom or its id is not available
+    // Fetch old messages when the component mounts
+    useEffect(() => {
+    if (roomId) {
+        fetchMessages(roomId).then((fetchedMessages) => {
+        setMessages(fetchedMessages);
+        }).catch((err) => console.error("Error fetching messages:", err));
     }
+    }, [roomId]);
+
+  useEffect(() => {
+    if (!roomId) return;
   
     let reconnectInterval;
   
-    console.log("Attempting WebSocket connection to:", chatRoom.id);
+    console.log("Attempting WebSocket connection to:", roomId);
   
     socket.current = io("http://127.0.0.1:8000", {
       transports: ["websocket"],
@@ -64,7 +69,7 @@ const UserMessageBox = () => {
   
     console.log("WebSocket reference:", socket.current);
   
-    socket.current.emit("join_room", { room_id: chatRoom.id, user_id: user });
+    socket.current.emit("join_room", { room_id: roomId, user_id: user });
   
     socket.current.on("connect", () => {
       console.log("Connected to Socket.IO server");
@@ -74,6 +79,7 @@ const UserMessageBox = () => {
   
     socket.current.on("connect_error", (error) => {
       console.error("Socket.IO connection error:", error);
+      clearInterval(reconnectInterval);
     });
   
     socket.current.on("disconnect", () => {
@@ -89,7 +95,7 @@ const UserMessageBox = () => {
       socket.current.disconnect();
       clearInterval(reconnectInterval);
     };
-  }, [chatRoom]);
+  }, [roomId]);
 
 
   useEffect(() => {
@@ -112,50 +118,60 @@ const UserMessageBox = () => {
     if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
 
     try {
-      const formData = new FormData();
-      formData.append("room_id", chatRoom.id);
-      formData.append("receiver_id", selectedShop.user);
-      console.log("the selected shop id", selectedShop.user);
-      formData.append("message", newMessage);
+        let messagePayload = {
+          message: newMessage,
+          room_id: roomId,
+          sender_id: user,
+          receiver_id: selectedShop.id,
+        };
+    
+        // Handle file sending via API
+        if (selectedFile || audioBlob) {
+          const formData = new FormData();
+          formData.append("room_id", roomId);
+          formData.append("receiver_id", selectedShop.id);
+          formData.append("message", newMessage);
+    
+          if (selectedFile) {
+            formData.append("file", selectedFile);
+          }
+    
+          if (audioBlob) {
+            formData.append("audio", audioBlob, "audio.webm");
+          }
+    
+          // Send the file via API and get the response
+          const response = await sendMessage(formData); // API call
+          console.log('the response comming for shop send message',response)
 
-      if (selectedFile) {
-        formData.append("file", selectedFile);
+          // Add the file URL to the WebSocket payload based on response
+          if (response.image) {
+            messagePayload.image = response.image;
+          }
+          if (response.video) {
+            messagePayload.video = response.video;
+          }
+          if (response.audio) {
+              console.log('is audio')
+            messagePayload.audio = response.audio;
+          }
+    
+          // Reset file and audio input after sending
+          setSelectedFile(null);
+          setAudioBlob(null);
+        }
+    
+        // WebSocket send logic
+        if (socket.current && socket.current.connected) {
+          socket.current.emit("send_message", messagePayload);
+        } else {
+          console.error("Socket.IO is not connected. Message not sent.");
+        }
+    
+        setNewMessage(""); // Clear the message input
+      } catch (error) {
+        console.error("Error sending message:", error);
       }
-
-      if (audioBlob) {
-        formData.append("audio", audioBlob, "audio.webm");
-      }
-
-      const messagePayload = {
-        message: newMessage,
-        room_id: chatRoom.id,
-        sender_id: user,
-        receiver_id: selectedShop.user,
-      };
-      console.log("Message payload::", messagePayload);
-      console.log("WebSocket state:", socket.current);
-
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
-
-      if (socket.current && socket.current.connected) {
-        console.log("Socket.IO is connected, sending message");
-        socket.current.emit("send_message", messagePayload);
-      } else {
-        console.error("Socket.IO is not connected. Message not sent.");
-        return;
-      }
-
-    //   setMessages((prevMessages) => [...prevMessages, messagePayload]);
-      console.log("Message added to state");
-      setNewMessage("");
-      setSelectedFile(null); // Reset the selected file after sending
-      setAudioBlob(null);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
   };
 
   const handlePaperclipClick = () => {
