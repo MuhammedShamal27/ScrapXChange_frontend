@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { Outlet,useNavigate } from "react-router-dom";
+import AudioCallModal from "../AudioCallModal";
 
 
 const UserMessageBox = () => {
@@ -32,6 +33,7 @@ const UserMessageBox = () => {
   const audioRef = useRef(null);
   const fileInputRef = useRef(null);
   const token = useSelector((state) => state.auth.token);
+  const [showModal, setShowModal] = useState(false); // Modal state
   const socket = useRef();
   const scrollRef = useRef();
   const navigate = useNavigate();
@@ -235,25 +237,85 @@ const UserMessageBox = () => {
 
   //---audio call
 
-  const handleAudioCallClick = async () => {
-    const peerConnection = new RTCPeerConnection();
-    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    
-    localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStream);
+  // Generate random ID
+  const randomID = (len = 5) => {
+    let result = "";
+    const chars = "12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP";
+    for (let i = 0; i < len; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+
+  console.log('the shop id',selectedShop.id)
+  const handlePhoneClick = () => {
+    const callId = randomID(); // Generate random ID for the call
+    socket.current.emit("audio_call", {
+      callId,
+      sender_id: user,
+      receiver_id: selectedShop.id, 
+      room_id: roomId,
+      message: "Calling"
     });
-    
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
+  
+  };
+  
 
-    const offerData = { offer, from: user, roomId };
-    
-    // Emit the offer to the backend
-    socket.current.emit("call_user", offerData);
+  const handleAcceptCall = () => { 
+    socket.current.emit("audio_call", {
+      callId,
+      sender_id: user, // Shop accepting the call
+      receiver_id: selectedShop.id, 
+      room_id: roomId
+    });
+    navigate(`/userChat/audioCall/${roomId}/${callId}`);
+  };
+  
 
-    // Navigate to the audio call page and pass the offer data via state
-    navigate(`/userChat/audioCall/${roomId}`, { state: { offerData } });
-};
+  const handleDeclineCall = () => {
+    socket.current.emit("audio_call", {
+      message: "call_declined",
+      sender_id: user,
+      receiver_id: selectedShop.id,
+      room_id: roomId
+    });
+    setShowModal(false);
+  };
+  useEffect(() => {
+    if (!socket.current) return;
+  
+    const handleMessage = (data) => {
+      if (data.message === "call_declined" && data.receiver_id === user) {
+        // Handle call decline
+        alert("The call was declined.");
+      }
+    };
+  
+    socket.current.on("receive_message", handleMessage);
+  
+    return () => {
+      socket.current.off("receive_message", handleMessage); // Cleanup listener
+    };
+  }, []);
+  useEffect(() => {
+    if (!socket.current) return;
+  
+    const handleMessage = (data) => {
+      if (data.message === "incoming_call") {
+        if (data.receiver_id === user) {
+          // This shop is receiving the call
+          setShowModal(true);
+        }
+      }
+    };
+  
+    socket.current.on("receive_message", handleMessage);
+  
+    return () => {
+      socket.current.off("receive_message", handleMessage); // Cleanup listener
+    };
+  }, []);
 
   return (
     <div className="flex flex-col flex-grow">
@@ -273,10 +335,18 @@ const UserMessageBox = () => {
             </div>
             <div className="flex space-x-4">
                 <Outlet />
-                <Phone  color="#a3aed0" size={20} onClick={handleAudioCallClick} />
+                <Phone  color="#a3aed0" size={20} onClick={handlePhoneClick} className="cursor-pointer"  />
               <Search color="#a3aed0" size={20} />
             </div>
           </div>
+
+          {showModal && (
+            <AudioCallModal>
+              <h2>Incoming Call</h2>
+              <button onClick={handleAcceptCall}>Accept</button>
+              <button onClick={handleDeclineCall}>Decline</button>
+            </AudioCallModal>
+          )}
           <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
             {Array.isArray(messages) &&
               messages.map((msg, index) => (
