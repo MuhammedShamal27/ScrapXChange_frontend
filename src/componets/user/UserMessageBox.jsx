@@ -34,10 +34,12 @@ const UserMessageBox = () => {
   const fileInputRef = useRef(null);
   const token = useSelector((state) => state.auth.token);
   const [showModal, setShowModal] = useState(false); // Modal state
+  const [callId, setCallId] = useState(null);
   const socket = useRef();
   const scrollRef = useRef();
   const navigate = useNavigate();
 
+  
   let user = null;
   if (token) {
     try {
@@ -248,29 +250,33 @@ const UserMessageBox = () => {
   };
 
 
-  console.log('the shop id',selectedShop.id)
+  
   const handlePhoneClick = () => {
     const callId = randomID(); // Generate random ID for the call
     socket.current.emit("audio_call", {
       callId,
       sender_id: user,
-      receiver_id: selectedShop.id, 
+      receiver_id: selectedShop.user, 
       room_id: roomId,
       message: "Calling"
     });
-  
+    navigate(`/userChat/audioCall/${roomId}/${callId}`);
   };
   
 
   const handleAcceptCall = () => { 
-    socket.current.emit("audio_call", {
-      callId,
-      sender_id: user, // Shop accepting the call
-      receiver_id: selectedShop.id, 
-      room_id: roomId
-    });
-    navigate(`/userChat/audioCall/${roomId}/${callId}`);
-  };
+    if (callId){
+      socket.current.emit("audio_call", {
+        callId,
+        sender_id: user, // Shop accepting the call
+        receiver_id: selectedShop.user, 
+        room_id: roomId,
+        message: "call_accepted"
+      });
+      navigate(`/userChat/audioCall/${roomId}/${callId}`);
+    };
+    }
+
   
 
   const handleDeclineCall = () => {
@@ -282,14 +288,24 @@ const UserMessageBox = () => {
     });
     setShowModal(false);
   };
+
   useEffect(() => {
     if (!socket.current) return;
   
     const handleMessage = (data) => {
-      if (data.message === "call_declined" && data.receiver_id === user) {
-        // Handle call decline
-        alert("The call was declined.");
-      }
+      console.log('the data comming to the handle message',data)
+
+          // Check if the current user/shop is the receiver
+    if (data.message === "Calling" && data.receiver_id === user) {
+      setCallId(data.callId);
+      // Show the incoming call modal
+      setShowModal(true);
+    } 
+
+    if (data.message === "call_declined" && data.receiver_id === user) {
+      alert("The call was declined.");
+      setShowModal(false);
+    }
     };
   
     socket.current.on("receive_message", handleMessage);
@@ -297,25 +313,9 @@ const UserMessageBox = () => {
     return () => {
       socket.current.off("receive_message", handleMessage); // Cleanup listener
     };
-  }, []);
-  useEffect(() => {
-    if (!socket.current) return;
-  
-    const handleMessage = (data) => {
-      if (data.message === "incoming_call") {
-        if (data.receiver_id === user) {
-          // This shop is receiving the call
-          setShowModal(true);
-        }
-      }
-    };
-  
-    socket.current.on("receive_message", handleMessage);
-  
-    return () => {
-      socket.current.off("receive_message", handleMessage); // Cleanup listener
-    };
-  }, []);
+  }, [user]);
+
+
 
   return (
     <div className="flex flex-col flex-grow">
@@ -341,12 +341,12 @@ const UserMessageBox = () => {
           </div>
 
           {showModal && (
-            <AudioCallModal>
-              <h2>Incoming Call</h2>
-              <button onClick={handleAcceptCall}>Accept</button>
-              <button onClick={handleDeclineCall}>Decline</button>
-            </AudioCallModal>
+            <AudioCallModal
+            callId={callId}
+            handleAcceptCall={handleAcceptCall}
+            handleDeclineCall={handleDeclineCall} />
           )}
+
           <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
             {Array.isArray(messages) &&
               messages.map((msg, index) => (

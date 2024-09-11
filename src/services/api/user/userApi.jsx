@@ -96,7 +96,7 @@ export const getUserHomeData = async () =>{
 export const userProfile = async () =>{
     try {
         const response = await axiosInstance.get('/user/profile/');
-        console.log("userProfile",response)
+        // console.log("userProfile",response)
         return response.data
     }catch (err) {
         if (!err.response) throw err;

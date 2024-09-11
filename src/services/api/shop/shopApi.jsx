@@ -374,3 +374,15 @@ export const shopSendMessage = async (formData) => {
         throw err;
     }
 };
+
+
+export const fetchShopProfile = async (shop) => {
+    try {
+        const response = await axiosInstance.get('/shop/shopProfile/',shop);
+        // console.log('the response of sendMessage',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};

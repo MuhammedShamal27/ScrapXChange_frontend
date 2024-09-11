@@ -2,7 +2,7 @@ import React from 'react'
 import SA_profile from "../assets/SA_profile.png";
 
 
-const AudioCallModal = ({ onAccept, onDecline }
+const AudioCallModal = ({ callId, handleAcceptCall, handleDeclineCall }
 ) => {
   return (
     <>
@@ -18,8 +18,8 @@ const AudioCallModal = ({ onAccept, onDecline }
         
         <video src="" className="hidden"></video> 
         <div className="flex justify-evenly mt-6">
-          <button onClick={onAccept} className="bg-darkGreen text-white px-4 py-2 rounded-full focus:outline-none" > Accept </button>
-          <button onClick={onDecline} className="bg-black text-white px-4 py-2 rounded-full focus:outline-none "> Decline </button>
+          <button onClick={() => handleAcceptCall(callId)} className="bg-darkGreen text-white px-4 py-2 rounded-full focus:outline-none" > Accept </button>
+          <button onClick={handleDeclineCall} className="bg-black text-white px-4 py-2 rounded-full focus:outline-none "> Decline </button>
         </div>
       </div>
     </div>

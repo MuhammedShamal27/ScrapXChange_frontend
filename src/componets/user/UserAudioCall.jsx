@@ -1,43 +1,68 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { jwtDecode } from 'jwt-decode';
+import { userProfile } from '../../services/api/user/userApi';
+
 
 const UserAudioCall = () => {
     const { roomId } = useParams();
     const containerRef = useRef(null);
-    const navigate = useNavigate();
+    const [isRoomJoined, setIsRoomJoined] = useState(false);    const navigate = useNavigate();
+    const [profile, setProfile] = useState(null);
     const token = useSelector((state) => state.auth.token);
   
     let user = null;
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        shop = decodedToken.user_id;
+        user = decodedToken.user_id?.toString();
       } catch (error) {
         console.error("Invalid token:", error);
       }
     }
+    
+    useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const userData = await userProfile(token);
+          setProfile(userData);
+        } catch (error) {
+          console.error("Error fetching user profile data:", error);
+        }
+      };
+      fetchProfile();
+    }, [token]);
+
   
     const handleLeaveRoom = () => {
-      navigate('/shop/shopChat/Messages');
+      navigate('/userChat');
     }
   
     useEffect(() => {
-      if(!containerRef.current) return
+      console.log('started zego');
+      if (!containerRef.current || !profile ||  !isRoomJoined) {
+        return;
+      } else {
+        console.log('Conditions met, executing myMeeting');
+      }
   
       const myMeeting = async() => {
         const appId = 1646937662
         const serverSecret = "cf390adbc0b7a6678da6cb1e03179c92"
+        const username = profile?.username || "Default User Name";
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appId,
           serverSecret,
           roomId,
           user,
-          user.name,
+          username,
         )
         const zc = ZegoUIKitPrebuilt.create(kitToken)
+        console.log('Joining room with token:', kitToken);  
+        console.log("ZegoUIKitPrebuilt instance created", zc);
+
         zc.joinRoom({
           container: containerRef.current,
             scenario:{
@@ -50,10 +75,15 @@ const UserAudioCall = () => {
             showLeaveRoomConfirmDialog: false,
             onLeaveRoom: handleLeaveRoom,
             onUserLeave: handleLeaveRoom,
-        })
+        });
+        setIsRoomJoined(true); 
+        console.log('Room joined, flag updated to true');
+
       }
+      console.log('Calling myMeeting function');
       myMeeting()
-    },[ roomId, user,  navigate ])
+      setIsRoomJoined(false);
+    },[roomId,user,profile])
 
   return (
     <div>

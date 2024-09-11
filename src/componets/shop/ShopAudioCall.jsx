@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { jwtDecode } from 'jwt-decode';
+import { fetchShopProfile } from '../../services/api/shop/shopApi';
 
 
 const ShopAudioCall = () => {
@@ -10,35 +11,65 @@ const ShopAudioCall = () => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.shop.token);
+  const [profile, setProfile] = useState(null);
+  const [isRoomJoined, setIsRoomJoined] = useState(false); // Track if room is already joined
+
+
 
   let shop = null;
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      shop = decodedToken.user_id;
+      shop = decodedToken.user_id?.toString();
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
 
-  const handleLeaveRoom = () => {
-    navigate('/shop/shopChat/Messages');
-  }
 
   useEffect(() => {
-    if(!containerRef.current) return
+    console.log('the profile is started')
+
+    const fetchProfile = async () => {
+      try {
+
+        const shopData = await fetchShopProfile();
+        setProfile(shopData);
+      } catch (error) {
+        console.error("Error fetching user profile data:", error);
+      }
+    };
+    console.log('the profile funcion is over')
+    fetchProfile();
+  }, [token]);
+
+  const handleLeaveRoom = () => {
+    navigate('/shop/shopChat');
+  }
+  
+
+  useEffect(() => {
+    console.log('the zego is started')
+    if(!containerRef.current || !profile || isRoomJoined) return
 
     const myMeeting = async() => {
+      console.log('the zego fuction is started')
+
       const appId = 1646937662
-      const serverSecret = "cf390adbc0b7a6678da6cb1e03179c92"
+      const serverSecret = "cf390adbc0b7a6678da6cb1e03179c92" 
+
+      const shopName = profile?.shop_name || "Default Shop Name";
+      console.log('the shop name',shopName)
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appId,
         serverSecret,
         roomId,
         shop,
-        shop.name,
+        shopName,
       )
       const zc = ZegoUIKitPrebuilt.create(kitToken)
+      console.log('Joining room with token:', kitToken);  
+      console.log("ZegoUIKitPrebuilt instance created", zc);
       zc.joinRoom({
         container: containerRef.current,
           scenario:{
@@ -52,9 +83,17 @@ const ShopAudioCall = () => {
           onLeaveRoom: handleLeaveRoom,
           onUserLeave: handleLeaveRoom,
       })
+      setIsRoomJoined(true); 
+          // Cleanup to ensure you leave the room when the component unmounts or `useEffect` is triggered again
+
+    return () => {
+      console.log('Leaving room');
+      setIsRoomJoined(false);
+    };
     }
+    console.log('the zego funcion is over')
     myMeeting()
-  },[ roomId, shop,  navigate ])
+  },[roomId,shop,profile])
 
   return (
 
@@ -66,3 +105,6 @@ const ShopAudioCall = () => {
 }
 
 export default ShopAudioCall
+
+
+// roomId, userId, userName, navigate

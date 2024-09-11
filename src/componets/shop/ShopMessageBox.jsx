@@ -14,7 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { fetchShopMessages, shopSendMessage } from "../../services/api/shop/shopApi";
+import { fetchShopMessages, fetchShopProfile, shopSendMessage } from "../../services/api/shop/shopApi";
 import { Outlet,useNavigate } from "react-router-dom";
 import AudioCallModal from "../AudioCallModal";
 
@@ -34,17 +34,21 @@ const ShopMessageBox = () => {
   const socket = useRef();
   const navigate = useNavigate();  
   const token = useSelector((state) => state.shop.token);
+  const [callId, setCallId] = useState(null);
   const scrollRef = useRef();
 
   let shop = null;
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
+      console.log('the decoded token',decodedToken)
       shop = decodedToken.user_id;
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
+
+
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
@@ -246,29 +250,35 @@ const ShopMessageBox = () => {
     return result;
   };
 
-  const handlePhoneClick = () => {
+  const handlePhoneClickShop = () => {
     const callId = randomID(); // Generate random ID for the call
-    socket.current.emit("audio_call", {
-      callId,
-      sender_id: shop,
-      receiver_id: selectedUser.id, // If the shop is calling a user
-      room_id: roomId,
-      message: "incoming_call"
-    });
-    setShowModal(true); // Show the modal with the call details
-  };
+    setCallId(callId)
+    console.log('the call id is ',callId)
+    if (callId){
+      socket.current.emit("audio_call", {
+        callId,
+        sender_id: shop,
+        receiver_id: selectedUser.id, // If the shop is calling a user
+        room_id: roomId,
+        message: "Calling"
+      });
+      navigate(`/shop/shopChat/audioCall/${roomId}/${callId}`);
+    };
+    }
   
 
   const handleAcceptCall = () => {
-    const callId = randomID(); // Generate or use the provided callId
-    socket.current.emit("audio_call", {
-      callId,
-      sender_id: shop, // Shop accepting the call
-      receiver_id: selectedUser.id, 
-      room_id: roomId
-    });
-    navigate(`/shop/shopChat/audioCall/${roomId}/${callId}`);
-  };
+    if (callId){
+      socket.current.emit("audio_call", {
+        callId,
+        sender_id: shop, // Shop accepting the call
+        receiver_id: selectedUser.id, 
+        room_id: roomId,
+        message: "call_accepted"
+      });
+      navigate(`/shop/shopChat/audioCall/${roomId}/${callId}`);
+    };
+    }
   
 
   const handleDeclineCall = () => {
@@ -280,14 +290,24 @@ const ShopMessageBox = () => {
     });
     setShowModal(false);
   };
+
   useEffect(() => {
     if (!socket.current) return;
   
     const handleMessage = (data) => {
-      if (data.message === "call_declined" && data.receiver_id === shop) {
-        // Handle call decline
-        alert("The call was declined.");
-      }
+      console.log('the data comming to the handle message',data)
+
+          // Check if the current user/shop is the receiver
+    if (data.message === "Calling" && data.receiver_id === shop) {
+      // Show the incoming call modal
+      setCallId(data.callId);
+      setShowModal(true);
+    } 
+
+    if (data.message === "call_declined" && data.receiver_id === shop) {
+      alert("The call was declined.");
+      setShowModal(false);
+    }
     };
   
     socket.current.on("receive_message", handleMessage);
@@ -295,25 +315,8 @@ const ShopMessageBox = () => {
     return () => {
       socket.current.off("receive_message", handleMessage); // Cleanup listener
     };
-  }, []);
-  useEffect(() => {
-    if (!socket.current) return;
-  
-    const handleMessage = (data) => {
-      if (data.message === "incoming_call") {
-        if (data.receiver_id === shop) {
-          // This shop is receiving the call
-          setShowModal(true);
-        }
-      }
-    };
-  
-    socket.current.on("receive_message", handleMessage);
-  
-    return () => {
-      socket.current.off("receive_message", handleMessage); // Cleanup listener
-    };
-  }, []);
+  }, [shop]);
+
       
 
 
@@ -336,17 +339,16 @@ const ShopMessageBox = () => {
             <div className="flex space-x-4">
 
               <Outlet />
-              <Phone  color="#a3aed0" size={20} onClick={handlePhoneClick} className="cursor-pointer" />
+              <Phone  color="#a3aed0" size={20} onClick={handlePhoneClickShop} className="cursor-pointer" />
               <Search color="#a3aed0" size={20} />
             </div>
           </div>
 
           {showModal && (
-            <AudioCallModal>
-              <h2>Incoming Call</h2>
-              <button onClick={handleAcceptCall}>Accept</button>
-              <button onClick={handleDeclineCall}>Decline</button>
-            </AudioCallModal>
+            <AudioCallModal
+            callId={callId}
+            handleAcceptCall={handleAcceptCall}
+            handleDeclineCall={handleDeclineCall} />
           )}
 
           <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">

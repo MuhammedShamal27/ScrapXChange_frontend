@@ -92,7 +92,7 @@ const shopRouter =
                     element : <ProtectedRoute shop><ShopMessageBox/></ProtectedRoute>,
                 },
                 {
-                    path :'audioCall/:roomId',
+                    path :'audioCall/:roomId/:callId',
                     element : <ProtectedRoute shop><ShopAudioCall/></ProtectedRoute>,
                 }
             ]
