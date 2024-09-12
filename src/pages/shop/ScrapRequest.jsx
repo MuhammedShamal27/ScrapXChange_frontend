@@ -40,36 +40,37 @@ const ScrapRequest = () => {
                     <div className='text-blue-950 font-bold text-2xl p-7'>
                         <h1>Requests Table</h1>
                     </div>
-                    <table className='flex flex-col'>
-                        <thead >
-                            <tr className='flex justify-between m-7 font-semibold'>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Address</th>
-                                <th>Pincode</th>
-                                <th>Details</th>
+                    <table className='w-full table-auto text-xs'>
+                        <thead>
+                            <tr className='text-left font-semibold border-b'>
+                                <th className='p-4'>Name</th>
+                                <th className='p-4'>Date</th>
+                                <th className='p-4'>Address</th>
+                                <th className='p-4'>Pincode</th>
+                                <th className='p-4'>Details</th>
                             </tr>
                         </thead>
-                        <tbody >
-                        {scrapRequests.length > 0 ? (
-                            scrapRequests.map((request, index) => (
-                                <tr key={index} className='flex justify-between m-7 text-xs'>
-                                    <td>{request.name}</td>
-                                    <td>{new Date(request.date_requested).toLocaleDateString()}</td>
-                                    <td>{request.address}</td>
-                                    <td>{request.pincode}</td>
-                                    <td>
-                                        <button onClick={()=>handleDetails(request.id)}><Info color="#a3aed0" /></button>
-                                    </td>
+                        <tbody>
+                            {scrapRequests.length > 0 ? (
+                                scrapRequests.map((request, index) => (
+                                    <tr key={index} className='border-b'>
+                                        <td className='p-4'>{request.name}</td>
+                                        <td className='p-4'>{new Date(request.date_requested).toLocaleDateString()}</td>
+                                        <td className='p-4'>{request.address}</td>
+                                        <td className='p-4'>{request.pincode}</td>
+                                        <td className='p-4'>
+                                            <button onClick={() => handleDetails(request.id)}><Info color="#a3aed0" /></button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className='p-4 font-semibold text-2xl text-center'>! No New requests found.</td>
                                 </tr>
-                            ))
-                        ) : (
-                            <tr className='flex justify-center'>
-                                <td colSpan="5" className='p-4 font-semibold text-2xl'>! No New requests found.</td>
-                            </tr>
-                        )}
+                            )}
                         </tbody>
                     </table>
+
                 </div>
             </div>
         </div>

@@ -174,7 +174,7 @@ const ScrapCollectioinConfirmation = () => {
             <p className="text-xs  mb-4">Payment Successfully!</p>
             <button
               className="bg-black text-white py-2 px-4 rounded-3xl text-xs"
-              onClick={() => navigate('/shop/todaysPending')}
+              onClick={() => navigate(`/shop/invoice/${id}`)}
             >
               Done
             </button>

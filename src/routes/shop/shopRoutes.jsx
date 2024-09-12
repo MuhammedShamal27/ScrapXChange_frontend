@@ -80,7 +80,7 @@ const shopRouter =
             element: <ProtectedRoute shop><ScrapCollectioinConfirmation/></ProtectedRoute>
         },
         {
-            path: 'invoice',
+            path: 'invoice/:id',
             element: <ProtectedRoute shop><Invoice/></ProtectedRoute>
         },
         {
@@ -91,11 +91,12 @@ const shopRouter =
                     path :'Messages/:roomId',
                     element : <ProtectedRoute shop><ShopMessageBox/></ProtectedRoute>,
                 },
-                {
-                    path :'audioCall/:roomId/:callId',
-                    element : <ProtectedRoute shop><ShopAudioCall/></ProtectedRoute>,
-                }
+
             ]
+        },
+        {
+            path :'audioCall/:roomId/:callId',
+            element : <ProtectedRoute shop><ShopAudioCall/></ProtectedRoute>,
         }
     ]
 };

@@ -41,7 +41,6 @@ const ShopMessageBox = () => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      console.log('the decoded token',decodedToken)
       shop = decodedToken.user_id;
     } catch (error) {
       console.error("Invalid token:", error);
@@ -134,7 +133,7 @@ const ShopMessageBox = () => {
           };
       
           // Handle file sending via API
-          if (selectedFile || audioBlob) {
+          if (selectedFile || audioBlob || newMessage) {
             const formData = new FormData();
             formData.append("room_id", roomId);
             formData.append("receiver_id", selectedUser.id);
@@ -200,6 +199,15 @@ const ShopMessageBox = () => {
   const handleMicClick = () => {
     if (isRecording) {
       mediaRecorder.stop();
+      // if (mediaRecorder) {
+      //   mediaRecorder.onstop = async () => {
+      //     setIsRecording(false);
+      //     if (audioBlob) {
+      //       console.log("Audio Blob:", audioBlob);
+      //       await handleSendMessage();
+      //     }
+      //   };
+      // }
       console.log("the recodering is stopped", mediaRecorder);
     } else {
       startRecording();
@@ -262,7 +270,7 @@ const ShopMessageBox = () => {
         room_id: roomId,
         message: "Calling"
       });
-      navigate(`/shop/shopChat/audioCall/${roomId}/${callId}`);
+      navigate(`/shop/audioCall/${roomId}/${callId}`);
     };
     }
   
@@ -276,7 +284,7 @@ const ShopMessageBox = () => {
         room_id: roomId,
         message: "call_accepted"
       });
-      navigate(`/shop/shopChat/audioCall/${roomId}/${callId}`);
+      navigate(`/shop/audioCall/${roomId}/${callId}`);
     };
     }
   
@@ -294,7 +302,7 @@ const ShopMessageBox = () => {
   useEffect(() => {
     if (!socket.current) return;
   
-    const handleMessage = (data) => {
+    const handleAudioMessage = (data) => {
       console.log('the data comming to the handle message',data)
 
           // Check if the current user/shop is the receiver
@@ -310,10 +318,10 @@ const ShopMessageBox = () => {
     }
     };
   
-    socket.current.on("receive_message", handleMessage);
+    socket.current.on("receive_message", handleAudioMessage);
   
     return () => {
-      socket.current.off("receive_message", handleMessage); // Cleanup listener
+      socket.current.off("receive_message", handleAudioMessage); // Cleanup listener
     };
   }, [shop]);
 
@@ -356,9 +364,8 @@ const ShopMessageBox = () => {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${
-                    msg.sender === shop ? "justify-end" : "justify-start"
-                  }`}
+                  ref={index === messages.length - 1 ? scrollRef : null} // Add ref to the last message
+                  className={`flex ${ msg.sender === shop ? "justify-end" : "justify-start"}`}
                 >
                   <div
                     className={`p-3 rounded-lg ${
@@ -393,6 +400,8 @@ const ShopMessageBox = () => {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
+  {/* {new Date(msg.timestamp).toISOString().slice(11, 16)} */}
+
                     </span>
                   </div>
                 </div>

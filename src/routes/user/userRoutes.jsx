@@ -51,11 +51,12 @@ const userRoutes = createBrowserRouter([
                         path: 'messages/:roomId',
                         element: <ProtectedRoute><UserMessageBox /></ProtectedRoute>,
                     },
-                    {
-                        path: 'audioCall/:roomId/:callId',
-                        element: <ProtectedRoute><UserAudioCall /></ProtectedRoute>,
-                    },
+
                 ],
+            },
+            {
+                path: 'audioCall/:roomId/:callId',
+                element: <ProtectedRoute><UserAudioCall /></ProtectedRoute>,
             },
             {   path: '/' , 
                 element : <Home/> },

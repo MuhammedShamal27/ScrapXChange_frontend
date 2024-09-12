@@ -14,7 +14,7 @@ const AudioCallModal = ({ callId, handleAcceptCall, handleDeclineCall }
         </div>
         
         <h2 className="text-xl font-semibold mb-2">Incoming Call</h2>
-        <p className="text-gray-500 mb-6">John Doe is calling...</p>
+        <p className="text-gray-500 mb-6">calling...</p>
         
         <video src="" className="hidden"></video> 
         <div className="flex justify-evenly mt-6">

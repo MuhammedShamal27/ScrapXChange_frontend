@@ -30,7 +30,7 @@ const UserMessageBox = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const audioRef = useRef(null);
+  const audioRef = useRef(null);  
   const fileInputRef = useRef(null);
   const token = useSelector((state) => state.auth.token);
   const [showModal, setShowModal] = useState(false); // Modal state
@@ -124,17 +124,19 @@ const UserMessageBox = () => {
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
+    const currentTimestamp = new Date().toISOString();
 
     try {
         let messagePayload = {
           message: newMessage,
           room_id: roomId,
           sender_id: user,
-          receiver_id: selectedShop.id,
+          receiver_id: selectedShop.user,
+          timestamp: currentTimestamp,
         };
     
         // Handle file sending via API
-        if (selectedFile || audioBlob) {
+        if (selectedFile || audioBlob || newMessage) {
           const formData = new FormData();
           formData.append("room_id", roomId);
           formData.append("receiver_id", selectedShop.id);
@@ -171,7 +173,9 @@ const UserMessageBox = () => {
     
         // WebSocket send logic
         if (socket.current && socket.current.connected) {
+          console.log('the message sending includes',messagePayload);
           socket.current.emit("send_message", messagePayload);
+          
         } else {
           console.error("Socket.IO is not connected. Message not sent.");
         }
@@ -253,16 +257,19 @@ const UserMessageBox = () => {
   
   const handlePhoneClick = () => {
     const callId = randomID(); // Generate random ID for the call
-    socket.current.emit("audio_call", {
-      callId,
-      sender_id: user,
-      receiver_id: selectedShop.user, 
-      room_id: roomId,
-      message: "Calling"
-    });
-    navigate(`/userChat/audioCall/${roomId}/${callId}`);
-  };
-  
+    setCallId(callId)
+    if (callId) {
+      socket.current.emit("audio_call", {
+        callId,
+        sender_id: user,
+        receiver_id: selectedShop.user, 
+        room_id: roomId,
+        message: "Calling"
+      });
+      navigate(`/audioCall/${roomId}/${callId}`);
+    };
+    
+    }
 
   const handleAcceptCall = () => { 
     if (callId){
@@ -273,7 +280,7 @@ const UserMessageBox = () => {
         room_id: roomId,
         message: "call_accepted"
       });
-      navigate(`/userChat/audioCall/${roomId}/${callId}`);
+      navigate(`/audioCall/${roomId}/${callId}`);
     };
     }
 
@@ -292,7 +299,7 @@ const UserMessageBox = () => {
   useEffect(() => {
     if (!socket.current) return;
   
-    const handleMessage = (data) => {
+    const handleAudioMessage = (data) => {
       console.log('the data comming to the handle message',data)
 
           // Check if the current user/shop is the receiver
@@ -308,10 +315,10 @@ const UserMessageBox = () => {
     }
     };
   
-    socket.current.on("receive_message", handleMessage);
+    socket.current.on("receive_message", handleAudioMessage);
   
     return () => {
-      socket.current.off("receive_message", handleMessage); // Cleanup listener
+      socket.current.off("receive_message", handleAudioMessage); // Cleanup listener
     };
   }, [user]);
 
@@ -334,7 +341,6 @@ const UserMessageBox = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-                <Outlet />
                 <Phone  color="#a3aed0" size={20} onClick={handlePhoneClick} className="cursor-pointer"  />
               <Search color="#a3aed0" size={20} />
             </div>
@@ -352,10 +358,8 @@ const UserMessageBox = () => {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${
-                    msg.sender === user ? "justify-end" : "justify-start"
-                  }`}
-                >
+                  ref={index === messages.length - 1 ? scrollRef : null} // Add ref to the last message
+                  className={`flex ${ msg.sender === user ? "justify-end" : "justify-start" }`} >
                   <div
                     className={`p-3 rounded-lg ${
                       msg.sender === user
@@ -389,6 +393,7 @@ const UserMessageBox = () => {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
+                      {/* {new Date(msg.timestamp).toISOString().slice(11, 16)} */}
                     </span>
                   </div>
                 </div>

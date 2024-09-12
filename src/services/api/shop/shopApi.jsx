@@ -310,6 +310,17 @@ export const VerifyPayment = async(paymentData) => {
     }
 }
 
+export const fetchInvoice = async(id) => {
+    try{
+        const response = await axiosInstance.get(`/shop/invoice/${id}`)
+        console.log('the response',response.data)
+        return response.data
+    }catch (err) {
+        console.error("Error while taking data",err);
+        throw err;
+    }
+}
+
 
 export const fetchAllUsers = async(searchQuery) => {
     try{

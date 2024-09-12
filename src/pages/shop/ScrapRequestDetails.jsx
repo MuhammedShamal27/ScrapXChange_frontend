@@ -97,9 +97,21 @@ const ScrapRequestDetails = () => {
                   />
  
                 </div>
-                <h1 className="text-center text-blue-950 text-base m-7 font-semibold">
+                {/* <h1 className="text-center text-blue-950 text-lg m-7 font-bold">
                   {requestDetails.name}
-                </h1>
+                </h1> */}
+                <div className="flex flex-col rounded-lg shadow-md m-3 gap-3 items-center text-sm">
+                  <h1 className="font-bold text-blue-950 text-lg">Selected Items</h1>
+                  <p className="text-black">
+                    {requestDetails.products
+                      .map((product) => product.name)
+                      .join(", ")}
+                  </p>
+                  <div className="flex">
+                    <p className="font-bold">Note : </p>
+                    <p> {requestDetails.add_note}</p>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-y-10 gap-7 m-5 text-xs">
                   <div className="rounded-xl p-3 shadow">
                     <p className="text-gray-500">Name</p>
@@ -130,14 +142,7 @@ const ScrapRequestDetails = () => {
                     <p className="text-black">{requestDetails.phone}</p>
                   </div>
                 </div>
-                <div className="flex flex-col rounded-lg shadow-md m-3 gap-5 items-center text-xs">
-                  <h1 className="font-medium text-gray-500">Selected Items</h1>
-                  <p className="text-black ">
-                    {requestDetails.products
-                      .map((product) => product.name)
-                      .join(", ")}
-                  </p>
-                </div>
+
                 <div className="flex justify-evenly p-3 items-center">
                   <button
                     onClick={handleShedule}

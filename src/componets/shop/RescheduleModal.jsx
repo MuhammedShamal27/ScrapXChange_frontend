@@ -35,6 +35,10 @@ const RescheduleModal = ({isOpen, id, onClose}) => {
     };
 
     if (!isOpen) return null;
+
+    const handleMessage = () => {
+        navigate('/shop/shopChat')
+    }
     
   return (
     <>
@@ -44,7 +48,7 @@ const RescheduleModal = ({isOpen, id, onClose}) => {
                     <StaticDatePicker orientation="landscape" value={selectedDate} onChange={(newValue) => setSelectedDate(newValue)} />
                 </LocalizationProvider>
                 <div className="flex justify-around space-x-7">
-                    <button className="bg-myBlue text-white rounded-3xl text-xs h-7 w-36">Message</button>
+                    <button className="bg-myBlue text-white rounded-3xl text-xs h-7 w-36" onClick={handleMessage}>Message</button>
                     <button onClick={handleReShedule} className=" bg-green-500 text-white rounded-3xl text-xs h-7 w-36">Schedule</button>
                     <button onClick={handleGoBack} className="bg-black text-white rounded-3xl text-xs h-7 w-36">Go Back</button>
                 </div>

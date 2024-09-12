@@ -103,7 +103,7 @@ const ScrapList = () => {
       toast("Please select a date.");
       return;
     }
-    if (!formDetails.name || !formDetails.address || !formDetails.landmark || !formDetails.pincode || !formDetails.phone || !formDetails.upi ) {
+    if (!formDetails.name || !formDetails.address || !formDetails.landmark || !formDetails.pincode || !formDetails.phone || !formDetails.upi || !formDetails.add_note ) {
       toast("Please fill all the required details.");
       return;
     }
@@ -244,6 +244,16 @@ const ScrapList = () => {
                     value={formDetails.upi}
                     onChange={handleInputChange}
                   />
+                </div>
+                <div className=' p-3'>
+                  <input
+                      className='bg-gray-100 border-0 rounded-lg text-xs w-full h-14'
+                      type="text"
+                      name="add_note"
+                      placeholder='Add Description'
+                      value={formDetails.add_note}
+                      onChange={handleInputChange}
+                    />
                 </div>
                 <div className='flex justify-between items-center text-xs font-bold p-3'>
                   <div className='flex space-x-3'>
