@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ShopNavBar from '../../componets/shop/ShopNavBar';
@@ -7,13 +7,11 @@ import "../../styles/adminAndShop.css";
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop';
 import { updateshop } from '../../redux/reducers/shopReducer';
 import { shopHome } from '../../services/api/shop/shopApi';
-import { io } from "socket.io-client";
 
 
 const ShopHome = () => {
   const [shop, setShop] = useState(null);
   const dispatch = useDispatch();
-  const socket = useRef();
 
 
 
@@ -31,12 +29,6 @@ const ShopHome = () => {
     fetchShopData();
   }, [dispatch]);
 
-  useEffect( ()=>{
-    if (!shop)return;
-    socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'], debug: true });
-    console.log("socket console:", socket.current);
-
-  })
 
 
   return (

@@ -18,7 +18,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, updateUser } from "../../redux/reducers/userReducer";
 import { getUserHomeData } from "../../services/api/user/userApi";
-import { io } from "socket.io-client";
 
 
 const Home = () => {
@@ -26,7 +25,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const socket = useRef();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
  
 
@@ -48,12 +46,6 @@ const Home = () => {
     navigate("/login");
   };
 
-  useEffect( ()=>{
-    if (!user)return;
-    socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'], debug: true });
-    console.log("socket console:", socket.current);
-
-  })
   
   return (
     <>

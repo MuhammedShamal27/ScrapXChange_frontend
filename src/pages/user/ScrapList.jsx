@@ -3,12 +3,14 @@ import { useParams } from 'react-router-dom';
 import { X } from 'lucide-react';
 import UserNavBar from '../../componets/user/UserNavBar';
 import UserFooter from '../../componets/user/UserFooter';
-import { collectionRequest, shopScrapList } from '../../services/api/user/userApi';
+import { collectionRequest, createOrFetchChatRoom, shopScrapList } from '../../services/api/user/userApi';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { toast } from 'sonner';
 import success from '../../assets/success.png'
+import { Socket } from 'socket.io-client';
+import socket from '../../utils/hooks/Socket';
 const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const ScrapList = () => {
@@ -103,7 +105,8 @@ const ScrapList = () => {
       toast("Please select a date.");
       return;
     }
-    if (!formDetails.name || !formDetails.address || !formDetails.landmark || !formDetails.pincode || !formDetails.phone || !formDetails.upi || !formDetails.add_note ) {
+    if (!formDetails.name || !formDetails.address || !formDetails.landmark ||
+       !formDetails.pincode || !formDetails.phone || !formDetails.upi || !formDetails.add_note ) {
       toast("Please fill all the required details.");
       return;
     }
@@ -121,12 +124,29 @@ const ScrapList = () => {
       console.log('the form data',formData)
       const response = await collectionRequest(formData);
       console.log("the response", response);
+      const createRoom = await createOrFetchChatRoom(id);
+      console.log('create or fetch room',createRoom)
+      const room_id=createRoom.id
+      const shop=createRoom.shop.user
+      const user=createRoom.user
+      const message = `The ${user} has a collection request ${formData.date_requested}.`;
+      console.log('the room_id and shop is ',room_id,shop)
+
+      socket.emit("notification",{
+        room_id : room_id,
+        sender_id : user,
+        receiver_id : shop,
+        message : message,
+      })
+
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Error submitting request", error);
       toast("Failed to submit request");
     }
   };
+
+
 
   const hasProducts = categories.some(category => Array.isArray(category.products) && category.products.length > 0);
   return (

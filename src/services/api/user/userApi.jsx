@@ -224,3 +224,13 @@ export const sendMessage = async (formData) => {
 };
 
 
+export const sendNotification = async () => {
+    try{
+        const response = await axiosInstance.post ('/user/notification/create/')
+        console.log('the reponse of sendNotification',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending Notification",err);
+        throw err;
+    }
+}

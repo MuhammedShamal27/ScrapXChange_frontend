@@ -17,6 +17,8 @@ import { io } from "socket.io-client";
 import { fetchShopMessages, fetchShopProfile, shopSendMessage } from "../../services/api/shop/shopApi";
 import { Outlet,useNavigate } from "react-router-dom";
 import AudioCallModal from "../AudioCallModal";
+import { AudioRecorder } from 'react-audio-voice-recorder';
+import VoiceRecorder from "../VoiceRecorder";
 
 const ShopMessageBox = () => {
   const { roomId } = useParams();
@@ -26,8 +28,6 @@ const ShopMessageBox = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const audioRef = useRef(null);
   const fileInputRef = useRef(null);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [showModal, setShowModal] = useState(false); // Modal state
@@ -123,6 +123,12 @@ const ShopMessageBox = () => {
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
+
+        console.log("Sending message");
+        if (!audioBlob) {
+          console.log("No audio to send");
+          return;
+        }
       
         try {
           let messagePayload = {
@@ -196,55 +202,22 @@ const ShopMessageBox = () => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleMicClick = () => {
-    if (isRecording) {
-      mediaRecorder.stop();
-      // if (mediaRecorder) {
-      //   mediaRecorder.onstop = async () => {
-      //     setIsRecording(false);
-      //     if (audioBlob) {
-      //       console.log("Audio Blob:", audioBlob);
-      //       await handleSendMessage();
-      //     }
-      //   };
-      // }
-      console.log("the recodering is stopped", mediaRecorder);
-    } else {
-      startRecording();
-    }
-  };
-
-  const startRecording = () => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        console.log("started the audio recording");
-        const recorder = new MediaRecorder(stream);
-        setMediaRecorder(recorder);
-        recorder.ondataavailable = (event) => {
-          setAudioBlob(event.data);
-          setIsRecording(false);
-        };
-        recorder.start();
-        setMediaRecorder(recorder);
-        setIsRecording(true);
-      })
-      .catch((error) => {
-        console.error("Error accessing microphone", error);
-      });
-  };
-
   useEffect(() => {
-    if (mediaRecorder) {
-      mediaRecorder.onstop = async () => {
-        setIsRecording(false);
-        if (audioBlob) {
-          console.log("Audio Blob:", audioBlob);
-          await handleSendMessage();
-        }
-      };
+    if (audioBlob) {
+      console.log("Audio blob state updated, sending message...");
+      handleSendMessage(); // Send message when audioBlob is set
     }
-  }, [mediaRecorder]);
+  }, [audioBlob]);
+  
+
+    // When audio is recorded, set the blob in state
+    const handleRecordingComplete = (blob) => {
+      console.log("Recording complete, blob received in ShopMessageBox:", blob);
+      setAudioBlob(blob);
+      console.log('the audio is setted to state',audioBlob)
+      setTimeout(() => handleSendMessage(), 100);  // Automatically send the audio message when recording is complete
+    };
+
 
 
   //audio call
@@ -365,43 +338,21 @@ const ShopMessageBox = () => {
                 <div
                   key={index}
                   ref={index === messages.length - 1 ? scrollRef : null} // Add ref to the last message
-                  className={`flex ${ msg.sender === shop ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`p-3 rounded-lg ${
-                      msg.sender === shop
-                        ? "bg-bgColor text-black shadow-2xl"
-                        : "bg-gray text-black shadow-2xl"
-                    }`}
-                  >
-                    {msg.message}
-                    {msg.image && (
-                      <img
-                        src={`http://127.0.0.1:8000${msg.image}`}
-                        alt="image"
-                        className="max-w-xs mt-2 rounded-lg"
-                      />
-                    )}
-                    {msg.video && (
-                      <video
-                        src={`http://127.0.0.1:8000${msg.video}`}
-                        controls
-                        className="max-w-xs mt-2 rounded-lg"
-                      />
-                    )}
-                    {msg.audio && (
-                      <audio
-                        src={`http://127.0.0.1:8000${msg.audio}`}
-                        controls
-                      />
-                    )}
-                    <span className="text-xs text-black ml-7">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-  {/* {new Date(msg.timestamp).toISOString().slice(11, 16)} */}
+                  className={`flex ${ msg.sender === shop ? "justify-end" : "justify-start"}`}>
+                  <div className={`p-3 rounded-lg ${
+                      msg.sender === shop ? "bg-bgColor text-black shadow-2xl" : "bg-gray text-black shadow-2xl" }`}>
 
+                    {msg.message}
+
+                    {msg.image && ( <img src={`http://127.0.0.1:8000${msg.image}`} alt="image" className="max-w-xs mt-2 rounded-lg" /> )}
+
+                    {msg.video && ( <video src={`http://127.0.0.1:8000${msg.video}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
+
+                    {msg.audio && (<audio src={`http://127.0.0.1:8000${msg.audio}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
+
+                    <span className="text-xs text-black ml-7">
+                      {new Date(msg.timestamp).toLocaleTimeString([], {hour: "2-digit",minute: "2-digit",})}
+                      {/* {new Date(msg.timestamp).toISOString().slice(11, 16)} */}
                     </span>
                   </div>
                 </div>
@@ -428,18 +379,20 @@ const ShopMessageBox = () => {
             />
 
             {newMessage.trim() === "" && !isRecording && !showMediaOptions ? (
-              <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleMicClick} >
-                <Mic color="#ffffff" />
+              // Show the microphone icon to start recording
+              <div className="p-3 rounded-full cursor-pointer" onClick={() => setIsRecording(true)}>
+                <VoiceRecorder onRecordingComplete={handleRecordingComplete} />
               </div>
             ) : isRecording ? (
-              <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleMicClick}>
-                <CircleStop color="#ffffff" />
+              <div className="rounded-full cursor-pointer">
+                <VoiceRecorder onRecordingComplete={handleRecordingComplete} />
               </div>
             ) : (
-              <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleSendMessage} >
+              <div className="bg-lightGreen p-3 rounded-full cursor-pointer" onClick={handleSendMessage}>
                 <SendHorizontal color="#ffffff" />
               </div>
             )}
+
           </div>
         </>
       ) : (
@@ -450,7 +403,4 @@ const ShopMessageBox = () => {
     </div>
   );
 };
-
-
-
 export default ShopMessageBox;
