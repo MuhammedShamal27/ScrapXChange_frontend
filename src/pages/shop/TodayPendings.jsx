@@ -8,6 +8,8 @@ import FooterofAdminAndShop from '../../componets/FooterOfAdminAndShop';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import Nothing from '../../assets/Nothing.jpeg'
+import ReportMessage from '../../componets/ReportMessage';
+import { TriangleAlert } from 'lucide-react';
 
 const TodayPendings = () => {
     const navigate = useNavigate();
@@ -15,6 +17,9 @@ const TodayPendings = () => {
     const [error, setError] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedRequestDetails, setSelectedRequestDetails] = useState(null);
+    const [selectedUser,setSelectedUser] = useState(null);
+    const [isReportModalOpen,setIsReportModalOpen] = useState(false);
+    
 
     useEffect(() => {
         const fetchPendings = async () => {
@@ -50,6 +55,16 @@ const TodayPendings = () => {
         }
     };
 
+    const handleReportClick = (pending) => {
+        setSelectedUser(pending)
+        setIsReportModalOpen(true);
+    }
+
+    const closeReportModal = () => {
+        setIsReportModalOpen(false);
+        setSelectedUser(null);
+    };
+
     return (
         <>
             <div className="adminFont flex bg-bgColor min-h-screen">
@@ -61,9 +76,15 @@ const TodayPendings = () => {
                             <div className="grid grid-cols-3 gap-7">
                                 {pendings.map((pending, index) => (
                                     <div key={index} className="rounded-lg shadow-2xl p-3 space-y-3">
-                                        <img className="rounded" src={todaypending} alt="Pending" />
+                                        <div className="relative"> {/* Add a relative container */}
+                                            <img className="rounded" src={todaypending} alt="Pending" />
+                                            <button onClick={() => handleReportClick(pending)} className="absolute top-2 right-2 bg-white rounded-sm">
+                                            <TriangleAlert color="#c81414" size={20}/>
+                                            </button> {/* Positioned button in the top right */}
+                                        </div>
                                         <h1 className="text-center font-semibold">{pending.name}</h1>
                                         <div className="flex justify-between">
+                                            {/* <button onClick={() => handleReportClick(pending)} className="bg-red-500 text-white py-2 px-4 rounded-3xl text-xs">Report</button> */}
                                             <button onClick={() => openDetailsModal(pending.id)} className="bg-black text-white py-2 px-4 rounded-3xl text-xs">Details</button>
                                             <button onClick={() => handleCollect(pending.id)} className="bg-myBlue text-white py-2 px-4 rounded-3xl text-xs">Collect</button>
                                         </div>
@@ -87,6 +108,14 @@ const TodayPendings = () => {
                     onClose={() => setIsDetailsModalOpen(false)}
                 />
             )}
+
+            {isReportModalOpen && selectedUser &&
+                <ReportMessage 
+                    onClose={closeReportModal} 
+                    receiver={selectedUser.user} 
+                    Name={selectedUser.name}
+                    type="shop"
+                />}
         </>
     );
 };

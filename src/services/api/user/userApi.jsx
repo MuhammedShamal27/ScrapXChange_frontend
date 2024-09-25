@@ -234,3 +234,15 @@ export const sendNotification = async () => {
         throw err;
     }
 }
+
+
+export const reportUser = async ({ receiver, reason }) => {
+    try {
+        const response = await axiosInstance.post('/user/report/',{ receiver, reason })
+        console.log('the response of reportUser',response)
+        return response.data;
+    } catch (err) {
+        console.error("Error while reporting ",err)
+        throw err;
+    }
+}
