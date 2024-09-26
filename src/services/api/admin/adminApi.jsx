@@ -216,3 +216,28 @@ export const ShopBlockUnblock = async (id , actionPerformed) =>{
         return Promise.reject(err.response.data);
     }
 }
+
+
+export const Reports = async () =>{
+    try{
+        const response = await axiosInstance.get(`/scrapxchange_admin/reports/`);
+        console.log('api report',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const ReportBlockUnblock = async (receiverId ,reportId) =>{
+    try{
+        const response = await axiosInstance.patch(`/scrapxchange_admin/report-block-unblock/${receiverId}/`,{reportId: reportId });
+        console.log('api report',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}

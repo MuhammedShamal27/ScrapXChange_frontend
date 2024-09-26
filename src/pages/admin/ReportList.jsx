@@ -1,9 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminNavBar from '../../componets/admin/AdminNavBar'
 import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
+import { ReportBlockUnblock, Reports } from '../../services/api/admin/adminApi'
+import {toast} from 'sonner'
 
 const ReportList = () => {
+    const [reports , setReports] =useState([]);
+
+    useEffect(()=>{
+        const fetchAllReports = async () =>{
+            try{
+                const response = await Reports();
+                setReports(response);
+            }catch(err){
+                console.error('some error occured ',err)
+            }
+        }
+        fetchAllReports();
+    },[])
+
+    const handleBlockUnblock = async (receiverId, reportId) => {
+        try{
+            const response = await ReportBlockUnblock(receiverId, reportId);
+            // Update the specific report's block status directly in the state
+            setReports((prevReports) =>
+                prevReports.map((report) =>
+                    report.id === reportId
+                        ? { ...report, receiver_is_blocked: !report.receiver_is_blocked ,is_checked: false }
+                        : report
+                )
+            );
+            toast.success(response.message)
+        }catch(err){
+            console.error('some error occured during blocking or unblocking ',err)
+            toast.error('Something went wrong , please try again.')
+        }
+    }
+
   return (
     <>
         <div className='adminFont flex bg-bgColor '>
@@ -19,12 +53,15 @@ const ReportList = () => {
                             <h1>Reason</h1>
                             <h1>Action</h1>
                         </div>
-                        <div className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
-                            <p>Bekcam</p>
-                            <p>Carlos</p>
-                            <p>That was a foul</p>
-                            <button className='bg-red-500 rounded-2xl text-white px-4 py-1 w-1/3'>Block</button>
-                        </div>
+                        {reports.map((report,index)=>(
+                            <div key={index} className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
+                                <p>{report.sender_name}</p>
+                                <p>{report.receiver_name}</p>
+                                <p>{report.reason}</p>
+                                <button className={`rounded-2xl text-white px-4 py-1 w-2/4 ${report.receiver_is_blocked ? 'bg-black' : 'bg-red-500'}`} 
+                                onClick={() => handleBlockUnblock(report.receiver, report.id)}>{report.receiver_is_blocked ? 'Unblock' : 'Block'}</button>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -35,28 +72,3 @@ const ReportList = () => {
 }
 
 export default ReportList
-
-
-
-                    {/* <table className="w-full">
-                        <thead className=" text-sm text-left">
-                            <tr className='m-7 border-b'>
-                                <th className="pl-10">From</th>
-                                <th className="pl-10">Towards</th>
-                                <th className="pl-10">Reason</th>
-                                <th className="pl-10">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className='text-xs mt-7 shadow-sm'>
-                                <td className="pl-10 ">Bekcam</td>
-                                <td className="pl-10 ">Carlos</td>
-                                <td className="pl-10 ">That was a foul</td>
-                                <td className="pl-10 ">
-                                <button className="bg-red-500 text-white rounded-2xl px-3 py-1">
-                                    Block
-                                </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> */}
