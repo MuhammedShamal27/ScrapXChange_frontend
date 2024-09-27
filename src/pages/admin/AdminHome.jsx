@@ -3,15 +3,27 @@ import AdminNavBar from "../../componets/admin/AdminNavBar";
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import "../../styles/adminAndShop.css";
 import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
-import { adminHome } from "../../services/api/admin/adminApi";
+import { adminHome, DashboardData } from "../../services/api/admin/adminApi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Circle, CircleCheck, CircleCheckBig, CircleX, Ellipsis, EllipsisVertical, LayoutDashboard, RectangleEllipsis, User } from "lucide-react";
+import { Circle, CircleAlert, CircleCheck, CircleCheckBig, CircleX, Ellipsis, EllipsisVertical, LayoutDashboard, RectangleEllipsis, User } from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
 
 const AdminHome = () => {
   const [admin, setAdmin] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const [dashboardData,setDashboardData] = useState([]);
+    // Initialize dashboardData with default empty arrays
+    const [dashboardData, setDashboardData] = useState({
+      total_users: 0,
+      total_shops: 0,
+      total_collection_requests: 0,
+      users: [],
+      shops: [],
+      collection_requests: [],
+      unverified_shops: [],
+    });
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -26,6 +38,30 @@ const AdminHome = () => {
 
     fetchAdminData();
   }, [dispatch]);
+
+
+  useEffect(()=> {
+    const fetchAllData = async() =>{
+      try{
+        const response = await DashboardData();
+        console.log('the response of dashboard data',response)
+        setDashboardData(response)
+      }catch(error){
+        console.error('error occured',error)
+      }
+    }
+    fetchAllData();
+  },[])
+
+  const handleRequestTable = () => {
+    navigate('/admin/shoprequestlist/')
+  }
+  const handleUser = () => {
+    navigate('/admin/userlist/')
+  }
+  const handleShop = () => {
+    navigate('/admin/shoplist/')
+  }
 
   return (
     <>
@@ -42,21 +78,21 @@ const AdminHome = () => {
                 <User color="#a3aed0" size={40} className="bg-bgColor m-3 p-2 rounded-full" />
                 <div>
                   <p className="">Total User</p>
-                  <h1 className="font-semibold">35</h1>
+                  <h1 className="font-semibold">{dashboardData.total_users}</h1>
                 </div>
               </div>
               <div className="flex bg-white rounded-lg shadow items-center space-x-3">
                 <LayoutDashboard color="#a3aed0" size={40} className="bg-bgColor m-3 p-2 rounded-full"/>
                 <div>
                   <p className="">Total Shops</p>
-                  <h1 className="font-semibold">39</h1>
+                  <h1 className="font-semibold">{dashboardData.total_shops}</h1>
                 </div>
               </div>
               <div className="flex bg-white rounded-lg shadow items-center space-x-3">
                 <CircleCheckBig color="#a3aed0" size={40} className="bg-bgColor m-3 p-2 rounded-full"/>
                 <div>
                   <p className="">Pending Requests</p>
-                  <h1 className="font-semibold">154</h1>
+                  <h1 className="font-semibold">{dashboardData.total_collection_requests}</h1>
                 </div>
               </div>
             </div>
@@ -67,19 +103,21 @@ const AdminHome = () => {
               <div className="bg-white p-6 rounded-lg shadow">
                 <div className="flex justify-between mb-4 ">
                   <h2 className="text-xl font-bold ">Users</h2>
-                  <button className=""><Ellipsis color="#a3aed0" /></button>
+                  <button onClick={handleUser} className="bg-bgColor rounded-md"><Ellipsis color="#a3aed0" /></button>
                 </div>
 
-                <div className="flex justify-between shadow p-1 rounded-lg">
-                  <div className="flex space-x-3 text-sm">
-                    <img src={SA_profile} alt="userImage" className="h-10 w-10"/>
-                    <div>
-                      <h1>UserName</h1>
-                      <p>Email</p>
+                {dashboardData.users.map((user) => (
+                  <div key={user.id} className="flex justify-between shadow p-1 rounded-lg m-3">
+                    <div className="flex space-x-3 text-sm">
+                      <img src={SA_profile} alt="userImage" className="h-10 w-10" />
+                      <div>
+                        <h1>{user.username}</h1>
+                        <p>{user.email}</p>
+                      </div>
                     </div>
+                    <button><EllipsisVertical color="#a3aed0" /></button>
                   </div>
-                  <button><EllipsisVertical color="#a3aed0" /></button>
-                </div>
+                ))}
               </div>
 
               {/* Request Table Section */}
@@ -87,30 +125,43 @@ const AdminHome = () => {
               <div className="bg-white rounded-lg p-6 shadow">
                 <div className="flex justify-between">
                   <h1 className="text-xl font-bold">Request Table</h1>
-                  <button><Ellipsis color="#a3aed0" /></button>
+                  <button onClick={handleRequestTable} className="bg-bgColor rounded-md"><Ellipsis color="#a3aed0" /></button>
                 </div>
-                <div className="flex flex-col space-y-3">
+                <div className="flex flex-col space-y-3 text-sm">
                   <div className="flex justify-between border-b">
                     <h1>Name</h1>
                     <h1>Status</h1>
                     <h1>Date</h1>
                   </div>
-                  <div className="flex justify-between">
-                    <h1>BeckamScrap</h1>
-                    <div className="flex">
-                      <CircleX color="#e71818" />
-                      <p>Rejected</p>
-                    </div>
-                    <p>27/09/2024</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <h1>BeckamScrap</h1>
-                    <div className="flex">
-                      <CircleCheck color="#18e74c" />
-                      <p>Approved</p>
-                    </div>
-                    <p>27/09/2024</p>
-                  </div>
+                  {dashboardData.collection_requests.length > 0 ? (
+      // Use slice to get the last five requests
+      dashboardData.collection_requests.slice(-5).map((request) => (
+        <div key={request.id} className="flex justify-between">
+          <h1>{request.shop}</h1>
+          <div className="flex">
+            {request.is_rejected ? (
+              <>
+                <CircleX color="#e71818" />
+                <p>Rejected</p>
+              </>
+            ) : request.is_accepted ? (
+              <>
+                <CircleCheck color="#18e74c" />
+                <p>Approved</p>
+              </>
+            ) : (
+              <>
+                <CircleAlert color="#e78618" />
+                <p>Pending</p>
+              </>
+            )}
+          </div>
+          <p>{new Date(request.scheduled_date).toLocaleDateString()}</p>
+        </div>
+      ))
+    ) : (
+      <p>No requests available</p>
+    )}
                 </div>
               </div>
             </div>
@@ -121,34 +172,50 @@ const AdminHome = () => {
               <div className="bg-white p-6 rounded-lg shadow">
                 <div className="flex justify-between mb-4 ">
                   <h2 className="text-xl font-bold ">Shop</h2>
-                  <button className=""><Ellipsis color="#a3aed0" /></button>
+                  <button onClick={handleShop} className="bg-bgColor rounded-md"><Ellipsis color="#a3aed0" /></button>
                 </div>
 
-                <div className="flex justify-between shadow p-1 rounded-lg">
-                  <div className="flex space-x-3 text-sm">
-                    <img src={SA_profile} alt="userImage" className="h-10 w-10"/>
-                    <div>
-                      <h1>UserName</h1>
-                      <p>Email</p>
+                {dashboardData.shops.map((shop) => (
+                  <div key={shop.id} className="flex justify-between shadow p-1 rounded-lg m-3">
+                    <div className="flex space-x-3 text-sm">
+                      <img src={SA_profile} alt="shopImage" className="h-10 w-10" />
+                      <div>
+                        <h1>{shop.shop_name}</h1>
+                        <p>{shop.phone}</p>
+                      </div>
                     </div>
+                    <button><EllipsisVertical color="#a3aed0" /></button>
                   </div>
-                  <button><EllipsisVertical color="#a3aed0" /></button>
-                </div>
+                ))}
               </div>
 
               {/* Today Pending Section */}
+
               <div className="bg-white p-6 rounded-lg shadow">
-                <h2 className="text-xl font-bold mb-4">Today Pending</h2>
-                <ul>
-                  <li className="flex items-center mb-4">
-                    <input type="checkbox" className="mr-4" />
-                    <span>Landing Page Design</span>
-                  </li>
-                  <li className="flex items-center mb-4">
-                    <input type="checkbox" className="mr-4" />
-                    <span>Dashboard Builder</span>
-                  </li>
-                </ul>
+                <h2 className="text-xl font-bold mb-4">Request Pending</h2>
+                <div className="flex flex-col space-y-3 text-sm">
+                  {/* Table Header */}
+                  <div className="grid grid-cols-4 border-b">
+                    <p>Name</p>
+                    <p>Email</p>
+                    <p>Place</p>
+                    <p>Details</p>
+                  </div>
+
+                  {/* Table Row */}
+                  {dashboardData.unverified_shops.length > 0 ? (
+                    dashboardData.unverified_shops.map((shop) => (
+                      <div key={shop.id} className="grid grid-cols-4">
+                        <p>{shop.shop_name}</p>
+                        <p>{shop.shop_license_number}</p>
+                        <p>{shop.phone}</p>
+                        <p>Pending</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No pending shops</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

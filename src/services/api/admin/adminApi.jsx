@@ -241,3 +241,16 @@ export const ReportBlockUnblock = async (receiverId ,reportId) =>{
         return Promise.reject(err.response.data);
     }
 }
+
+
+export const DashboardData = async () =>{
+    try{
+        const response = await axiosInstance.get(`/scrapxchange_admin/dashboard-data/`);
+        console.log('api dashboard',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
