@@ -4,9 +4,12 @@ import HeadingAndProfile from '../../componets/HeadingAndProfile'
 import FooterOfAdminAndShop from '../../componets/FooterOfAdminAndShop'
 import { ReportBlockUnblock, Reports } from '../../services/api/admin/adminApi'
 import {toast} from 'sonner'
+import { EllipsisVertical } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const ReportList = () => {
     const [reports , setReports] =useState([]);
+    const navigate = useNavigate();
 
     useEffect(()=>{
         const fetchAllReports = async () =>{
@@ -20,23 +23,11 @@ const ReportList = () => {
         fetchAllReports();
     },[])
 
-    const handleBlockUnblock = async (receiverId, reportId) => {
-        try{
-            const response = await ReportBlockUnblock(receiverId, reportId);
-            // Update the specific report's block status directly in the state
-            setReports((prevReports) =>
-                prevReports.map((report) =>
-                    report.id === reportId
-                        ? { ...report, receiver_is_blocked: !report.receiver_is_blocked ,is_checked: false }
-                        : report
-                )
-            );
-            toast.success(response.message)
-        }catch(err){
-            console.error('some error occured during blocking or unblocking ',err)
-            toast.error('Something went wrong , please try again.')
-        }
+    const handleNavigate = (receiver_id) => {
+        // Navigate to the report details page, passing the receiver_id as a URL param
+        navigate(`/admin/reports/${receiver_id}`);
     }
+
 
   return (
     <>
@@ -54,12 +45,12 @@ const ReportList = () => {
                             <h1>Action</h1>
                         </div>
                         {reports.map((report,index)=>(
-                            <div key={index} className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
+                            <div key={index} onClick={() => handleNavigate(report.receiver_id)}
+                             className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
                                 <p>{report.sender_name}</p>
                                 <p>{report.receiver_name}</p>
                                 <p>{report.reason}</p>
-                                <button className={`rounded-2xl text-white px-4 py-1 w-2/4 ${report.receiver_is_blocked ? 'bg-black' : 'bg-red-500'}`} 
-                                onClick={() => handleBlockUnblock(report.receiver, report.id)}>{report.receiver_is_blocked ? 'Unblock' : 'Block'}</button>
+                                <p ><EllipsisVertical /></p>
                             </div>
                         ))}
                     </div>

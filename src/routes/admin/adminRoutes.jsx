@@ -10,6 +10,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../../App";
 import ProtectedRoute from "../ProtectedRoute";
 import ReportList from "../../pages/admin/ReportList";
+import ReportDetails from "../../pages/admin/ReportDetails";
 
 
 const adminRouter = 
@@ -43,6 +44,9 @@ const adminRouter =
       {
         path: 'reportlist',
         element: (<ProtectedRoute admin><ReportList/> </ProtectedRoute>),},
+      {
+        path: 'reportdetails/:id',
+        element: (<ProtectedRoute admin><ReportDetails/> </ProtectedRoute>),},
     ],
   };
 

@@ -397,12 +397,33 @@ export const fetchShopProfile = async (shop) => {
         throw err;
     }
 };
-
+export const getReportDetails = async (receiver_id) => {
+    try {
+        const response = await axiosInstance.get(`/shop/report/${receiver_id}`,);
+        console.log('the response of getReportDetails',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
 
 export const reportShop = async ({ receiver, reason }) => {
     try {
         const response = await axiosInstance.post('/shop/report/',{ receiver, reason });
         console.log('the response of sendMessage',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
+
+
+export const shopGraph = async () => {
+    try {
+        const response = await axiosInstance.get('/shop/graph/');
+        console.log('the response of graph ',response.data)
         return response.data;
     } catch (err) {
         console.error("Error while sending message", err);
