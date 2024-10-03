@@ -230,9 +230,33 @@ export const Reports = async () =>{
     }
 }
 
-export const ReportBlockUnblock = async (receiverId ,reportId) =>{
+export const DetailOfReport = async (report_id) =>{
     try{
-        const response = await axiosInstance.patch(`/scrapxchange_admin/report-block-unblock/${receiverId}/`,{reportId: reportId });
+        const response = await axiosInstance.get(`/scrapxchange_admin/report-details/${report_id}/`);
+        console.log('ReportDetails api response',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const ReportReasons = async (receiver) =>{
+    try{
+        const response = await axiosInstance.get(`/scrapxchange_admin/report-reason/${receiver}/`);
+        console.log('ReportReasons api response',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const ReportBlockUnblock = async (receiverId ,request) =>{
+    try{
+        const response = await axiosInstance.patch(`/scrapxchange_admin/report-block-unblock/${receiverId}/`,request);
         console.log('api report',response.data)
         return response.data
     }

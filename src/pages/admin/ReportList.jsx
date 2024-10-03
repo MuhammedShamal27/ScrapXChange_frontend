@@ -23,9 +23,8 @@ const ReportList = () => {
         fetchAllReports();
     },[])
 
-    const handleNavigate = (receiver_id) => {
-        // Navigate to the report details page, passing the receiver_id as a URL param
-        navigate(`/admin/reports/${receiver_id}`);
+    const handleNavigate = (id) => {
+        navigate(`/admin/reportdetails/${id}/`);
     }
 
 
@@ -45,7 +44,7 @@ const ReportList = () => {
                             <h1>Action</h1>
                         </div>
                         {reports.map((report,index)=>(
-                            <div key={index} onClick={() => handleNavigate(report.receiver_id)}
+                            <div key={index} onClick={() => handleNavigate(report.id)}
                              className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
                                 <p>{report.sender_name}</p>
                                 <p>{report.receiver_name}</p>
