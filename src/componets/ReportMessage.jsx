@@ -11,14 +11,15 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
 
     const handleSubmit = async () => {
         try {
-          let finalReason = reason === 'other' ? otherReason : reason;
+          let finalReason = reason === 'other' ? "other" : reason;
+          let description = reason === 'other' ? otherReason : '';
 
           let response;
           // Check the type and call the appropriate report function
           if (type === 'user') {
-            response = await reportUser({ receiver, reason: finalReason });
+            response = await reportUser({ receiver, reason: finalReason,description });
           } else if (type === 'shop') {
-            response = await reportShop({ receiver, reason: finalReason });
+            response = await reportShop({ receiver, reason: finalReason,description });
           }
 
           toast.success('Report sent successfully');

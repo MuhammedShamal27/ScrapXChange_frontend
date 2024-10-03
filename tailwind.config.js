@@ -17,7 +17,10 @@ export default {
       },
       padding:{
         '68p':'280px'
-      }
+      },
+      animation: {
+        'spin-slow': 'spin 1s linear infinite',
+      },
     },
   },
   plugins: [require('flowbite/plugin')

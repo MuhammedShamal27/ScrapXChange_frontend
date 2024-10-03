@@ -19,6 +19,7 @@ import Invoice from "../../pages/shop/Invoice";
 import ShopChat from "../../pages/shop/ShopChat";
 import ShopMessageBox from "../../componets/shop/ShopMessageBox";
 import ShopAudioCall from "../../componets/shop/ShopAudioCall";
+import ShopProfile from "../../pages/shop/ShopProfile";
 
 
 const shopRouter = 
@@ -97,6 +98,10 @@ const shopRouter =
         {
             path :'audioCall/:roomId/:callId',
             element : <ProtectedRoute shop><ShopAudioCall/></ProtectedRoute>,
+        },
+        {
+            path :'shopProfile',
+            element : <ProtectedRoute shop><ShopProfile/></ProtectedRoute>,
         }
     ]
 };
