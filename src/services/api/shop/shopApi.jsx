@@ -430,3 +430,15 @@ export const shopGraph = async () => {
         throw err;
     }
 };
+
+
+export const shopProfileAndLocation = async (formData) => {
+    try {
+        const response = await axiosInstance.put('/shop/shop-profile/',formData);
+        console.log('the response of shopProfile ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};

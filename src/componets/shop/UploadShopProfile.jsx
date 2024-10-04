@@ -1,103 +1,232 @@
-import React, { useEffect, useState } from 'react'
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { GoogleMap, LoadScript, Autocomplete } from "@react-google-maps/api";
+import todaypending from "../../assets/todaypending.png";
+import { shopProfileAndLocation } from "../../services/api/shop/shopApi";
+import { toast } from "sonner";
+
+const libraries = ["places", "marker"]; // Ensure 'marker' is included
 
 const UploadShopProfile = ({ isOpen, onClose }) => {
-    const [image, setImage] = useState(null);
-    const [location, setLocation] = useState({ lat: 0, lng: 0 });
-    const [isLocationLoaded, setIsLocationLoaded] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [map, setMap] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [autocomplete, setAutocomplete] = useState(null);
+  const [center, setCenter] = useState({ lat: 40.749933, lng: -73.98633 });
+  const markerRef = useRef(null); // Ref to store the marker instance
 
-
-      // Handle image upload
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  const mapOptions = {
+    zoom: 13,
+    mapId: "626bdc518ba1534c", // Replace with your actual Map ID
   };
 
-  // Fetch user location using browser's Geolocation API
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          setIsLocationLoaded(true);
-        },
-        (error) => {
-          console.error("Error fetching location: ", error);
-          setIsLocationLoaded(false);
-        }
-      );
+  // Handle marker dragend event
+  const onMarkerDragEnd = (event) => {
+    const position = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    };
+    setSelectedPlace({
+      lat: position.lat,
+      lng: position.lng,
+      displayName: "Custom Location (Dragged)",
+    });
+    setCenter(position); // Update the center to follow the marker drag
+  };
+
+  // Initialize the AdvancedMarkerElement after the map is loaded
+  const initializeAdvancedMarker = useCallback((mapInstance) => {
+    if (!window.google || !window.google.maps.marker.AdvancedMarkerElement) {
+      console.error("AdvancedMarkerElement not available");
+      return;
     }
-  }, []);
-    // Handle form submit
-    const handleSubmit = () => {
-        // Process image and location (e.g., send to server)
-        console.log("Image:", image);
-        console.log("Location:", location);
-        onClose(); // Close the modal after submission
-      };
-    
-      if (!isOpen) return null; // Don't render if the modal isn't open
+
+    const markerElement = new window.google.maps.marker.AdvancedMarkerElement({
+      map: mapInstance,
+      position: center, // Use the dynamic center as the marker position
+      title: "Drag me!",
+      draggable: true,
+    });
+
+    // Set up the dragend listener
+    markerElement.addListener("dragend", (event) => {
+      const position = event.latLng;
+      setSelectedPlace({
+        lat: position.lat(),
+        lng: position.lng(),
+        displayName: "Dragged Location",
+      });
+      setCenter(position.toJSON()); // Update the map center on marker drag
+    });
+
+    markerRef.current = markerElement; // Store the marker instance
+  }, [center]); // Dependency on center
+
+  // On load map
+  const onLoadMap = useCallback((mapInstance) => {
+    setMap(mapInstance);
+    initializeAdvancedMarker(mapInstance);
+  }, [initializeAdvancedMarker]);
+
+  // On autocomplete load
+  const onLoadAutocomplete = (autocompleteInstance) => {
+    setAutocomplete(autocompleteInstance);
+  };
+
+  // On place changed in autocomplete
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      if (!place.geometry || !place.geometry.location) {
+        toast("No details available for input: '" + place.name + "'");
+        return;
+      }
+
+      const location = place.geometry.location;
+      const newCenter = { lat: location.lat(), lng: location.lng() };
+
+      setSelectedPlace({
+        lat: newCenter.lat,
+        lng: newCenter.lng,
+        displayName: place.name,
+        formattedAddress: place.formatted_address,
+      });
+
+      // Update the map center dynamically to the searched location
+      setCenter(newCenter); // This will trigger map re-centering
+
+      // Pan the map to the new location
+      if (map) {
+        map.panTo(newCenter); // Move the map's center to the new location
+      }
+
+      // Update marker position for AdvancedMarkerElement
+      if (markerRef.current) {
+        markerRef.current.position = newCenter; // Update the position property
+      }
+    }
+  };
+
+  // Handle image selection and preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
+
+  // Save location and image
+  const saveLocation = async () => {
+    if (!selectedPlace) {
+      toast("Please select a location first");
+      return;
+    }
+
+    if (!profilePicture) {
+        toast("Please upload an image");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("latitude", selectedPlace.lat);
+    formData.append("longitude", selectedPlace.lng);
+    if (profilePicture) {
+        formData.append('profile_picture', profilePicture);  // Make sure this line is executed
+    }
+
+    try {
+      const response = await shopProfileAndLocation(formData)
+      console.log('the response of shopProfileAndLocation',response)
+      onClose();
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
-    <>
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96">
-        <h2 className="text-xl font-bold mb-4">Upload Image and Location</h2>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Upload Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-gray-300 file:text-sm file:bg-gray-50 file:text-gray-700"
-          />
-        </div>
-
-        {/* Display Google Map for location */}
-        <div className="mb-4">
-          {isLocationLoaded ? (
-            <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-              <GoogleMap
-                mapContainerStyle={{
-                  width: "100%",
-                  height: "200px",
-                }}
-                center={location}
-                zoom={15}
-                onClick={(e) =>
-                  setLocation({ lat: e.latLng.lat(), lng: e.latLng.lng() })
-                }
-              >
-                <Marker position={location} />
-              </GoogleMap>
-            </LoadScript>
+    <div className="flex flex-col md:flex-row justify-between items-start gap-6 p-6">
+      {/* Left column: Image Upload */}
+      <div className="w-full md:w-1/3 flex flex-col items-center">
+        <label htmlFor="profilePictureInput" className="cursor-pointer">
+          {previewImage ? (
+            <img
+              className="w-32 h-32 rounded-lg object-cover mb-4"
+              src={previewImage}
+              alt="Selected profile"
+            />
           ) : (
-            <p className="text-gray-500">Fetching location...</p>
+            <img
+              className="w-32 h-32 rounded-lg object-cover mb-4"
+              src={todaypending}
+              alt="Placeholder"
+            />
           )}
-        </div>
+        </label>
+        <input
+          id="profilePictureInput"
+          type="file"
+          name="profile_picture"
+          className="hidden"
+          onChange={handleImageChange}
+        />
 
-        {/* Action Buttons */}
-        <div className="flex justify-end space-x-4">
-          <button
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
-            onClick={onClose}
+        <button
+          className="bg-black hover:bg-gray-600 text-xs text-white py-2 px-4 rounded-full mt-2"
+          onClick={() => document.getElementById("profilePictureInput").click()}
+        >
+          Upload Image
+        </button>
+      </div>
+
+      {/* Right column: Map search and details */}
+      <div className="w-full md:w-2/3 flex flex-col space-y-4">
+        <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU" libraries={libraries}>
+          <Autocomplete onLoad={onLoadAutocomplete} onPlaceChanged={onPlaceChanged}>
+            <input
+              id="place-input"
+              type="text"
+              placeholder="Search for a place..."
+              className="border p-2 rounded-full mb-2 w-2/6 text-xs"
+            />
+          </Autocomplete>
+
+          <GoogleMap
+            mapContainerStyle={{ width: "100%", height: "300px" }}
+            center={center} // Dynamically updated center
+            options={mapOptions} // Including mapId and other options
+            zoom={13}
+            onLoad={onLoadMap}
+          />
+        </LoadScript>
+
+        {/* Display selected place details */}
+        <p className="text-sm text-gray-600">
+          Selected Location:{" "}
+          {selectedPlace
+            ? `${selectedPlace.displayName}, ${selectedPlace.formattedAddress}`
+            : "Please select a place."}
+        </p>
+
+        <div className="">
+          {/* <button
+            
+            className="bg-black text-white py-2 px-4 text-xs rounded-full"
           >
-            Cancel
-          </button>
+            Confirm Location
+          </button> */}
+
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-            onClick={handleSubmit}
+            onClick={saveLocation}
+            className="bg-myBlue text-white py-2 px-4 text-xs rounded-full"
           >
-            Upload
+            Submit
           </button>
         </div>
       </div>
     </div>
-    </>
-  )
-}
+  );
+};
 
-export default UploadShopProfile
+export default UploadShopProfile;
