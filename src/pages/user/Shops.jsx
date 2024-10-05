@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
 import Shop_image from "../../assets/Shop_requests.png";
 import { fetchshops, shopScrapList } from "../../services/api/user/userApi";
 import ReportMessage from "../../componets/ReportMessage";
 import { Search } from "lucide-react";
+
+// Custom marker icon to avoid missing marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 const Shops = () => {
   const [shops, setShops] = useState([]);
@@ -22,19 +33,17 @@ const Shops = () => {
     const fetchShopsData = async () => {
       try {
         const response = await fetchshops();
-        console.log("the response", response);
         const shopWithProducts = await Promise.all(
           response.map(async (shop) => {
             const products = await shopScrapList(shop.id);
-            // Flatten categories and products into a single list of products
             const allProducts = products.flatMap(
               (category) => category.products
             );
-            return { ...shop, allProducts }; // Include flattened products list
+            return { ...shop, allProducts };
           })
         );
         setShops(shopWithProducts);
-        setFilteredShops(shopWithProducts); // Initially, all shops are shown
+        setFilteredShops(shopWithProducts);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching shops:", error);
@@ -45,7 +54,6 @@ const Shops = () => {
     fetchShopsData();
   }, []);
 
-  // Handle product search filtering
   const handleSearch = (e) => {
     const searchQuery = e.target.value.toLowerCase();
     setProductSearch(searchQuery);
@@ -75,10 +83,8 @@ const Shops = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = shops.slice(startIndex, startIndex + itemsPerPage);
 
-  // Calculate the total number of pages
   const totalPages = Math.ceil(shops.length / itemsPerPage);
 
-  // Handle pagination controls
   const handlePrevClick = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -95,18 +101,14 @@ const Shops = () => {
     <>
       <div className="flex flex-col min-h-screen">
         <UserNavBar />
-
         <div className="flex-grow mt-10 ml-10">
           <div className="flex justify-between">
             <h1 className="font-medium text-2xl ml-4 sm:ml-10 lg:ml-20">
               Sell Scrap
             </h1>
-
-            {/* Search Bar for Products */}
             <div className="flex items-center border rounded-full w-1/6 ml-20 gap-3">
               <Search size={15} />
               <input
-                // type="text"
                 value={productSearch}
                 onChange={handleSearch}
                 placeholder="Search for products..."
@@ -136,6 +138,24 @@ const Shops = () => {
                   <div>
                     <h1 className="font-bold">{shop.shop_name}</h1>
                     <p className="text-xs">{shop.address}</p>
+
+                    {/* Map Section */}
+                    <div className="w-full h-64 mt-4">
+                      <MapContainer
+                        center={[parseFloat(shop.latitude), parseFloat(shop.longitude)]}
+                        zoom={13}
+                        style={{ height: "100%", width: "100%" }}
+                      >
+                        <TileLayer
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker
+                          position={[parseFloat(shop.latitude), parseFloat(shop.longitude)]}
+                        >
+                          <Popup>{shop.shop_name}</Popup>
+                        </Marker>
+                      </MapContainer>
+                    </div>
                   </div>
                 </div>
 
@@ -161,19 +181,13 @@ const Shops = () => {
         {totalPages > 1 && (
           <div className="flex justify-center lg:justify-end rounded-lg bg-white w-full lg:w-24 ml-4 sm:ml-10 lg:ml-32 mt-4 space-x-3 text-black">
             {currentPage > 1 && (
-              <button
-                onClick={handlePrevClick}
-                className="rounded-lg p-2 text-gray-500"
-              >
+              <button onClick={handlePrevClick} className="rounded-lg p-2 text-gray-500">
                 Prev |
               </button>
             )}
             <p className="rounded-lg p-2 text-gray-500">{currentPage}</p>
             {currentPage < totalPages && (
-              <button
-                onClick={handleNextClick}
-                className="rounded-lg p-2 text-gray-500"
-              >
+              <button onClick={handleNextClick} className="rounded-lg p-2 text-gray-500">
                 | Next
               </button>
             )}

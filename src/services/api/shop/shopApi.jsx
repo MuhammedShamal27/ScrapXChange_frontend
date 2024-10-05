@@ -442,3 +442,15 @@ export const shopProfileAndLocation = async (formData) => {
         throw err;
     }
 };
+
+
+export const shopTransactionList = async () => {
+    try {
+        const response = await axiosInstance.get('/shop/shop-transactions/');
+        console.log('the response of shopTransactionList ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};

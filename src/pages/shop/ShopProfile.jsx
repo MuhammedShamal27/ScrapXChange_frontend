@@ -8,6 +8,7 @@ import { fetchShopProfile } from "../../services/api/shop/shopApi";
 import Spinner from "../../utils/Spinner";
 import UploadShopProfile from "../../componets/shop/UploadShopProfile";
 import { baseURL } from "../../utils/constant";
+import { X } from "lucide-react";
 
 const ShopProfile = () => {
   const [shopProfile, setShopProfile] = useState(null);
@@ -108,7 +109,7 @@ const ShopProfile = () => {
                 </div>
                 {!isUploadAllowed && (
                   <p className="text-xs font-bold ml-7 text-red-500">
-                    You can only update your location and image after 30 days.
+                    NOTE : Once uploaded,you can only update your location and image after 30 days.
                   </p>
                 )}
               </div>
@@ -122,7 +123,7 @@ const ShopProfile = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 relative w-3/4">
             <button className="absolute top-2 right-2 text-red-500" onClick={handleCloseModal}>
-              ✖
+              <X/>
             </button>
             <UploadShopProfile onClose={handleCloseModal} />
           </div>

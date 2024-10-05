@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import socket from "./utils/hooks/Socket";
+import 'leaflet/dist/leaflet.css';
+
 
 
 
