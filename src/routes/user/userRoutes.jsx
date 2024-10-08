@@ -18,6 +18,7 @@ import UserChat from '../../pages/user/UserChat';
 import UserMessageBox from '../../componets/user/UserMessageBox';
 import UserAudioCall from '../../componets/user/UserAudioCall';
 import Dashboard from '../../pages/user/Dashboard';
+import UserTransactionList from '../../pages/user/UserTransactionList';
 
 
 
@@ -58,6 +59,10 @@ const userRoutes = createBrowserRouter([
             {
                 path: '/dashboard',
                 element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+            },
+            {
+                path: '/transactions',
+                element: <ProtectedRoute><UserTransactionList /></ProtectedRoute>,
             },
             {
                 path: 'audioCall/:roomId/:callId',

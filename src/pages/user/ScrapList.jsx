@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import success from '../../assets/success.png'
 import { Socket } from 'socket.io-client';
 import socket from '../../utils/hooks/Socket';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const ScrapList = () => {
@@ -28,6 +30,21 @@ const ScrapList = () => {
     confirmDetails: false,
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const userToken = useSelector((state) => state.auth.token);
+
+  let user = null;
+
+  // Decode the user token if it exists
+  if (userToken ) {
+    // Ensure only userToken is used for user side
+    try {
+      const decodedUserToken = jwtDecode(userToken);
+      user = decodedUserToken.user_id;
+      console.log("user ID:", user);
+    } catch (error) {
+      console.error("Invalid user token:", error);
+    }
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -126,18 +143,27 @@ const ScrapList = () => {
       console.log("the response", response);
       const createRoom = await createOrFetchChatRoom(id);
       console.log('create or fetch room',createRoom)
-      const room_id=createRoom.id
-      const shop=createRoom.shop.user
-      const user=createRoom.user
-      const message = `The ${user} has a collection request ${formData.date_requested}.`;
-      console.log('the room_id and shop is ',room_id,shop)
+      // const room_id=createRoom.id
+      // const shop=createRoom.shop.user
+      // const user=createRoom.user.id
+      // const username=createRoom.user.username
+      // const message = `${username} has sended a collection request on the date ${formData.date_requested}.`;
+      // console.log(`the room_id ${room_id},the shop id is ${shop}`)
 
-      socket.emit("notification",{
-        room_id : room_id,
-        sender_id : user,
-        receiver_id : shop,
-        message : message,
-      })
+      // socket.emit("notification",{
+      //   room_id : room_id,
+      //   sender_id : user,
+      //   receiver_id : shop,
+      //   message : message,
+      // })
+
+          // Emit the notification via Socket.IO
+    socket.emit('notification', {
+      room_id: createRoom.shop.user,  // Shop ID (room for the shop to receive the notification)
+      sender_id: user,  // Assuming `user` is the logged-in user's ID
+      receiver_id: createRoom.shop.user,  // Shop ID to notify
+      message: 'A new scrap collection request has been submitted',  // Customize the message
+    });
 
       setShowSuccessModal(true);
     } catch (error) {

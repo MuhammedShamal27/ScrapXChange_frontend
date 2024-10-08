@@ -7,11 +7,13 @@ import {
   getScrapRequestDetails,
   rejectRequest,
   scheduleRequest,
+  shopCreateOrFetchChatRoom,
 } from "../../services/api/shop/shopApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import MessageModal from "../../componets/shop/MessageModal";
 import ResheduleModal from "../../componets/shop/RescheduleModal";
+import socket from "../../utils/hooks/Socket";
 
 const ScrapRequestDetails = () => {
   const { id } = useParams();
@@ -39,6 +41,22 @@ const ScrapRequestDetails = () => {
     try {
       const response = await scheduleRequest(id);
       console.log("request sheduled successfully", response);
+      console.log('the user id is',requestDetails.user)
+      const createRoom = await shopCreateOrFetchChatRoom (requestDetails.user)
+      console.log("the response of create room",createRoom)
+      const room_id=createRoom.id
+      const shop=createRoom.shop.user
+      const user=createRoom.user.id
+      const username=createRoom.shop.shop_name
+      const message = `${username} has accepted the collection request .`;
+      console.log(`the room_id ${room_id},the shop id is ${shop}`)
+
+      socket.emit("notification",{
+        room_id : room_id,
+        sender_id : shop,
+        receiver_id : user,
+        message : message,
+      })
       toast("Scheduled successfully");
       navigate("/shop/scrapRequests");
     } catch (err) {
@@ -178,6 +196,7 @@ const ScrapRequestDetails = () => {
         isOpen={isResheduleModalOpen}
         onClose={() => setIsResheduleModalOpen(false)}
         id={id}
+        userDetails={requestDetails}
       />
     </>
   );

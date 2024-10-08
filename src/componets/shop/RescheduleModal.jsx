@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import { reScheduleRequest } from '../../services/api/shop/shopApi';
+import { reScheduleRequest, shopCreateOrFetchChatRoom } from '../../services/api/shop/shopApi';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import socket from '../../utils/hooks/Socket';
 
-const RescheduleModal = ({isOpen, id, onClose}) => {
+const RescheduleModal = ({isOpen, id, userDetails , onClose}) => {
     const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(null);
+    console.log('user',userDetails)
 
     const handleReShedule = async (e) => {
         e.preventDefault();
@@ -16,6 +18,22 @@ const RescheduleModal = ({isOpen, id, onClose}) => {
         try {
             console.log(date)
             const response = await reScheduleRequest(id,date);
+            console.log('the response is ',response)
+            const createRoom = await shopCreateOrFetchChatRoom(userDetails.user)
+            console.log("the response of create room",createRoom)
+            const room_id=createRoom.id
+            const shop=createRoom.shop.user
+            const user=createRoom.user.id
+            const username=createRoom.shop.shop_name
+            const message = `${username} has accepted the collection request .`;
+            console.log(`the room_id ${room_id},the shop id is ${shop}`)
+      
+            socket.emit("notification",{
+              room_id : room_id,
+              sender_id : shop,
+              receiver_id : user,
+              message : message,
+            })
             toast("Scheduled successfully.");
             onClose(); 
             navigate("/shop/scrapRequests");

@@ -246,3 +246,14 @@ export const reportUser = async ({ receiver, reason , description }) => {
         throw err;
     }
 }
+
+export const userTransactions = async () => {
+    try {
+        const response = await axiosInstance.get('/user/transactions/')
+        console.log('the response of transactions',response)
+        return response.data;
+    } catch (err) {
+        console.error("Error while reporting ",err)
+        throw err;
+    }
+}
