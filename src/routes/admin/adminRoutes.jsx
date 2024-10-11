@@ -11,6 +11,7 @@ import App from "../../App";
 import ProtectedRoute from "../ProtectedRoute";
 import ReportList from "../../pages/admin/ReportList";
 import ReportDetails from "../../pages/admin/ReportDetails";
+import AdminNotification from "../../pages/admin/AdminNotification";
 
 
 const adminRouter = 
@@ -47,6 +48,9 @@ const adminRouter =
       {
         path: 'reportdetails/:id',
         element: (<ProtectedRoute admin><ReportDetails/> </ProtectedRoute>),},
+      {
+        path: 'notifications',
+        element: (<ProtectedRoute admin><AdminNotification/> </ProtectedRoute>),},
     ],
   };
 

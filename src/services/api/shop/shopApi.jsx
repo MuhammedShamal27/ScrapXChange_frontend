@@ -28,7 +28,7 @@ export const loginShop = async (shopData) =>{
     }
 }
 
-export const shopHome = async () => {
+export const fetchShopHome = async () => {
     try {
         const response = await axiosInstance.get ('/shop/home/')
         console.log("the shop home response data", response.data)
@@ -448,6 +448,41 @@ export const shopTransactionList = async () => {
     try {
         const response = await axiosInstance.get('/shop/shop-transactions/');
         console.log('the response of shopTransactionList ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
+
+
+export const shopDashboard = async () => {
+    try {
+        const response = await axiosInstance.get('/shop/shop-dashboard/');
+        console.log('the response of shopDashboard ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
+
+
+export const fetchShopNotifications = async () => {
+    try {
+        const response = await axiosInstance.get('/shop/shop-notification/');
+        console.log('the response of fetchShopNotifications ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
+
+export const markShopNotifications = async (id) => {
+    try {
+        const response = await axiosInstance.put(`/shop/notifications/${id}/mark-as-read/`);
+        console.log('the response of markShopNotifications ',response.data)
         return response.data;
     } catch (err) {
         console.error("Error while sending message", err);

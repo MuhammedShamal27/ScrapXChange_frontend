@@ -21,20 +21,26 @@ const RescheduleModal = ({isOpen, id, userDetails , onClose}) => {
             console.log('the response is ',response)
             const createRoom = await shopCreateOrFetchChatRoom(userDetails.user)
             console.log("the response of create room",createRoom)
-            const room_id=createRoom.id
-            const shop=createRoom.shop.user
-            const user=createRoom.user.id
-            const username=createRoom.shop.shop_name
-            const message = `${username} has accepted the collection request .`;
-            console.log(`the room_id ${room_id},the shop id is ${shop}`)
+
+            socket.emit('notification', {
+                sender_id: createRoom.shop.user,  // Assuming `user` is the logged-in user's ID
+                receiver_id: createRoom.user.id,  // Shop ID to notify
+                message: 'A  scrap collection request has been Approved',  // Customize the message
+              });
+            // const room_id=createRoom.id
+            // const shop=createRoom.shop.user
+            // const user=createRoom.user.id
+            // const username=createRoom.shop.shop_name
+            // const message = `${username} has accepted the collection request .`;
+            // console.log(`the room_id ${room_id},the shop id is ${shop}`)
       
-            socket.emit("notification",{
-              room_id : room_id,
-              sender_id : shop,
-              receiver_id : user,
-              message : message,
-            })
-            toast("Scheduled successfully.");
+            // socket.emit("notification",{
+            //   room_id : room_id,
+            //   sender_id : shop,
+            //   receiver_id : user,
+            //   message : message,
+            // })
+            // toast("Scheduled successfully.");
             onClose(); 
             navigate("/shop/scrapRequests");
         } catch (err) {

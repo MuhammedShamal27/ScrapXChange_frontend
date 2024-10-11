@@ -257,3 +257,37 @@ export const userTransactions = async () => {
         throw err;
     }
 }
+
+
+export const fecthUserNotification = async() => {
+    try{
+        const response = await axiosInstance.get('/user/notifications/')
+        console.log('the response of fecthUserNotification',response)
+        return response.data;
+    }catch(error){ 
+        console.error("Error while fecthing .",err)
+        throw error;
+    }
+}
+
+export const markReadNotification = async(id) => {
+    try{
+        const response = await axiosInstance.patch(`/user/notifications/${id}/read/`)
+        console.log('the response of markReadNotification',response)
+        return response.data;
+    }catch(error){ 
+        console.error("Error while fecthing .",err)
+        throw error;
+    }
+}
+
+export const fetchUserDashboard = async() => {
+    try{
+        const response = await axiosInstance.get(`/user/dashboard/`)
+        console.log('the response of fetchUserDashboard',response)
+        return response.data;
+    }catch(error){ 
+        console.error("Error while fecthing .",err)
+        throw error;
+    }
+}

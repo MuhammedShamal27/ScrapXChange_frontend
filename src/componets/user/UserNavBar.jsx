@@ -21,6 +21,10 @@ const UserNavBar = () => {
     navigate("/");
   }
 
+  const handleNotification = () => {
+    navigate("/notifications")
+  }
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center p-5">
       <div className="flex gap-3 items-center mb-4 sm:mb-0">
@@ -36,7 +40,7 @@ const UserNavBar = () => {
       <div className="flex gap-7 items-center">
         {isAuthenticated ? (
           <>
-            <p className="">
+            <p className="" onClick={handleNotification}>
               <Bell size={20} />
             </p>
             <p className="">

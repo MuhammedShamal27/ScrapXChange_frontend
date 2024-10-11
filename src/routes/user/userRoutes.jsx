@@ -19,6 +19,7 @@ import UserMessageBox from '../../componets/user/UserMessageBox';
 import UserAudioCall from '../../componets/user/UserAudioCall';
 import Dashboard from '../../pages/user/Dashboard';
 import UserTransactionList from '../../pages/user/UserTransactionList';
+import UserNotification from '../../pages/user/UserNotification';
 
 
 
@@ -67,6 +68,10 @@ const userRoutes = createBrowserRouter([
             {
                 path: 'audioCall/:roomId/:callId',
                 element: <ProtectedRoute><UserAudioCall /></ProtectedRoute>,
+            },
+            {
+                path: 'notifications',
+                element: <ProtectedRoute><UserNotification /></ProtectedRoute>,
             },
             {   path: '/' , 
                 element : <Home/> },

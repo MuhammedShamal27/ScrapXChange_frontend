@@ -278,3 +278,27 @@ export const DashboardData = async () =>{
         return Promise.reject(err.response.data);
     }
 }
+
+export const fetchAdminNotification = async () =>{
+    try{
+        const response = await axiosInstance.get(`/scrapxchange_admin/notification/`);
+        console.log('api dashboard',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}
+
+export const markNotificationRead = async (id) =>{
+    try{
+        const response = await axiosInstance.post(`/scrapxchange_admin/notifications/read/${id}/`);
+        console.log('api dashboard',response.data)
+        return response.data
+    }
+    catch (err) {
+        if (!err.response) throw err;
+        return Promise.reject(err.response.data);
+    }
+}

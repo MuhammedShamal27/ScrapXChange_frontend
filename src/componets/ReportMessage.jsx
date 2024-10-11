@@ -4,10 +4,40 @@ import {toast} from 'sonner'
 import { useState } from 'react';
 import { reportUser } from '../services/api/user/userApi';
 import { reportShop } from '../services/api/shop/shopApi';
+import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
+import socket from '../utils/hooks/Socket';
 
 const ReportMessage = ({ onClose, Name, receiver, type }) => {
     const [reason, setReason] = useState('');
     const [otherReason, setOtherReason] = useState('');
+
+    const userToken = useSelector((state) => state.auth.token);
+    const shopToken = useSelector((state) => state.shop.token);
+  
+    let userId = null;
+    let shopId = null;
+  
+    // Decode tokens to get user/shop IDs
+    if (userToken) {
+        try {
+            const decodedUserToken = jwtDecode(userToken);
+            userId = decodedUserToken.user_id;
+            console.log('the user',userId)
+        } catch (error) {
+            console.error("Invalid user token:", error);
+        }
+    }
+  
+    if (shopToken) {
+        try {
+            const decodedShopToken = jwtDecode(shopToken);
+            shopId = decodedShopToken.user_id;
+            console.log('the shop',shopId)
+        } catch (error) {
+            console.error("Invalid shop token:", error);
+        }
+    }
 
     const handleSubmit = async () => {
         try {
@@ -18,8 +48,20 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
           // Check the type and call the appropriate report function
           if (type === 'user') {
             response = await reportUser({ receiver, reason: finalReason,description });
+            socket.emit('notification', {
+                sender_id: userId,  
+                receiver_id: receiver,  
+                message: 'A report Aganist a shop is submitted.',
+                notification_type : 'report'
+              });
           } else if (type === 'shop') {
             response = await reportShop({ receiver, reason: finalReason,description });
+            socket.emit('notification', {
+                sender_id: shopId,  
+                receiver_id: receiver,  
+                message: 'A report Aganist a user is submitted.', 
+                notification_type : 'report' 
+              });
           }
 
           toast.success('Report sent successfully');

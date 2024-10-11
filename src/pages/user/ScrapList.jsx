@@ -143,28 +143,14 @@ const ScrapList = () => {
       console.log("the response", response);
       const createRoom = await createOrFetchChatRoom(id);
       console.log('create or fetch room',createRoom)
-      // const room_id=createRoom.id
-      // const shop=createRoom.shop.user
-      // const user=createRoom.user.id
-      // const username=createRoom.user.username
-      // const message = `${username} has sended a collection request on the date ${formData.date_requested}.`;
-      // console.log(`the room_id ${room_id},the shop id is ${shop}`)
-
-      // socket.emit("notification",{
-      //   room_id : room_id,
-      //   sender_id : user,
-      //   receiver_id : shop,
-      //   message : message,
-      // })
-
           // Emit the notification via Socket.IO
-    socket.emit('notification', {
-      room_id: createRoom.shop.user,  // Shop ID (room for the shop to receive the notification)
-      sender_id: user,  // Assuming `user` is the logged-in user's ID
-      receiver_id: createRoom.shop.user,  // Shop ID to notify
-      message: 'A new scrap collection request has been submitted',  // Customize the message
-    });
-
+      socket.emit('notification', {
+        sender_id: user,  
+        receiver_id: createRoom.shop.user,  // Shop ID 
+        message: 'A new scrap collection request has been submitted', 
+        notification_type:'general',
+      });
+      toast("Submitted successfully");
       setShowSuccessModal(true);
     } catch (error) {
       console.error("Error submitting request", error);

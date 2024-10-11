@@ -37,8 +37,8 @@ const LineGraph = () => {
       <LineChart data={data}>
         <Line type="monotone" dataKey="value" stroke="#4318FF" />
         <CartesianGrid stroke="#ccc" />
-        {/* <XAxis dataKey="name" /> */}
-        {/* <YAxis /> */}
+        <XAxis dataKey="name" />
+        <YAxis />
         <Tooltip />
       </LineChart>
     </ResponsiveContainer>

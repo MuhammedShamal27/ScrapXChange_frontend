@@ -21,6 +21,7 @@ import ShopMessageBox from "../../componets/shop/ShopMessageBox";
 import ShopAudioCall from "../../componets/shop/ShopAudioCall";
 import ShopProfile from "../../pages/shop/ShopProfile";
 import TransactionList from "../../pages/shop/TransactionList"
+import ShopNotifications from "../../pages/shop/ShopNotifications";
 
 
 const shopRouter = 
@@ -107,6 +108,10 @@ const shopRouter =
         {
             path :'transactions',
             element : <ProtectedRoute shop><TransactionList/></ProtectedRoute>,
+        },
+        {
+            path :'notifications',
+            element : <ProtectedRoute shop><ShopNotifications/></ProtectedRoute>,
         },
     ]
 };

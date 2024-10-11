@@ -44,19 +44,12 @@ const ScrapRequestDetails = () => {
       console.log('the user id is',requestDetails.user)
       const createRoom = await shopCreateOrFetchChatRoom (requestDetails.user)
       console.log("the response of create room",createRoom)
-      const room_id=createRoom.id
-      const shop=createRoom.shop.user
-      const user=createRoom.user.id
-      const username=createRoom.shop.shop_name
-      const message = `${username} has accepted the collection request .`;
-      console.log(`the room_id ${room_id},the shop id is ${shop}`)
-
-      socket.emit("notification",{
-        room_id : room_id,
-        sender_id : shop,
-        receiver_id : user,
-        message : message,
-      })
+      socket.emit('notification', {
+        sender_id: createRoom.shop.user,  
+        receiver_id: createRoom.user.id,  // User ID 
+        message: 'A  scrap collection request has been Approved', 
+        notification_type : 'general',
+      });
       toast("Scheduled successfully");
       navigate("/shop/scrapRequests");
     } catch (err) {
