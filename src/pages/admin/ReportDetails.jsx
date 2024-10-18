@@ -109,6 +109,10 @@ const ReportDetails = () => {
                     <p>{report.description}</p>
                     </div>
                 )}
+              <div className="flex items-center text-sm space-x-7">
+                <h1>Date :</h1>
+                <p>{report ? new Date(report.timestamp).toLocaleDateString() : "Loading..."}</p>
+              </div>
             </div>
 
             <div className="flex justify-around text-sm p-3">
@@ -176,21 +180,24 @@ const ReportDetails = () => {
 
         <div className="bg-white m-10 rounded-lg text-sm">
           <h1 className="font-semibold ml-7 p-3">Similar Reports</h1>
-          <div className="grid grid-cols-3 justify-items-center border-b py-2">
+          <div className="grid grid-cols-4 justify-items-center border-b py-2">
             <h1>From</h1>
             <h1>Towards</h1>
             <h1>Reason</h1>
+            <h1>Date</h1>
+
           </div>
 
           {reportReason && reportReason.similar_reports.length > 0 ? (
             reportReason.similar_reports.map((similarReport, index) => (
               <div
                 key={index}
-                className="grid grid-cols-3 justify-items-center py-2"
+                className="grid grid-cols-4 justify-items-center py-2"
               >
                 <h1>{similarReport.sender__username}</h1>
                 <h1>{similarReport.receiver__username}</h1>
                 <h1>{similarReport.reason}</h1>
+                <h1>{new Date(similarReport.timestamp).toLocaleDateString()}</h1>
               </div>
             ))
           ) : (

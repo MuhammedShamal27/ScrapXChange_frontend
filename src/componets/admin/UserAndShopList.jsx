@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Dropdown, DropdownItem } from "flowbite-react";
-import USA_profile from '../../assets/USA_profile.png';
+import main_profile from '../../assets/USA_profile.png';
 import { useNavigate } from 'react-router-dom';
 
 const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
@@ -84,7 +84,7 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
                     src={
                       type === 'users'
                         ? item.user_profile?.profile_picture
-                        : item.shop?.profile_picture || USA_profile
+                        : item.shop?.profile_picture || main_profile
                     }
                     alt="profile"
                   />

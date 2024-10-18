@@ -33,47 +33,61 @@ const ShopRequestList = () => {
       };
 
   return (
-    <>
-        <div className='adminFont flex bg-bgColor'>
-            <AdminNavBar/>
-            <div className='w-4/5' >
-                <HeadingAndProfile/>
-                <div className='bg-white ml-11 rounded-2xl  '>
-                    <div className='flex justify-between ml-9'>
-                        <h5 className='text-blue-950 font-bold text-2xl m-3'>List</h5>
-                        <div className='flex bg-bgColor rounded-full m-3 justify-between items-center h-7 '>
-                                <Search color="#4318FF" size={20}/>
-                                <input className='bg-bgColor rounded-full text-myBlue' placeholder='Search'/>
-                        </div>
-                    </div>
-                    <div className=' flex  mt-5 text-myBlue px-10 '>
-                        <p>Name</p>
-                        <p className='pl-80'>Email</p>
-                        <p className='pl-68p'>Place</p>
-                        <p className='pl-48'>Details</p>
-                    </div>
-                    <div className='flex flex-col mt-5 ml-5 justify-around'>
-                    {shopRequests.length === 0 ? (
-                <p className='text-center font-bold text-2xl m-10'>No Available Requests.</p>
-              ) : (
-                shopRequests.map((request) => (
-                  <div key={request.id} className='flex justify-between m-3 shadow-xl rounded-lg items-center'>
-                    <div className='flex m-3 items-center space-x-3'>
-                      <img src={Shop_requests} alt="profile" />
-                      <p>{request.shop.name}</p>
-                    </div>
-                    <p>{request.email}</p>
-                    <p>{request.shop.place}</p>
-                    <p><Info color="#a3aed0" onClick={() => handleInfoClick(request.id)} /></p>
-                  </div>
-                ))
-              )}
-                    </div>
-                </div>
-            </div>
+<>
+  <div className="adminFont flex flex-col lg:flex-row bg-bgColor min-h-screen">
+    <AdminNavBar />
+    
+    <div className="w-full lg:w-4/5">
+      <HeadingAndProfile />
+      
+      <div className="bg-white lg:ml-11 rounded-2xl p-6">
+        <div className="flex justify-between lg:ml-9 mb-4">
+          <h5 className="text-blue-950 font-bold text-2xl m-3">List</h5>
         </div>
-        <FooterOfAdminAndShop/>
-    </>
+        <div className="hidden lg:flex mt-5 text-myBlue px-10 border-b pb-4">
+          <p className="w-1/4 text-left">Name</p> {/* Align to left */}
+          <p className="w-1/4 text-center">Email</p>
+          <p className="w-1/4 text-center">Pincode</p>
+          <p className="w-1/4 text-center">Details</p>
+        </div>
+
+        <div className="lg:hidden mt-5 mb-4 text-myBlue border-b pb-4">
+          <p className="w-full text-left">Requests</p>
+        </div>
+
+        <div className="flex flex-col mt-5 space-y-3">
+          {shopRequests.length === 0 ? (
+            <p className="text-center font-bold text-xl m-10">No Available Requests.</p>
+          ) : (
+            shopRequests.map((request) => (
+              <div
+                key={request.id}
+                className="flex flex-col lg:flex-row justify-between items-center m-3 p-4 shadow-xl rounded-lg bg-gray-50 w-full"
+              >
+                <div className="lg:w-1/4 flex items-center space-x-3">
+                  <img src={request.profile_picture ? `${baseURL}${request.profile_picture}` : Shop_requests} alt="profile" className="h-12 w-12 rounded-full" />
+                  <p className="text-gray-700 font-medium">{request.shop.shop_name}</p>
+                </div>
+                <p className="w-full lg:w-1/4 text-center text-gray-700">{request.email}</p>
+                <p className="w-full lg:w-1/4 text-center text-gray-700">{request.shop.pincode}</p>
+                  <div className="w-full lg:w-1/4 flex justify-center">
+                  <Info
+                    className="cursor-pointer"
+                    color="#a3aed0"
+                    onClick={() => handleInfoClick(request.id)}
+                  />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <FooterOfAdminAndShop />
+</>
+
   )
 }
 

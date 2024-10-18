@@ -6,58 +6,30 @@ import Shop_image from "../../assets/Shop_requests.png";
 import { fetchshops, shopScrapList } from "../../services/api/user/userApi";
 import ReportMessage from "../../componets/ReportMessage";
 import { Search } from "lucide-react";
+import stateData from "../../data/states-and-districts.json";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "400px",
+};
+
+const defaultCenter = {
+  lat: 9.9367552, // Default center coordinates (could be a central location)
+  lng: 76.3180429,
+};
 
 const Shops = () => {
-  const [shops, setShops] = useState([]);
+  const navigate = useNavigate();
+  const [selectedState, setSelectedState] = useState("");
+  const [districts, setDistricts] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredShops, setFilteredShops] = useState([]);
-  const [productSearch, setProductSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [shops, setShops] = useState([]);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState(null);
-  const [map, setMap] = useState(null);
-  const itemsPerPage = 2;
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchShopsData = async () => {
-      try {
-        const response = await fetchshops();
-        const shopWithProducts = await Promise.all(
-          response.map(async (shop) => {
-            const products = await shopScrapList(shop.id);
-            const allProducts = products.flatMap(
-              (category) => category.products
-            );
-            return { ...shop, allProducts };
-          })
-        );
-        setShops(shopWithProducts);
-        setFilteredShops(shopWithProducts);
-        setLoading(false);
-
-        // Initialize the map once the shop data is loaded
-        initMap(shopWithProducts);
-      } catch (error) {
-        console.error("Error fetching shops:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchShopsData();
-  }, []);
-
-  const handleSearch = (e) => {
-    const searchQuery = e.target.value.toLowerCase();
-    setProductSearch(searchQuery);
-
-    const filtered = shops.filter((shop) =>
-      shop.allProducts.some((product) =>
-        product.name.toLowerCase().includes(searchQuery)
-      )
-    );
-    setFilteredShops(filtered);
-  };
 
   const handleSellScrapClick = (shopId) => {
     navigate(`/scraplist/${shopId}`);
@@ -73,207 +45,191 @@ const Shops = () => {
     setSelectedShop(null);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = shops.slice(startIndex, startIndex + itemsPerPage);
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setSelectedState(state);
 
-  const totalPages = Math.ceil(shops.length / itemsPerPage);
+    const selectedStateData = stateData.states.find((s) => s.state === state);
 
-  const handlePrevClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  // Function to initialize the Google Map and add markers
-  const initMap = (shops) => {
-    const defaultLocation = { lat: 9.9312, lng: 76.2673 }; // Default to Kochi
-
-    const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
-      zoom: 10,
-      center: defaultLocation,
-    });
-
-    setMap(mapInstance);
-
-    shops.forEach((shop) => {
-      if (shop.latitude && shop.longitude) {
-        const position = {
-          lat: parseFloat(shop.latitude),
-          lng: parseFloat(shop.longitude),
-        };
-
-        const marker = new window.google.maps.Marker({
-          position,
-          map: mapInstance,
-          title: shop.shop_name,
-        });
-
-        // Add hover listener for marker to show details
-        const infoWindow = new window.google.maps.InfoWindow({
-          content: `<div><strong>${shop.shop_name}</strong><br>${shop.address}</div>`,
-        });
-
-        marker.addListener("mouseover", () => {
-          infoWindow.open(mapInstance, marker);
-        });
-
-        marker.addListener("mouseout", () => {
-          infoWindow.close();
-        });
-      }
-    });
-  };
-
-  // Function to zoom in on a specific shop when its div is clicked
-  const zoomToShop = (shop) => {
-    if (map && shop.latitude && shop.longitude) {
-      const position = {
-        lat: parseFloat(shop.latitude),
-        lng: parseFloat(shop.longitude),
-      };
-
-      map.setZoom(15); // Zoom in on the shop
-      map.setCenter(position);
-
-      // Optionally open an InfoWindow when the shop is clicked
-      const infoWindow = new window.google.maps.InfoWindow({
-        content: `<div><strong>${shop.shop_name}</strong><br>${shop.address}<br>${shop.phone}</div>`,
-      });
-
-      infoWindow.open(map, new window.google.maps.Marker({ position, map }));
-    }
-  };
-
-  // Load Google Maps API dynamically
-  useEffect(() => {
-    if (!window.google) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-
-      script.onload = () => {
-        // Initialize map after script is loaded
-        initMap(shops);
-      };
+    if (selectedStateData) {
+      setDistricts(selectedStateData.districts);
+      console.log("Districts found:", selectedStateData.districts);
     } else {
-      initMap(shops);
+      setDistricts([]);
+      console.log("No districts found");
     }
-  }, [shops]);
+  };
+
+  const handleDistrictChange = (e) => {
+    setSelectedDistrict(e.target.value);
+  };
+
+
+  useEffect(() => {
+    if (selectedState && selectedDistrict) {
+      fetchShopsData();
+    }
+  }, [selectedState, selectedDistrict]);
+
+  const fetchShopsData = async () => {
+    try {
+      const params = {
+        state: selectedState,
+        district: selectedDistrict,
+      };
+      const data = await fetchshops(params);
+      setShops(data);
+      setFilteredShops(data);
+    } catch (error) {
+      console.error("Error fetching shops:", error);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query) {
+      const filtered = shops.filter((shop) =>
+        shop.products.some((product) => product.name.toLowerCase().includes(query))
+      );
+      setFilteredShops(filtered);
+    } else {
+      setFilteredShops(shops); // Reset to all shops if no search query
+    }
+  };
 
   return (
     <>
       <div className="flex flex-col min-h-screen">
         <UserNavBar />
 
-        {/* Flex container to hold the shops list and map side by side */}
         <div className="flex-grow mt-10 ml-10 flex">
-          {/* Left side: Shops list */}
-          <div className="w-5/12 pr-4 overflow-auto">
+          <div className="w-full pr-4 overflow-auto">
             <div className="flex justify-between">
               <h1 className="font-medium text-2xl ml-4 sm:ml-10 ">
                 Sell Scrap
               </h1>
 
+              <div className="space-x-3">
+                <select
+                  className="rounded-full text-sm"
+                  value={selectedState}
+                  onChange={handleStateChange}
+                >
+                  <option value="">Select State</option>
+                  {stateData.states.map((state) => (
+                    <option key={state.state} value={state.state}>
+                      {state.state}
+                    </option>
+                  ))}
+                </select>
+
+                {/* District Dropdown */}
+                {districts.length > 0  && ( 
+                  <select className="rounded-full text-sm" value={selectedDistrict} onChange={handleDistrictChange}>
+                    <option value="">Select District</option>
+                    {districts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
               {/* Search Bar for Products */}
-              <div className="flex items-center border rounded-full w-1/2 ml-20 gap-3">
+              <div className="flex items-center border rounded-full  ml-20 gap-3">
                 <Search size={15} />
                 <input
-                  value={productSearch}
-                  onChange={handleSearch}
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                   placeholder="Search for products..."
                   className="border-none text-xs outline-none"
                 />
               </div>
             </div>
 
-            {loading ? (
-              <p>Loading...</p>
-            ) : filteredShops.length === 0 ? (
-              <p className="ml-10 mt-4">
-                No shops have the product you're looking for.
-              </p>
-            ) : (
-              filteredShops.map((shop) => (
-                <div
-                  key={shop.id}
-                  className="flex flex-col lg:flex-row justify-between items-center border-2 w-full mt-6 p-4 rounded-xl shadow-2xl space-y-4 lg:space-y-0 cursor-pointer"
-                  onClick={() => zoomToShop(shop)} // Zoom to the shop on click
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      className="w-24 h-24"
-                      src={Shop_image}
-                      alt="Shop image"
-                    />
-                    <div>
-                      <h1 className="font-bold">{shop.shop_name}</h1>
-                      <p className="text-xs">{shop.address}</p>
+            <div>
+
+            <div className="flex">
+              <div className="w-2/6 m-9 text-sm">
+                {filteredShops.length > 0 ? (
+                  filteredShops.map((shop) => (
+                    <div
+                      key={shop.id}
+                      className="flex rounded-lg shadow-lg p-3 items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <img src={Shop_image} alt="shop image" />
+                        <div>
+                          <h2 className="uppercase font-bold">
+                            {shop.shop_name}
+                          </h2>
+                          <h2>{shop.address}</h2>
+                        </div>
+                      </div>
+                      <div className="space-x-3">
+                        <button
+                          className="bg-black text-white p-1 rounded-3xl text-xs w-full sm:w-24"
+                          onClick={() => handleSellScrapClick(shop.id)}
+                        >
+                          Sell Scrap
+                        </button>
+                        <button
+                          className="bg-red-500 text-white p-1 rounded-3xl text-xs w-full sm:w-24"
+                          onClick={() => handleReportClick(shop)}
+                        >
+                          Report
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  ))
+                ) : (
+                  <p className="font-semibold">
+                    {searchQuery
+                      ? "No shop accepting the searched product in this area."
+                      : "Select State and District To Sell Scrap."}
+                  </p>
+                )}
+              </div>
 
-                  <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0 items-center lg:items-start lg:m-3">
-                    <button
-                      onClick={() => handleSellScrapClick(shop.id)}
-                      className="bg-black text-white p-2 sm:p-3 rounded-3xl text-xs w-full sm:w-24"
-                    >
-                      Sell Scrap
-                    </button>
-                    <button
-                      onClick={() => handleReportClick(shop)}
-                      className="bg-red-500 text-white p-2 sm:p-3 rounded-3xl text-xs w-full sm:w-24"
-                    >
-                      Report
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+              <div className="w-3/6 mt-9 ml-44">
+              <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU"> 
+                <GoogleMap
+                  mapContainerStyle={mapContainerStyle}
+                  zoom={10}
+                  center={defaultCenter}
+                >
+                  {filteredShops.length > 0 &&
+                    filteredShops.map((shop) => (
+                      <Marker
+                        key={shop.id}
+                        position={{
+                          lat: parseFloat(shop.latitude),
+                          lng: parseFloat(shop.longitude),
+                        }}
+                        title={shop.shop_name}
+                        onClick={() => navigate(`/scraplist/${shop.id}`)}
+                      />
+                    ))}
+                </GoogleMap>
+              </LoadScript>
+              </div>
+            </div>
 
-          {/* Right side: Map */}
-          <div className="w-7/12">
-            <div id="map" style={{ height: "50vh", width: "100%" }}></div>
+            </div>
+
           </div>
         </div>
-
-        {totalPages > 1 && (
-          <div className="flex justify-center lg:justify-end rounded-lg bg-white w-full lg:w-24 ml-4 sm:ml-10 lg:ml-32 mt-4 space-x-3 text-black">
-            {currentPage > 1 && (
-              <button
-                onClick={handlePrevClick}
-                className="rounded-lg p-2 text-gray-500"
-              >
-                Prev |
-              </button>
-            )}
-            <p className="rounded-lg p-2 text-gray-500">{currentPage}</p>
-            {currentPage < totalPages && (
-              <button
-                onClick={handleNextClick}
-                className="rounded-lg p-2 text-gray-500"
-              >
-                | Next
-              </button>
-            )}
-          </div>
-        )}
 
         <div className="mt-auto">
           <UserFooter />
         </div>
-
         {isReportModalOpen && selectedShop && (
           <ReportMessage
             onClose={closeReportModal}
-            receiver={selectedShop.user}
+            receiver={selectedShop.user_id}
             Name={selectedShop.shop_name}
             type="user"
           />

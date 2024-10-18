@@ -39,10 +39,20 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
         }
     }
 
+        const validateOtherReason = (input) => {
+            const regex = /^[A-Za-z\s.]+$/;
+                return regex.test(input) && input.trim() !== '' && input.trim() !== '.';
+        };
+
     const handleSubmit = async () => {
         try {
           let finalReason = reason === 'other' ? "other" : reason;
           let description = reason === 'other' ? otherReason : '';
+
+          if (finalReason === 'other' && !validateOtherReason(otherReason)) {
+            toast.error('Please enter a valid reason.');
+            return; // Prevent submission if invalid
+        }
 
           let response;
           // Check the type and call the appropriate report function
@@ -67,8 +77,8 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
           toast.success('Report sent successfully');
           onClose(); // Close the modal on success
         } catch (err) {
-          console.error('An error happened while sending:', err);
-          toast.error('Error occurred while sending the report');
+          console.error('An error happened while sending:', err.response.data);
+          toast.error(err.response.data.message);
         }
       };
     

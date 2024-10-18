@@ -120,9 +120,10 @@ export const editUserProfile = async (formData) =>{
     }
 }
 
-export const fetchshops = async (shopsList) => {
+export const fetchshops = async (params) => {
     try {
-        const response = await axiosInstance.get('/user/shops/',shopsList)
+        console.log('going request',params)
+        const response = await axiosInstance.get('/user/shops/',{params:params})
         console.log("the response of shops ",response)
         return response.data
     }catch (err) {

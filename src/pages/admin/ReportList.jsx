@@ -37,18 +37,20 @@ const ReportList = () => {
                 <div className=" bg-white m-7 rounded-lg">
                     <h1 className="text-xl font-semibold p-3 ml-7">Reports</h1>
                     <div className='flex flex-col ml-7'>
-                        <div className='grid grid-cols-4 gap-4 p-3 font-semibold border-b '>
+                        <div className='grid grid-cols-5 gap-4 p-3 font-semibold border-b '>
                             <h1>From</h1>
                             <h1>Towards</h1>
                             <h1>Reason</h1>
+                            <h1>Date</h1>
                             <h1>Action</h1>
                         </div>
                         {reports.map((report,index)=>(
                             <div key={index} onClick={() => handleNavigate(report.id)}
-                             className='grid grid-cols-4 gap-4 p-3 items-center text-xs  '>
+                             className='grid grid-cols-5 gap-4 p-3 items-center text-xs  '>
                                 <p>{report.sender_name}</p>
                                 <p>{report.receiver_name}</p>
                                 <p>{report.reason}</p>
+                                <p>{new Date(report.timestamp).toLocaleDateString()}</p>
                                 <p ><EllipsisVertical /></p>
                             </div>
                         ))}

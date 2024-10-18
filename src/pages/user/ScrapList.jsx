@@ -13,6 +13,7 @@ import { Socket } from 'socket.io-client';
 import socket from '../../utils/hooks/Socket';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
+import dayjs from 'dayjs';
 const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const ScrapList = () => {
@@ -110,6 +111,9 @@ const ScrapList = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+  const today = dayjs();
+  const tomorrow = today.add(1, 'day');
+  const oneWeekFromToday = today.add(7, 'day');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,6 +156,19 @@ const ScrapList = () => {
       });
       toast("Submitted successfully");
       setShowSuccessModal(true);
+          // Clear form and state after successful submission
+    setSelectedItems([]);
+    setSelectedDate(null);
+    setFormDetails({
+      name: '',
+      address: '',
+      landmark: '',
+      pincode: '',
+      phone: '',
+      upi: '',
+      add_note: '',
+      confirmDetails: false,
+    });
     } catch (error) {
       console.error("Error submitting request", error);
       toast("Failed to submit request");
@@ -216,7 +233,9 @@ const ScrapList = () => {
           {selectedItems.length > 0 && (
             <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <StaticDatePicker orientation="landscape" value={selectedDate} onChange={(newValue) => setSelectedDate(newValue)} />
+                <StaticDatePicker orientation="landscape" value={selectedDate} 
+                onChange={(newValue) => setSelectedDate(newValue)} 
+                minDate={tomorrow} maxDate={oneWeekFromToday}/>
               </LocalizationProvider>
             </div>
           )}

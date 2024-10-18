@@ -1,26 +1,14 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import register_page_img from '../../assets/register_page_img.png'
 import '../../styles/adminAndShop.css'
 import { useDispatch } from 'react-redux'
 import { registerShop } from '../../services/api/shop/shopApi'
 import { toast } from 'sonner'
 import axiosInstance from '../../services/api/axiosInstance'
-// import { Autocomplete, GoogleMap, LoadScript } from '@react-google-maps/api'
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
+
 
 const libraries = ["places", "marker"];
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-
-// Define the container style for the map
-const containerStyle = {
-  width: "100%",
-  height: "400px"
-};
-
-// Initial map center
-const center = {
-  lat: -3.745,
-  lng: -38.523
-}
 
 const ShopRegister = () => {
 
@@ -42,11 +30,73 @@ const ShopRegister = () => {
 
     const [errors, setErrors] = useState({});
     const dispatch = useDispatch();
-    // const [center, setCenter] = useState({ lat: 9.928430, lng: 76.316391 });
-    // const [autocomplete, setAutocomplete] = useState(null);
-    // const [mapBounds, setMapBounds] = useState(null);
-    // const [map, setMap] = useState(null);
-    // const markerRef = useRef(null); 
+    const [center, setCenter] = useState({ lat: 9.928430, lng: 76.316391 });
+    const [map, setMap] = useState(null); // Store the map instance
+    const markerRef = useRef(null);
+    const [MarkerPosition, setMarkerPosition] = useState(center);
+    const [newLatLng, setNewLatLng] = useState(null);
+
+  useEffect(() => {
+    if (newLatLng) {
+      setMarkerPosition(newLatLng); // Update marker position when newLatLng changes
+      setFormData((prevData) => ({
+        ...prevData,
+        latitude: newLatLng.lat,
+        longitude: newLatLng.lng,
+      })); // Update form with new lat/lng
+    }
+  }, [newLatLng]);
+
+
+  // Initialize the advanced marker once the map is loaded
+  useEffect(() => {
+    if (map && !markerRef.current) {
+      google.maps
+        .importLibrary("marker") // Import the marker library
+        .then(({ AdvancedMarkerElement, PinElement }) => {
+          markerRef.current = new AdvancedMarkerElement({
+            map,
+            position: MarkerPosition,
+            title: "Map",
+            draggable: true,
+          });
+
+          google.maps.event.addListener(markerRef.current, 'dragend', function (event) {
+            const newPosition = {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+            };
+            setMarkerPosition(newPosition); // Update marker position on drag
+            setFormData((prevData) => ({
+              ...prevData,
+              latitude: newPosition.lat,
+              longitude: newPosition.lng,
+            })); // Update form with dragged position
+          });
+
+        });
+    }
+
+    // Update the marker position when MarkerPosition changes
+    if (markerRef.current) {
+      markerRef.current.position = MarkerPosition;
+    }
+  }, [map, MarkerPosition]);
+
+
+    // Function to update marker on map click
+    const onMapClick = (e) => {
+      const newPosition = {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng(),
+      };
+      setMarkerPosition(newPosition);
+      setFormData((prevData) =>({
+        ...prevData,
+        latitude: newPosition.lat,
+        longitude: newPosition.lng,
+      }));
+    };
 
     const validateField = (name, value) => {
         let errorMessage = "";
@@ -89,7 +139,7 @@ const ShopRegister = () => {
                 }
                 break;
             case "pincode":
-                if (!/\d[0-9]{6}/.test(value)) {
+                if (!/^\d{6}$/.test(value)) {
                     errorMessage = "Please check the entered pincode.";
                 }
                 break;
@@ -123,7 +173,8 @@ const ShopRegister = () => {
 
     const handlePincodeChange = async(e) => {
       const pincode = e.target.value;
-      setFormData({...formData,pincode})
+      setFormData({...formData,
+        pincode:pincode,})
 
       if (pincode.length === 6) {
         try{
@@ -134,125 +185,29 @@ const ShopRegister = () => {
             const PostOfficeData = data[0].PostOffice[0];
             const {State , District ,Name} =PostOfficeData;
 
-            setFormData({
-              ...formData,
+            setFormData((prevFormData)=>({
+              ...prevFormData,
               state:State,
               district:District,
-            });
+            }));
             const location = `${Name}, ${District}, ${State}`;
             const geocodingResponse = await axiosInstance.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU`
             );
-            
-            // if (geocodingResponse.data.status === "OK") {
-            //     const locationData = geocodingResponse.data.results[0].geometry.location;
-            //     const newCenter = {
-            //         lat: locationData.lat,
-            //         lng: locationData.lng,
-            //     };
-            //     setCenter(newCenter);
-            //     const bounds = geocodingResponse.data.results[0].geometry.bounds;
-            //     if (bounds) {
-            //       setMapBounds(new window.google.maps.LatLngBounds(
-            //           bounds.southwest, bounds.northeast
-            //       ));
-            //   }
-            //     if (markerRef.current) {
-            //       markerRef.current.setPosition(newCenter);
-            //     }
-            // } else {
-            //     toast.error("Unable to find coordinates for the location.");
-            // }
-        } else {
+            console.log('the response',geocodingResponse.data)
+
+            const { lat, lng } = geocodingResponse.data.results[0].geometry.location;
+
+            // Update the ShopRegister component's marker position
+            setNewLatLng({ lat, lng }); // Call this with lat and lng
+          } else {
             toast.error("Invalid Pincode or no data available.");
-        }
+          }
         }catch(error){
           console.error('there is an error ',error)
         }
       }
     }
-
-
-//     const isMarkerWithinBounds = (lat, lng) => {
-//       if (!mapBounds) return true; // No bounds set
-//       return mapBounds.contains(new window.google.maps.LatLng(lat, lng));
-//   };
-
-//   const onMarkerDragEnd = (event) => {
-//     const position = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-
-//     if (isMarkerWithinBounds(position.lat, position.lng)) {
-//         setFormData({ ...formData, latitude: position.lat, longitude: position.lng });
-//         setCenter(position); // Update map center
-//     } else {
-//         toast.error("Marker out of bounds. Please place it within the allowed region.");
-//         markerRef.current.setPosition(center); // Reset marker to last valid position
-//     }
-// };
-
-
-//     const mapOptions = {
-//       zoom: 13,
-//       mapId: "626bdc518ba1534c", 
-//     };
-
-  
-//     // Initialize the AdvancedMarkerElement after the map is loaded
-//     const initializeAdvancedMarker = useCallback((mapInstance) => {
-//       if (!window.google || !window.google.maps.marker.AdvancedMarkerElement) {
-//         console.error("AdvancedMarkerElement not available");
-//         return;
-//       }
-  
-//       const markerElement = new window.google.maps.marker.AdvancedMarkerElement({
-//         map: mapInstance,
-//         position: center, // Use the dynamic center as the marker position
-//         title: "Drag me!",
-//         draggable: true,
-//       });
-  
-//       // Set up the dragend listener
-//       markerElement.addListener("dragend",onMarkerDragEnd);
-//       markerRef.current = markerElement;
-//       }, [center ,onMarkerDragEnd]); // Dependency on center
-  
-//     // On load map
-//     const onLoadMap = useCallback((mapInstance) => {
-//       setMap(mapInstance);
-//       initializeAdvancedMarker(mapInstance);
-//     }, [initializeAdvancedMarker]);
-  
-//     // On autocomplete load
-//     const onLoadAutocomplete = (autocompleteInstance) => {
-//       setAutocomplete(autocompleteInstance);
-//     };
-  
-//     const onPlaceChanged = () => {
-//       if (autocomplete !== null) {
-//           const place = autocomplete.getPlace();
-//           if (place.geometry && place.geometry.location) {
-//               const location = place.geometry.location;
-//               const newCenter = { lat: location.lat(), lng: location.lng() };
-
-//               if (isMarkerWithinBounds(newCenter.lat, newCenter.lng)) {
-//                   setCenter(newCenter);
-//                   markerRef.current.setPosition(newCenter); // Update marker position
-//               } else {
-//                   toast.error("Selected place is outside the allowed region.");
-//               }
-//           }
-//       }
-//   };
-
-const [markerPosition, setMarkerPosition] = useState(center);
-
-// Function to update marker on map click
-const onMapClick = (e) => {
-  setMarkerPosition({
-    lat: e.latLng.lat(),
-    lng: e.latLng.lng(),
-  });
-};
 
 
     const handleSubmit = async (e) => {
@@ -270,23 +225,50 @@ const onMapClick = (e) => {
 
         if (Object.keys(validationErrors).length === 0) {
             try {
+                console.log('the formData',formData)
                 const result = await registerShop(formData);
                 console.log("befor the result if",result)
                 console.log(result.message)
                 if (result.message) {
                     console.log("the message",result.message)
                     toast.success(result.message); 
+                    setFormData({
+                      username: '',
+                      email: '',
+                      password: '',
+                      re_enter_password: '',
+                      shop_name: '',
+                      shop_license_number: '',
+                      address: '',
+                      pincode: '',
+                      state: '',
+                      district: '',
+                      latitude: '',
+                      longitude: '',
+                      phone: '',
+                  });
+                                  // Reset the marker position and map center
+                setMarkerPosition(center);
+                setNewLatLng(center);  // Resets the marker back to default position
+                if (markerRef.current) {
+                    markerRef.current.setPosition(center);
+                }
+
                 }else{
                     toast.error("Failed to register")
                 }
             } catch (err) {
-                if (err.response && err.response.data) {
-                    const errorData = err.response.data;
-                    Object.keys(errorData).forEach((key) => {
-                        if (errorData[key]) {
-                            toast.error(`${key.replace('_', ' ')} error: ${errorData[key][0]}`);
-                        }
-                    });
+              if (err ) {
+                const errorData = err
+                Object.keys(errorData).forEach((key) => {
+                  if (errorData[key] && Array.isArray(errorData[key])) {
+                      // Show each error as a toast message
+                      errorData[key].forEach((errorMessage) => {
+                          toast.error(`${key.replace('_', ' ')}: ${errorMessage}`);
+                      });
+                  }
+              });
+                
                 } else {
                     toast.error("An unexpected error occurred. Please try again later.");
                 }
@@ -297,13 +279,13 @@ const onMapClick = (e) => {
   return (
     <>
     <div className="adminFont">
-      <div className="flex flex-col lg:flex-row">
-        <div className="lg:w-2/4 mt-7">
+            <h1 className="text-3xl text-blue-950 font-bold text-center m-3">Scrap X Change</h1>
+      <div className="flex flex-col lg:flex-row gap-7">
+        <div className="md:w-full lg:w-2/4 mt-7">
           {/* Title Section */}
           <div className="mb-20">
-            <h1 className="text-3xl text-blue-950 font-bold text-center m-3">Scrap X Change</h1>
             <h1 className="ml-10 text-2xl text-blue-950 font-extrabold">Register</h1>
-            <p className="ml-10 text-xs text-gray-400 mt-10">
+            <p className="ml-10 text-xs text-gray-400">
               Enter the details given below to become a shop!
             </p>
           </div>
@@ -311,14 +293,14 @@ const onMapClick = (e) => {
           {/* Form Section */}
           <form
             onSubmit={handleSubmit}
-            className="ml-10 text-xs grid grid-flow-row grid-cols-2 gap-2 font-medium"
+            className="ml-10 text-xs grid grid-cols-1 md:grid-cols-2 gap-4 font-medium"
           >
             {/* Username */}
             <div className="flex flex-col mt-4">
               {errors.username && <p className="text-red-500">{errors.username}</p>}
               <h5>Username</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
@@ -331,7 +313,7 @@ const onMapClick = (e) => {
               {errors.email && <p className="text-red-500">{errors.email}</p>}
               <h5>Email</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -344,7 +326,7 @@ const onMapClick = (e) => {
               {errors.shop_name && <p className="text-red-500">{errors.shop_name}</p>}
               <h5>Shop Name</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="shop_name"
                 value={formData.shop_name}
                 onChange={handleChange}
@@ -357,7 +339,7 @@ const onMapClick = (e) => {
               {errors.shop_license_number && <p className="text-red-500">{errors.shop_license_number}</p>}
               <h5>Shop License Number</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="shop_license_number"
                 value={formData.shop_license_number}
                 onChange={handleChange}
@@ -370,7 +352,7 @@ const onMapClick = (e) => {
               {errors.address && <p className="text-red-500">{errors.address}</p>}
               <h5>Address</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
@@ -383,7 +365,7 @@ const onMapClick = (e) => {
               {errors.pincode && <p className="text-red-500">{errors.pincode}</p>}
               <h5>Pincode</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="pincode"
                 value={formData.pincode}
                 onChange={handlePincodeChange}
@@ -396,7 +378,7 @@ const onMapClick = (e) => {
               {errors.state && <p className="text-red-500">{errors.state}</p>}
               <h5>State</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
@@ -410,7 +392,7 @@ const onMapClick = (e) => {
               {errors.district && <p className="text-red-500">{errors.district}</p>}
               <h5>District</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="district"
                 value={formData.district}
                 onChange={handleChange}
@@ -424,7 +406,7 @@ const onMapClick = (e) => {
               {errors.phone && <p className="text-red-500">{errors.phone}</p>}
               <h5>Phone</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5"
+                className="border rounded-md w-full h-9 px-5"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -437,7 +419,7 @@ const onMapClick = (e) => {
               {errors.password && <p className="text-red-500">{errors.password}</p>}
               <h5>Password</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5 text-xs"
+                className="border rounded-md w-full h-9 px-5 text-xs"
                 name="password"
                 type="password"
                 value={formData.password}
@@ -451,7 +433,7 @@ const onMapClick = (e) => {
               {errors.re_enter_password && <p className="text-red-500">{errors.re_enter_password}</p>}
               <h5>Re-Enter Password</h5>
               <input
-                className="border rounded-md w-80 h-9 px-5 text-xs"
+                className="border rounded-md w-full h-9 px-5 text-xs"
                 name="re_enter_password"
                 type="password"
                 value={formData.re_enter_password}
@@ -463,7 +445,7 @@ const onMapClick = (e) => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="mt-8 text-xs bg-myBlue text-white w-80 h-9 border rounded-md"
+              className="mt-8 text-xs bg-myBlue text-white w-full h-9 border rounded-md"
             >
               Register
             </button>
@@ -471,48 +453,26 @@ const onMapClick = (e) => {
         </div>
   
         {/* Map and Image Section */}
-        <div className="flex flex-col lg:flex-row lg:w-2/4 lg:ml-auto space-x-4">
+        <div className="flex flex-col lg:flex-row lg:w-2/4 lg:ml-auto mt-36 space-x-4">
           {/* Map Section */}
-          <div className="lg:w-3/4 mt-72">
-
-          <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={markerPosition}
-        zoom={10}
-        onClick={onMapClick} // Set marker on click
-      >
-        <Marker position={markerPosition} />
-      </GoogleMap>
-    </LoadScript>
-            {/* <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU" libraries={libraries}>
-              <Autocomplete onLoad={onLoadAutocomplete} onPlaceChanged={onPlaceChanged}>
-                <input
-                  id="place-input"
-                  type="text"
-                  placeholder="Search for a place..."
-                  className="border p-2 rounded-full mb-2 w-full text-xs"
-                />
-              </Autocomplete>
-  
+          <div className="lg:w-3/4 mt-12">
+            <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU" libraries={libraries}>
               <GoogleMap
                 mapContainerStyle={{ width: "100%", height: "300px" }}
-                center={center} // Dynamically updated center
-                options={mapOptions} // Including mapId and other options
-                zoom={13}
-                onLoad={onLoadMap}
-              />
-            </LoadScript> */}
-          </div>
-  
-          {/* Image Section */}
-          <div className="lg:w-1/4 lg:ml-auto">
-            <img className="w-full h-full object-cover" src={register_page_img} alt="Register" />
+                center={MarkerPosition}
+                zoom={10}
+                onLoad={(map) => setMap(map)}
+                onClick={onMapClick}
+                options={{ mapId: "626bdc518ba1534c" }}
+              >
+              </GoogleMap>
+            </LoadScript>
           </div>
         </div>
       </div>
     </div>
   </>
+  
   )
 }
 
