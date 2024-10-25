@@ -11,7 +11,7 @@ const ShopNavBar = () => {
 
   const handleLogout = () => {
     dispatch(shopLogout());
-    navigate('/shop/login'); 
+    navigate('/login'); 
   };
   return (
     <>
