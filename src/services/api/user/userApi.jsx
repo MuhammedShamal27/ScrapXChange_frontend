@@ -145,8 +145,6 @@ export const shopScrapList = async (id) => {
 
 export const collectionRequest = async (formData) => {
     try {
-
-        
         console.log('the data sending ',formData)
         const response = await axiosInstance.post('/user/scrap-collection-request/',formData)
         console.log("the response of scrap collection  shops ",response)
@@ -267,6 +265,16 @@ export const fecthUserNotification = async() => {
         return response.data;
     }catch(error){ 
         console.error("Error while fecthing .",err)
+        throw error;
+    }
+}
+
+export const createUserNotification = async(notification) =>{
+    try{
+        const response = await axiosInstance.post('/user/notifications/create/',notification)
+        return response.data
+    }catch(error){
+        console.error("Error while fecthing.",error);
         throw error;
     }
 }

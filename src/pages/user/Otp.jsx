@@ -125,9 +125,9 @@ const Otp = () => {
 
   const handleResendOtp = async (e) =>{
     e.preventDefault();
-    console.log("Resending OTP to email:", email);
     try {
-      const response = await resendOtp({ email });
+      console.log("Resending OTP to email:", email);
+      const response = await resendOtp(email);
       console.log("the response coming inside",response)
       if (response){
         toast.success("OTP sent successfully.")

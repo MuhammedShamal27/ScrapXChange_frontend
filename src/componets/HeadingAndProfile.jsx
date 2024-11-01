@@ -18,10 +18,10 @@ const HeadingAndProfile = ({ isAdmin }) => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      console.log('the shop is',decodedToken)
+      // console.log('the shop is',decodedToken)
       shop = decodedToken.user_id;
     } catch (error) {
-      console.error("Invalid token:", error);
+      // console.error("Invalid token:", error);
     }
   }
 
@@ -30,9 +30,9 @@ const HeadingAndProfile = ({ isAdmin }) => {
       try{
         const response = await fetchShopHome()
         setProfile(response)
-        console.log('the profile',response)
+        // console.log('the profile',response)
       }catch(error){
-        console.error('the error is ',error)
+        // console.error('the error is ',error)
       }
     }
     fetchProfile();

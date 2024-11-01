@@ -52,10 +52,10 @@ const ShopHome = () => {
         setShop(shopData);
         dispatch(updateshop({ shop: shopData }));
         const response = await shopDashboard();
-        console.log("the response", response);
+        // console.log("the response", response);
         setDashboardData(response);
       } catch (error) {
-        console.error("Failed to fetch shop data:", error);
+        // console.error("Failed to fetch shop data:", error);
       }
     };
 

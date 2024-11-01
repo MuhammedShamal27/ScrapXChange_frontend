@@ -31,7 +31,7 @@ export const loginShop = async (shopData) =>{
 export const fetchShopHome = async () => {
     try {
         const response = await axiosInstance.get ('/shop/home/')
-        console.log("the shop home response data", response.data)
+        // console.log("the shop home response data", response.data)
         return response.data
     } catch (err) {
         if (!err.response) {
@@ -423,7 +423,7 @@ export const reportShop = async ({ receiver, reason }) => {
 export const shopGraph = async () => {
     try {
         const response = await axiosInstance.get('/shop/graph/');
-        console.log('the response of graph ',response.data)
+        // console.log('the response of graph ',response.data)
         return response.data;
     } catch (err) {
         console.error("Error while sending message", err);
@@ -459,7 +459,6 @@ export const shopTransactionList = async () => {
 export const shopDashboard = async () => {
     try {
         const response = await axiosInstance.get('/shop/shop-dashboard/');
-        console.log('the response of shopDashboard ',response.data)
         return response.data;
     } catch (err) {
         console.error("Error while sending message", err);

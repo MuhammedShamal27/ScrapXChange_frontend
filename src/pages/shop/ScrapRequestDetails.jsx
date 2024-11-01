@@ -46,7 +46,7 @@ const ScrapRequestDetails = () => {
       console.log("the response of create room",createRoom)
       socket.emit('notification', {
         sender_id: createRoom.shop.user,  
-        receiver_id: createRoom.user.id,  // User ID 
+        receiver_id: createRoom.user.id,   
         message: 'A  scrap collection request has been Approved', 
         notification_type : 'general',
       });

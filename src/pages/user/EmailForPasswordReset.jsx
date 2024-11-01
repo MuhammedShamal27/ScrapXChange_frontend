@@ -52,7 +52,7 @@ const EmailForPasswordReset = () => {
         <h1 className='text-4xl text-white font-semibold'>Reset Password</h1>
         <div className='flex flex-col   h-10 w-3/12 mt-10  mb-5 gap-2'>
             {error && <p>{error}</p>}
-            <input className='text-sm bg-inputBoxBlack p-5 rounded-lg' 
+            <input className='text-sm bg-inputBoxBlack p-5 rounded-lg text-white' 
             type='text' value={email} onChange={handleChange} placeholder='Email'/>
         </div>
         <button className='mt-5 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold '

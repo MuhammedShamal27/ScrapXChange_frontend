@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { X } from 'lucide-react';
-import UserNavBar from '../../componets/user/UserNavBar';
-import UserFooter from '../../componets/user/UserFooter';
-import { collectionRequest, createOrFetchChatRoom, shopScrapList } from '../../services/api/user/userApi';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import { toast } from 'sonner';
-import success from '../../assets/success.png'
-import { Socket } from 'socket.io-client';
-import socket from '../../utils/hooks/Socket';
-import { useSelector } from 'react-redux';
-import { jwtDecode } from 'jwt-decode';
-import dayjs from 'dayjs';
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { X } from "lucide-react";
+import UserNavBar from "../../componets/user/UserNavBar";
+import UserFooter from "../../componets/user/UserFooter";
+import {
+  collectionRequest,
+  createOrFetchChatRoom,
+  createUserNotification,
+  shopScrapList,
+} from "../../services/api/user/userApi";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
+import { toast } from "sonner";
+import success from "../../assets/success.png";
+import socket from "../../utils/hooks/Socket";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import dayjs from "dayjs";
+import { baseURL } from "../../utils/constant";
+import {sendNotificationToShop} from '../../services/api/notificationApi'
 
 const ScrapList = () => {
   const { id } = useParams(); // Get shop_id from URL
@@ -22,12 +27,12 @@ const ScrapList = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [formDetails, setFormDetails] = useState({
-    name: '',
-    address: '',
-    landmark: '',
-    pincode: '',
-    phone: '',
-    upi: '',
+    name: "",
+    address: "",
+    landmark: "",
+    pincode: "",
+    phone: "",
+    upi: "",
     confirmDetails: false,
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -36,7 +41,7 @@ const ScrapList = () => {
   let user = null;
 
   // Decode the user token if it exists
-  if (userToken ) {
+  if (userToken) {
     // Ensure only userToken is used for user side
     try {
       const decodedUserToken = jwtDecode(userToken);
@@ -53,7 +58,7 @@ const ScrapList = () => {
         const response = await shopScrapList(id);
         setCategories(response);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -69,7 +74,10 @@ const ScrapList = () => {
         }
         break;
       case "address":
-        if (value && (/^\s/.test(value) || /[!@#$%^&()_+=<>?/;:'"[\]{}|\\`~]/.test(value))) {
+        if (
+          value &&
+          (/^\s/.test(value) || /[!@#$%^&()_+=<>?/;:'"[\]{}|\\`~]/.test(value))
+        ) {
           return "Address cannot start with a space or contain special characters.";
         }
         break;
@@ -96,8 +104,12 @@ const ScrapList = () => {
 
   const handleItemClick = (item) => {
     setSelectedItems((prevSelectedItems) => {
-      if (prevSelectedItems.some(selectedItem => selectedItem.id === item.id)) {
-        return prevSelectedItems.filter(selectedItem => selectedItem.id !== item.id);
+      if (
+        prevSelectedItems.some((selectedItem) => selectedItem.id === item.id)
+      ) {
+        return prevSelectedItems.filter(
+          (selectedItem) => selectedItem.id !== item.id
+        );
       } else {
         return [...prevSelectedItems, item];
       }
@@ -108,12 +120,12 @@ const ScrapList = () => {
     const { name, value, type, checked } = e.target;
     setFormDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
   const today = dayjs();
-  const tomorrow = today.add(1, 'day');
-  const oneWeekFromToday = today.add(7, 'day');
+  const tomorrow = today.add(1, "day");
+  const oneWeekFromToday = today.add(7, "day");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,58 +138,54 @@ const ScrapList = () => {
       toast("Please select a date.");
       return;
     }
-    if (!formDetails.name || !formDetails.address || !formDetails.landmark ||
-       !formDetails.pincode || !formDetails.phone || !formDetails.upi || !formDetails.add_note ) {
+    if (
+      !formDetails.name ||
+      !formDetails.address ||
+      !formDetails.landmark ||
+      !formDetails.pincode ||
+      !formDetails.phone ||
+      !formDetails.upi ||
+      !formDetails.add_note
+    ) {
       toast("Please fill all the required details.");
       return;
     }
 
     const formData = {
       ...formDetails,
-      date_requested: selectedDate.format('YYYY-MM-DD'), 
-      products: selectedItems.map(item => item.id),
+      date_requested: selectedDate.format("YYYY-MM-DD"),
+      products: selectedItems.map((item) => item.id),
       shop: id,
     };
-    
 
     try {
-      
-      console.log('the form data',formData)
+      console.log("the form data", formData);
       const response = await collectionRequest(formData);
-      console.log("the response", response);
-      const createRoom = await createOrFetchChatRoom(id);
-      console.log('create or fetch room',createRoom)
-          // Emit the notification via Socket.IO
-      socket.emit('notification', {
-        sender_id: user,  
-        receiver_id: createRoom.shop.user,  // Shop ID 
-        message: 'A new scrap collection request has been submitted', 
-        notification_type:'general',
-      });
+      const sendNotification = await sendNotificationToShop(id);
       toast("Submitted successfully");
       setShowSuccessModal(true);
-          // Clear form and state after successful submission
-    setSelectedItems([]);
-    setSelectedDate(null);
-    setFormDetails({
-      name: '',
-      address: '',
-      landmark: '',
-      pincode: '',
-      phone: '',
-      upi: '',
-      add_note: '',
-      confirmDetails: false,
-    });
+      setSelectedItems([]);
+      setSelectedDate(null);
+      setFormDetails({
+        name: "",
+        address: "",
+        landmark: "",
+        pincode: "",
+        phone: "",
+        upi: "",
+        add_note: "",
+        confirmDetails: false,
+      });
     } catch (error) {
       console.error("Error submitting request", error);
       toast("Failed to submit request");
     }
   };
 
-
-
-  const hasProducts = categories.some(category => Array.isArray(category.products) && category.products.length > 0);
+  const hasProducts = categories.some(
+    (category) =>
+      Array.isArray(category.products) && category.products.length > 0
+  );
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -186,45 +194,65 @@ const ScrapList = () => {
         <div className="flex-grow">
           <div className="px-4 sm:px-10 lg:px-20 py-10">
             {hasProducts ? (
-              categories.map(category => (
-                category.products.length > 0 &&(
-                <div key={category.id} className="m-10">
-                  <h1 className="text-2xl font-semibold mb-4 text-center">{category.name}</h1>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 m-7 w-6/12">
-                    {category.products.map(product => (
-                      <div
-                        key={product.id}
-                        className={`border-2 p-3 rounded-lg cursor-pointer ${selectedItems.some(item => item.id === product.id) ? 'bg-gray-100' : ''}`}
-                        onClick={() => handleItemClick(product)}
-                      >
-                        <div className="flex justify-center">
-                          <img className="w-24 h-24" src={`${baseURL}${product.image}`} alt={product.name} />
-                        </div>
-                        <h1 className="text-sm mt-3">{product.name}</h1>
-                        <p className="text-gray-600">₹ {product.price}</p>
+              categories.map(
+                (category) =>
+                  category.products.length > 0 && (
+                    <div key={category.id} className="m-10">
+                      <h1 className="text-2xl font-semibold mb-4 text-center">
+                        {category.name}
+                      </h1>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 m-7 w-6/12">
+                        {category.products.map((product) => (
+                          <div
+                            key={product.id}
+                            className={`border-2 p-3 rounded-lg cursor-pointer ${
+                              selectedItems.some(
+                                (item) => item.id === product.id
+                              )
+                                ? "bg-gray-100"
+                                : ""
+                            }`}
+                            onClick={() => handleItemClick(product)}
+                          >
+                            <div className="flex justify-center">
+                              <img
+                                className="w-24 h-24"
+                                src={`${baseURL}${product.image}`}
+                                alt={product.name}
+                              />
+                            </div>
+                            <h1 className="text-sm mt-3">{product.name}</h1>
+                            <p className="text-gray-600">₹ {product.price}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-                )
-              ))
+                    </div>
+                  )
+              )
             ) : (
               <div className="text-center py-20 rounded-lg shadow-lg">
-                <h2 className="text-xl font-semibold">THE SHOP HAS NOT LISTED ANY SCRAP ITEMS YET.</h2>
+                <h2 className="text-xl font-semibold">
+                  THE SHOP HAS NOT LISTED ANY SCRAP ITEMS YET.
+                </h2>
               </div>
             )}
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className='flex justify-around m-7 shadow-lg rounded-lg'>
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-around m-7 shadow-lg rounded-lg"
+        >
           {selectedItems.length > 0 && (
-            <div className='rounded-lg w-1/4'>
-              <h1 className='font-medium text-lg m-7'>Selected Items</h1>
-              <div className='flex flex-col m-7 space-y-1'>
-                {selectedItems.map(item => (
-                  <div key={item.id} className='flex justify-between'>
+            <div className="rounded-lg w-1/4">
+              <h1 className="font-medium text-lg m-7">Selected Items</h1>
+              <div className="flex flex-col m-7 space-y-1">
+                {selectedItems.map((item) => (
+                  <div key={item.id} className="flex justify-between">
                     <p>{item.name}</p>
-                    <p onClick={() => handleItemClick(item)}><X /></p>
+                    <p onClick={() => handleItemClick(item)}>
+                      <X />
+                    </p>
                   </div>
                 ))}
               </div>
@@ -233,81 +261,85 @@ const ScrapList = () => {
           {selectedItems.length > 0 && (
             <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <StaticDatePicker orientation="landscape" value={selectedDate} 
-                onChange={(newValue) => setSelectedDate(newValue)} 
-                minDate={tomorrow} maxDate={oneWeekFromToday}/>
+                <StaticDatePicker
+                  orientation="landscape"
+                  value={selectedDate}
+                  onChange={(newValue) => setSelectedDate(newValue)}
+                  minDate={tomorrow}
+                  maxDate={oneWeekFromToday}
+                />
               </LocalizationProvider>
             </div>
           )}
 
           <div>
             {selectedItems.length > 0 && (
-              <div className='space-y-5 rounded-lg'>
-                <div className='p-3'>
-                  <h1 className='font-medium text-lg'>Add The Address</h1>
+              <div className="space-y-5 rounded-lg">
+                <div className="p-3">
+                  <h1 className="font-medium text-lg">Add The Address</h1>
                 </div>
-                <div className='grid grid-cols-2 gap-7 p-3'>
+                <div className="grid grid-cols-2 gap-7 p-3">
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="name"
-                    placeholder='Name'
+                    placeholder="Name"
                     value={formDetails.name}
                     onChange={handleInputChange}
                   />
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="address"
-                    placeholder='Address'
+                    placeholder="Address"
                     value={formDetails.address}
                     onChange={handleInputChange}
                   />
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="landmark"
-                    placeholder='landmark'
+                    placeholder="landmark"
                     value={formDetails.landmark}
                     onChange={handleInputChange}
                   />
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="pincode"
-                    placeholder='Pincode'
+                    placeholder="Pincode"
                     value={formDetails.pincode}
                     onChange={handleInputChange}
                   />
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="phone"
-                    placeholder='Phone'
+                    placeholder="Phone"
                     value={formDetails.phone}
                     onChange={handleInputChange}
                   />
                   <input
-                    className='bg-gray-100 border-0 rounded-lg text-xs'
+                    className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="upi"
-                    placeholder='UPI'
+                    placeholder="UPI"
                     value={formDetails.upi}
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className=' p-3'>
+                <div className=" p-3">
                   <input
-                      className='bg-gray-100 border-0 rounded-lg text-xs w-full h-14'
-                      type="text"
-                      name="add_note"
-                      placeholder='Add Description'
-                      value={formDetails.add_note}
-                      onChange={handleInputChange}
-                    />
+                    className="bg-gray-100 border-0 rounded-lg text-xs w-full h-14"
+                    type="text"
+                    name="add_note"
+                    placeholder="Add Description"
+                    value={formDetails.add_note}
+                    onChange={handleInputChange}
+                  />
                 </div>
-                <div className='flex justify-between items-center text-xs font-bold p-3'>
-                  <div className='flex space-x-3'>
+                <div className="flex justify-between items-center text-xs font-bold p-3">
+                  <div className="flex space-x-3">
                     <input
                       type="checkbox"
                       name="confirmDetails"
@@ -316,7 +348,12 @@ const ScrapList = () => {
                     />
                     <p>Confirm The Above Details</p>
                   </div>
-                  <button type='submit' className='bg-black text-white py-2 px-4 rounded-3xl text-xs'>Submit</button>
+                  <button
+                    type="submit"
+                    className="bg-black text-white py-2 px-4 rounded-3xl text-xs"
+                  >
+                    Submit
+                  </button>
                 </div>
               </div>
             )}
@@ -326,9 +363,9 @@ const ScrapList = () => {
         {showSuccessModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
             <div className="bg-white p-5 rounded-lg shadow-lg">
-              <img className='' src={success} alt="successimage" />
-              <div className='text-center'>
-                <p className='text-xl font-bold'>Woo hoo!!</p>
+              <img className="" src={success} alt="successimage" />
+              <div className="text-center">
+                <p className="text-xl font-bold">Woo hoo!!</p>
                 <p className="text-xs  mb-4">Request submitted successfully!</p>
                 <button
                   className="bg-black text-white py-2 px-4 rounded-3xl text-xs"

@@ -63,7 +63,7 @@ const ResetPassword = () => {
         <h1 className='text-4xl text-white font-semibold'>Reset Password</h1>
         <div className='flex flex-col   h-10 w-3/12 mt-10  mb-20 gap-2'>
             { error && <p>{error}</p> }
-            <input className='text-sm bg-inputBoxBlack p-5 rounded-lg' 
+            <input className='text-sm bg-inputBoxBlack p-5 rounded-lg text-white' 
             type='password' value={password} onChange={handlePasswordChange} placeholder='8 digit pin'/>
             <input className='text-sm bg-inputBoxBlack p-5 rounded-lg' 
             type='password' value={confirmPassword} onChange={handleConfirmPasswordChange} placeholder='Re-enter 8 digit pin'/>

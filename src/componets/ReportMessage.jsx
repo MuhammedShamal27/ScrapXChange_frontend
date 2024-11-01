@@ -2,7 +2,7 @@ import React from 'react'
 import Report from '../assets/Report.png';
 import {toast} from 'sonner'
 import { useState } from 'react';
-import { reportUser } from '../services/api/user/userApi';
+import { createUserNotification, reportUser } from '../services/api/user/userApi';
 import { reportShop } from '../services/api/shop/shopApi';
 import { jwtDecode } from 'jwt-decode';
 import { useSelector } from 'react-redux';
@@ -58,20 +58,25 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
           // Check the type and call the appropriate report function
           if (type === 'user') {
             response = await reportUser({ receiver, reason: finalReason,description });
-            socket.emit('notification', {
-                sender_id: userId,  
-                receiver_id: receiver,  
-                message: 'A report Aganist a shop is submitted.',
-                notification_type : 'report'
-              });
+
+            const notification = {
+              receiver : receiver,
+              sender : userId,
+              message : `A Report is submitted  aganist ${Name}.`,
+              notification_type : 'report'
+            }
+            const createNotification = await createUserNotification(notification)
+
+
           } else if (type === 'shop') {
             response = await reportShop({ receiver, reason: finalReason,description });
-            socket.emit('notification', {
-                sender_id: shopId,  
-                receiver_id: receiver,  
-                message: 'A report Aganist a user is submitted.', 
-                notification_type : 'report' 
-              });
+
+            // const notification = {
+            //     receiver : receiver,
+            //     sender : shopId,
+            //     message : `A Report is submitted  aganist ${Name}.`,
+            //     notification_type : 'report'
+            //   }
           }
 
           toast.success('Report sent successfully');

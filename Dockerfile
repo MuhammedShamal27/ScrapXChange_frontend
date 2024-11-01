@@ -1,11 +1,10 @@
-#Base image for Node.js
-FROM  node:20-alpine AS build
-#Set working directory inside the container
-WORKDIR /usr/src/app
-#Copy package.json and install dependencies
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
 COPY package.json package-lock.json ./
 
-RUN npm install 
+RUN npm install
 
 COPY . .
 
@@ -13,8 +12,12 @@ RUN npm run build
 
 FROM nginx:alpine
 
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+RUN rm -rf /etc/nginx/conf.d/*
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-#Command to run Vite in development mode
-CMD [ "nginx", "-g", "daemon off;" ]
+
+CMD ["nginx", "-g", "daemon off;"]
