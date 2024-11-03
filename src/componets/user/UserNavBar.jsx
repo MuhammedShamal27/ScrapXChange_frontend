@@ -4,7 +4,6 @@ import profile from "../../assets/SA_profile.png";
 import logo from "../../assets/logo.png";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 
@@ -49,7 +48,7 @@ const UserNavBar = () => {
             <Link to='/profile'>
               <img 
                 className="w-10 h-10 cursor-pointer rounded-full"
-                src={user?.profile_picture ? `${baseURL}${user.profile_picture}` : profile}
+                src={user?.profile_picture ? `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${user.profile_picture}` : profile}
                 alt="profile picture of user"
               />
             </Link>

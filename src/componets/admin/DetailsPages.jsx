@@ -9,7 +9,6 @@ import {
 } from "../../services/api/admin/adminApi";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
 
 const DetailsPages = ({ details, type }) => {
   if (!details) {

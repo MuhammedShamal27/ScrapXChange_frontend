@@ -70,9 +70,7 @@ const ShopMessageBox = () => {
 
 
     console.log("Attempting WebSocket connection to:", roomId);
-    // Establish WebSocket connection using native WebSocket
-    // socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'],});
-    socket.current = io("http://127.0.0.1:8000", { transports: ['websocket'], debug: true });
+    socket.current = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, { transports: ['websocket'], debug: true });
 
     console.log("WebSocket reference:", socket.current);
     socket.current.emit('join_room', { room_id: roomId, shop_id: shop });
@@ -344,11 +342,11 @@ const ShopMessageBox = () => {
 
                     {msg.message}
 
-                    {msg.image && ( <img src={`http://127.0.0.1:8000${msg.image}`} alt="image" className="max-w-xs mt-2 rounded-lg" /> )}
+                    {msg.image && ( <img src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}msg.image}`} alt="image" className="max-w-xs mt-2 rounded-lg" /> )}
 
-                    {msg.video && ( <video src={`http://127.0.0.1:8000${msg.video}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
+                    {msg.video && ( <video src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}{msg.video}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
 
-                    {msg.audio && (<audio src={`http://127.0.0.1:8000${msg.audio}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
+                    {msg.audio && (<audio src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.audio}`} controls className="max-w-xs mt-2 rounded-lg"/>)}
 
                     <span className="text-xs text-black ml-7">
                       {new Date(msg.timestamp).toLocaleTimeString([], {hour: "2-digit",minute: "2-digit",})}

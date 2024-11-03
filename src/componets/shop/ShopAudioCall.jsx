@@ -55,8 +55,8 @@ const ShopAudioCall = () => {
     const myMeeting = async() => {
       console.log('the zego fuction is started')
 
-      const appId = 1646937662
-      const serverSecret = "cf390adbc0b7a6678da6cb1e03179c92" 
+      const appId = 176630120
+      const serverSecret = "ec7e0aad2c5f86cf4e76f7369e3520fc" 
 
       const shopName = profile?.shop_name || "Default Shop Name";
       console.log('the shop name',shopName)

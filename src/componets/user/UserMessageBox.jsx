@@ -70,7 +70,7 @@ const UserMessageBox = () => {
   
     console.log("Attempting WebSocket connection to:", roomId);
   
-    socket.current = io("http://127.0.0.1:8000", {
+    socket.current = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, {
       transports: ["websocket"],
       debug: true,
     });
@@ -370,21 +370,21 @@ const UserMessageBox = () => {
                     {msg.message}
                     {msg.image && (
                       <img
-                        src={`http://127.0.0.1:8000${msg.image}`}
+                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.image}`}
                         alt="image"
                         className="max-w-xs mt-2 rounded-lg"
                       />
                     )}
                     {msg.video && (
                       <video
-                        src={`http://127.0.0.1:8000${msg.video}`}
+                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.video}`}
                         controls
                         className="max-w-xs mt-2 rounded-lg"
                       />
                     )}
                     {msg.audio && (
                       <audio
-                        src={`http://127.0.0.1:8000${msg.audio}`}
+                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.audio}`}
                         controls
                       />
                     )}
