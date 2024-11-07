@@ -2,7 +2,7 @@ import axiosInstance from "../axiosInstance";
 
 export const registerUser = async (userData) => {
         try {
-            const response = await axiosInstance.post('/user/register/', userData);
+            const response = await axiosInstance.post('/api/user/register/', userData);
             console.log("the register response data",response.data)
             return response.data;
         } catch (err) {
@@ -14,7 +14,7 @@ export const registerUser = async (userData) => {
 
 export const verifyOtp = async (otpData) =>{
     try{
-        const response = await axiosInstance.post('/user/verify-otp/',otpData);
+        const response = await axiosInstance.post('/api/user/verify-otp/',otpData);
         return response.data;
     }catch (err){
         if (!err.response) throw err;
@@ -24,7 +24,7 @@ export const verifyOtp = async (otpData) =>{
 
 export const resendOtp = async (email) =>{
     try{
-        const response = await axiosInstance.post('/user/resend-otp/',{ email });
+        const response = await axiosInstance.post('/api/user/resend-otp/',{ email });
         return response.data;
     }catch (err) {
         if (!err.response) throw err;
@@ -35,7 +35,7 @@ export const resendOtp = async (email) =>{
 
 export const loginUser = async (userData) =>{
     try{
-        const response = await axiosInstance.post('/user/login/',userData);
+        const response = await axiosInstance.post('/api/user/login/',userData);
         console.log('loginuser api response',response.data)
         return response.data
     }
@@ -47,7 +47,7 @@ export const loginUser = async (userData) =>{
 
 export const emailForResetPassword = async (userData) =>{
     try{
-        const response = await axiosInstance.post('/user/password-reset-request/',userData);
+        const response = await axiosInstance.post('/api/user/password-reset-request/',userData);
         console.log('Api emailForResetPassword',response.data)
         return response.data
     }
@@ -59,7 +59,7 @@ export const emailForResetPassword = async (userData) =>{
 
 export const passwordOtp = async (otpData) =>{
     try{
-        const response = await axiosInstance.post('/user/password-otp/',otpData);
+        const response = await axiosInstance.post('/api/user/password-otp/',otpData);
         console.log("Api passwordOtp",response.data)
         return response.data
     }
@@ -72,7 +72,7 @@ export const passwordOtp = async (otpData) =>{
 
 export const resetPassword = async (userData) =>{
     try{
-        const response = await axiosInstance.post('/user/password-reset/',userData);
+        const response = await axiosInstance.post('/api/user/password-reset/',userData);
         console.log('Api password-reset',response.data)
         return response.data
     }
@@ -84,7 +84,7 @@ export const resetPassword = async (userData) =>{
 
 export const getUserHomeData = async () =>{
     try {
-        const response = await axiosInstance.get('/user/');
+        const response = await axiosInstance.get('/api/user/');
         return response.data
     } catch (err) {
         if (!err.response) throw err;
@@ -95,7 +95,7 @@ export const getUserHomeData = async () =>{
 
 export const userProfile = async () =>{
     try {
-        const response = await axiosInstance.get('/user/profile/');
+        const response = await axiosInstance.get('/api/user/profile/');
         // console.log("userProfile",response)
         return response.data
     }catch (err) {
@@ -111,7 +111,7 @@ export const editUserProfile = async (formData) =>{
     try{
         console.log('here');
         
-        const response = await axiosInstance.put('/user/edit-profile/',formData );
+        const response = await axiosInstance.put('/api/user/edit-profile/',formData );
         console.log("the response api of editProfile",response)
         return response.data
     }catch (err) {
@@ -123,7 +123,7 @@ export const editUserProfile = async (formData) =>{
 export const fetchshops = async (params) => {
     try {
         console.log('going request',params)
-        const response = await axiosInstance.get('/user/shops/',{params:params})
+        const response = await axiosInstance.get('/api/user/shops/',{params:params})
         console.log("the response of shops ",response)
         return response.data
     }catch (err) {
@@ -134,7 +134,7 @@ export const fetchshops = async (params) => {
 
 export const shopScrapList = async (id) => {
     try {
-        const response = await axiosInstance.get(`/user/shops/${id}/products/`)
+        const response = await axiosInstance.get(`/api/user/shops/${id}/products/`)
         console.log("the response of shops ",response)
         return response.data
     }catch (err) {
@@ -146,7 +146,7 @@ export const shopScrapList = async (id) => {
 export const collectionRequest = async (formData) => {
     try {
         console.log('the data sending ',formData)
-        const response = await axiosInstance.post('/user/scrap-collection-request/',formData)
+        const response = await axiosInstance.post('/api/user/scrap-collection-request/',formData)
         console.log("the response of scrap collection  shops ",response)
         return response.data
     }catch (err) {
@@ -158,7 +158,7 @@ export const collectionRequest = async (formData) => {
 export const fetchAllShop = async (searchQuery) => {
     try {
         console.log('the data sending ')
-        const response = await axiosInstance.get('/user/all-shop/',{
+        const response = await axiosInstance.get('/api/user/all-shop/',{
             params: { search: searchQuery }
         })
         console.log("the response of scrap collection  shops ",response)
@@ -173,7 +173,7 @@ export const fetchAllShop = async (searchQuery) => {
 
 export const fetchUserChatRooms = async () => {
     try {
-        const response = await axiosInstance.get('/user/chatrooms/');
+        const response = await axiosInstance.get('/api/user/chatrooms/');
         console.log("the response of fetchUserChatRooms ",response)
         return response.data;
     } catch (err) {
@@ -185,7 +185,7 @@ export const fetchUserChatRooms = async () => {
 
 export const createOrFetchChatRoom = async (shopId) => {
     try {
-        const response = await axiosInstance.post(`/user/chatroom/${shopId}/`);
+        const response = await axiosInstance.post(`/api/user/chatroom/${shopId}/`);
         console.log('the response of fetchMessages',response.data)
 
         return response.data;
@@ -198,7 +198,7 @@ export const createOrFetchChatRoom = async (shopId) => {
 
 export const fetchMessages = async (roomId) => {
     try {
-        const response = await axiosInstance.get(`/user/chatroom/${roomId}/messages/`);
+        const response = await axiosInstance.get(`/api/user/chatroom/${roomId}/messages/`);
         console.log('the response of fetchMessages',response.data)
         return response.data;
     } catch (err) {
@@ -213,7 +213,7 @@ export const sendMessage = async (formData) => {
         const roomId = formData.get('room_id');
         console.log('the formdata inside the user api',roomId)
 
-        const response = await axiosInstance.post(`/user/chatroom/${roomId}/messages/`, formData);
+        const response = await axiosInstance.post(`/api/user/chatroom/${roomId}/messages/`, formData);
         console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {
@@ -225,7 +225,7 @@ export const sendMessage = async (formData) => {
 
 export const sendNotification = async () => {
     try{
-        const response = await axiosInstance.post ('/user/notification/create/')
+        const response = await axiosInstance.post ('/api/user/notification/create/')
         console.log('the reponse of sendNotification',response.data)
         return response.data;
     } catch (err) {
@@ -237,7 +237,7 @@ export const sendNotification = async () => {
 
 export const reportUser = async ({ receiver, reason , description }) => {
     try {
-        const response = await axiosInstance.post('/user/report/',{ receiver, reason , description })
+        const response = await axiosInstance.post('/api/user/report/',{ receiver, reason , description })
         console.log('the response of reportUser',response)
         return response.data;
     } catch (err) {
@@ -248,7 +248,7 @@ export const reportUser = async ({ receiver, reason , description }) => {
 
 export const userTransactions = async () => {
     try {
-        const response = await axiosInstance.get('/user/transactions/')
+        const response = await axiosInstance.get('/api/user/transactions/')
         console.log('the response of transactions',response)
         return response.data;
     } catch (err) {
@@ -260,7 +260,7 @@ export const userTransactions = async () => {
 
 export const fecthUserNotification = async() => {
     try{
-        const response = await axiosInstance.get('/user/notifications/')
+        const response = await axiosInstance.get('/api/user/notifications/')
         console.log('the response of fecthUserNotification',response)
         return response.data;
     }catch(error){ 
@@ -271,7 +271,7 @@ export const fecthUserNotification = async() => {
 
 export const createUserNotification = async(notification) =>{
     try{
-        const response = await axiosInstance.post('/user/notifications/create/',notification)
+        const response = await axiosInstance.post('/api/user/notifications/create/',notification)
         return response.data
     }catch(error){
         console.error("Error while fecthing.",error);
@@ -281,7 +281,7 @@ export const createUserNotification = async(notification) =>{
 
 export const markReadNotification = async(id) => {
     try{
-        const response = await axiosInstance.patch(`/user/notifications/${id}/read/`)
+        const response = await axiosInstance.patch(`/api/user/notifications/${id}/read/`)
         console.log('the response of markReadNotification',response)
         return response.data;
     }catch(error){ 
@@ -292,7 +292,7 @@ export const markReadNotification = async(id) => {
 
 export const fetchUserDashboard = async() => {
     try{
-        const response = await axiosInstance.get(`/user/dashboard/`)
+        const response = await axiosInstance.get(`/api/user/dashboard/`)
         console.log('the response of fetchUserDashboard',response)
         return response.data;
     }catch(error){ 

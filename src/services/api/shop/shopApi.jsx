@@ -2,7 +2,7 @@ import axiosInstance from "../axiosInstance"
 
 export const registerShop = async (shopData) =>{
     try{
-        const response = await axiosInstance.post ('/shop/register/',shopData)
+        const response = await axiosInstance.post ('/api/shop/register/',shopData)
         console.log("the shop response data" , response.data)
         return response.data
 
@@ -18,7 +18,7 @@ export const registerShop = async (shopData) =>{
 
 export const loginShop = async (shopData) =>{
     try{
-        const response = await axiosInstance.post ('/shop/login/',shopData)
+        const response = await axiosInstance.post ('/api/shop/login/',shopData)
         console.log("the shop login response data",response.data)
         return response.data
     } catch (err) {
@@ -30,7 +30,7 @@ export const loginShop = async (shopData) =>{
 
 export const fetchShopHome = async () => {
     try {
-        const response = await axiosInstance.get ('/shop/home/')
+        const response = await axiosInstance.get ('/api/shop/home/')
         // console.log("the shop home response data", response.data)
         return response.data
     } catch (err) {
@@ -44,7 +44,7 @@ export const fetchShopHome = async () => {
 
 export const fetchCategoryList = async () => {
     try {
-        const response = await axiosInstance.get ('/shop/category-list/')
+        const response = await axiosInstance.get ('/api/shop/category-list/')
         console.log("the category list response data", response.data)
         return response.data
     } catch (err) {
@@ -59,7 +59,7 @@ export const fetchCategoryList = async () => {
 export const addCategory = async (categoryData) => {
     try {
         console.log('is going to backend', categoryData);
-        const response = await axiosInstance.post('/shop/category-creation/', categoryData);
+        const response = await axiosInstance.post('/api/shop/category-creation/', categoryData);
         console.log("the add category response data", response.data);
         return response.data;
     } catch (err) {
@@ -73,7 +73,7 @@ export const addCategory = async (categoryData) => {
 
 export const getCategoryById = async (id) => {
     try {
-        const response = await axiosInstance.get(`/shop/category-detail/${id}/`);
+        const response = await axiosInstance.get(`/api/shop/category-detail/${id}/`);
         console.log("the category response data by id", response.data)
         return response.data;
     } catch (err) {
@@ -96,7 +96,7 @@ export const updateCategory = async (id, categoryData, originalImageUrl) => {
         }
       }
   
-      const response = await axiosInstance.put(`/shop/category-update/${id}/`, formData);
+      const response = await axiosInstance.put(`/api/shop/category-update/${id}/`, formData);
       console.log("The update category response data", response.data);
       return response.data;
     } catch (err) {
@@ -112,7 +112,7 @@ export const updateCategory = async (id, categoryData, originalImageUrl) => {
 
 export const fetchScrapList = async () => {
     try {
-        const response = await axiosInstance.get ('/shop/product-list/')
+        const response = await axiosInstance.get ('/api/shop/product-list/')
         console.log("the scrap list response data", response.data)
         return response.data
     } catch (err) {
@@ -126,7 +126,7 @@ export const fetchScrapList = async () => {
 
 export const addScrap = async (scrapData) => {
     try {
-        const response = await axiosInstance.post ('/shop/product-creation/',scrapData)
+        const response = await axiosInstance.post ('/api/shop/product-creation/',scrapData)
         console.log("the scrap list response data", response.data)
         return response.data
     } catch (err) {
@@ -140,7 +140,7 @@ export const addScrap = async (scrapData) => {
 
 export const getScrapById = async (id) => {
     try {
-        const response = await axiosInstance.get(`/shop/product-detail/${id}/`);
+        const response = await axiosInstance.get(`/api/shop/product-detail/${id}/`);
         console.log("the scrap response data by id", response.data)
         return response.data;
     } catch (err) {
@@ -163,7 +163,7 @@ export const updateScrap = async (id, scrapData, originalImageUrl) => {
         }
       }
   
-      const response = await axiosInstance.put(`/shop/product-update/${id}/`, formData);
+      const response = await axiosInstance.put(`/api/shop/product-update/${id}/`, formData);
       console.log("The scrap list response data", response.data);
       return response.data;
     } catch (err) {
@@ -178,7 +178,7 @@ export const updateScrap = async (id, scrapData, originalImageUrl) => {
 
 export const getScrapRequests = async () => {
     try {
-        const response = await axiosInstance.get(`/shop/scrap-requests/`);
+        const response = await axiosInstance.get(`/api/shop/scrap-requests/`);
         console.log("the scrap request response data", response.data)
         return response.data;
     } catch (err) {
@@ -190,7 +190,7 @@ export const getScrapRequests = async () => {
 
 export const getScrapRequestDetails = async (id) => {
     try{
-        const response = await axiosInstance.get(`/shop/scrap-request-details/${id}/`);
+        const response = await axiosInstance.get(`/api/shop/scrap-request-details/${id}/`);
         console.log("the scrap request details response data",response.data)
         return response.data
     }catch (err){
@@ -201,7 +201,7 @@ export const getScrapRequestDetails = async (id) => {
 
 export const scheduleRequest = async (id) => {
     try{
-        const response = await axiosInstance.post (`/shop/schedule-request/${id}/`);
+        const response = await axiosInstance.post (`/api/shop/schedule-request/${id}/`);
         return response.data
     }catch (err) {
         console.error("Error while sheduling .",err);
@@ -211,7 +211,7 @@ export const scheduleRequest = async (id) => {
 
 export const reScheduleRequest = async (id,date) => {
     try{
-        const response = await axiosInstance.post (`/shop/reschedule-request/${id}/`,{ scheduled_date: date });
+        const response = await axiosInstance.post (`/api/shop/reschedule-request/${id}/`,{ scheduled_date: date });
         return response.data
     }catch (err) {
         console.error("Error while scheduling .",err);
@@ -221,7 +221,7 @@ export const reScheduleRequest = async (id,date) => {
 
 export const rejectRequest = async (id,reason) => {
     try {
-        const response = await axiosInstance.post(`/shop/reject-request/${id}/`,{reason})
+        const response = await axiosInstance.post(`/api/shop/reject-request/${id}/`,{reason})
         return response.data
     }catch (err) {
         console.error("Error while rejceting .",err);
@@ -232,7 +232,7 @@ export const rejectRequest = async (id,reason) => {
 
 export const todayPendings = async() => {
     try{
-        const response = await axiosInstance.get('/shop/today-pendings/')
+        const response = await axiosInstance.get('/api/shop/today-pendings/')
         console.log(response.data)
         return response.data
     }catch (err){
@@ -243,7 +243,7 @@ export const todayPendings = async() => {
 
 export const getPendingDetails = async(id) => {
     try{
-        const response = await axiosInstance.get(`/shop/pending-details/${id}`)
+        const response = await axiosInstance.get(`/api/shop/pending-details/${id}`)
         console.log(response.data)
         return response.data
     }catch (err){
@@ -255,7 +255,7 @@ export const getPendingDetails = async(id) => {
 export const scrapCollected = async(id,formData) => {
     try{
         console.log('the data comming',formData)
-        const response = await axiosInstance.post(`/shop/scrap-collected/${id}/`,formData)
+        const response = await axiosInstance.post(`/api/shop/scrap-collected/${id}/`,formData)
         console.log(response.data)
         return response.data
     }catch (err) {
@@ -266,7 +266,7 @@ export const scrapCollected = async(id,formData) => {
 
 export const ConfirmCollection = async(id) => {
     try{
-        const response = await axiosInstance.get(`/shop/confirm-collection/${id}/`)
+        const response = await axiosInstance.get(`/api/shop/confirm-collection/${id}/`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -277,7 +277,7 @@ export const ConfirmCollection = async(id) => {
 
 export const PaymentCash = async(id) => {
     try{
-        const response = await axiosInstance.post(`/shop/payment-cash/${id}/`)
+        const response = await axiosInstance.post(`/api/shop/payment-cash/${id}/`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -289,7 +289,7 @@ export const PaymentCash = async(id) => {
 export const PaymentRazorpay = async(id) => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.post(`/shop/create-razorpay-order/${id}/`)
+        const response = await axiosInstance.post(`/api/shop/create-razorpay-order/${id}/`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -301,7 +301,7 @@ export const PaymentRazorpay = async(id) => {
 export const VerifyPayment = async(paymentData) => {
     try{
         console.log('here is also comming',paymentData)
-        const response = await axiosInstance.post('/shop/verify-payment/',paymentData)
+        const response = await axiosInstance.post('/api/shop/verify-payment/',paymentData)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -312,7 +312,7 @@ export const VerifyPayment = async(paymentData) => {
 
 export const fetchInvoice = async(id) => {
     try{
-        const response = await axiosInstance.get(`/shop/invoice/${id}`)
+        const response = await axiosInstance.get(`/api/shop/invoice/${id}`)
         console.log('the response',response.data)
         return response.data
     }catch (err) {
@@ -325,7 +325,7 @@ export const fetchInvoice = async(id) => {
 export const fetchAllUsers = async(searchQuery) => {
     try{
         console.log('here is also comming')
-        const response = await axiosInstance.get('/shop/all-users/',{
+        const response = await axiosInstance.get('/api/shop/all-users/',{
             params: { search: searchQuery }
         })
         console.log('the response',response.data)
@@ -338,7 +338,7 @@ export const fetchAllUsers = async(searchQuery) => {
 
 export const fetchshopChatRooms = async () => {
     try {
-        const response = await axiosInstance.get('/shop/userchatrooms/');
+        const response = await axiosInstance.get('/api/shop/userchatrooms/');
         console.log("the response of fetchshopChatRooms ",response)
         return response.data;
     } catch (err) {
@@ -349,7 +349,7 @@ export const fetchshopChatRooms = async () => {
 
 export const shopCreateOrFetchChatRoom = async (userId) => {
     try {
-        const response = await axiosInstance.post(`/shop/userchatroom/${userId}/`);
+        const response = await axiosInstance.post(`/api/shop/userchatroom/${userId}/`);
         console.log('the response of fetchMessages',response.data)
 
         return response.data;
@@ -361,7 +361,7 @@ export const shopCreateOrFetchChatRoom = async (userId) => {
 
 export const fetchShopMessages = async (roomId) => {
     try {
-        const response = await axiosInstance.get(`/shop/userchatroom/${roomId}/messages/`);
+        const response = await axiosInstance.get(`/api/shop/userchatroom/${roomId}/messages/`);
         console.log('the response of fetchMessages',response.data)
         return response.data;
     } catch (err) {
@@ -377,7 +377,7 @@ export const shopSendMessage = async (formData) => {
         const roomId = formData.get('room_id');
         console.log('the formdata inside the user api',roomId)
 
-        const response = await axiosInstance.post(`/shop/userchatroom/${roomId}/messages/`, formData);
+        const response = await axiosInstance.post(`/api/shop/userchatroom/${roomId}/messages/`, formData);
         console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {
@@ -389,7 +389,7 @@ export const shopSendMessage = async (formData) => {
 
 export const fetchShopProfile = async (shop) => {
     try {
-        const response = await axiosInstance.get('/shop/shopProfile/',shop);
+        const response = await axiosInstance.get('/api/shop/shopProfile/',shop);
         // console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {
@@ -399,7 +399,7 @@ export const fetchShopProfile = async (shop) => {
 };
 export const getReportDetails = async (receiver_id) => {
     try {
-        const response = await axiosInstance.get(`/shop/report/${receiver_id}`,);
+        const response = await axiosInstance.get(`/api/shop/report/${receiver_id}`,);
         console.log('the response of getReportDetails',response.data)
         return response.data;
     } catch (err) {
@@ -410,7 +410,7 @@ export const getReportDetails = async (receiver_id) => {
 
 export const reportShop = async ({ receiver, reason }) => {
     try {
-        const response = await axiosInstance.post('/shop/report/',{ receiver, reason });
+        const response = await axiosInstance.post('/api/shop/report/',{ receiver, reason });
         console.log('the response of sendMessage',response.data)
         return response.data;
     } catch (err) {
@@ -422,7 +422,7 @@ export const reportShop = async ({ receiver, reason }) => {
 
 export const shopGraph = async () => {
     try {
-        const response = await axiosInstance.get('/shop/graph/');
+        const response = await axiosInstance.get('/api/shop/graph/');
         // console.log('the response of graph ',response.data)
         return response.data;
     } catch (err) {
@@ -434,7 +434,7 @@ export const shopGraph = async () => {
 
 export const shopProfileAndLocation = async (formData) => {
     try {
-        const response = await axiosInstance.put('/shop/shop-profile/',formData);
+        const response = await axiosInstance.put('/api/shop/shop-profile/',formData);
         console.log('the response of shopProfile ',response.data)
         return response.data;
     } catch (err) {
@@ -446,7 +446,7 @@ export const shopProfileAndLocation = async (formData) => {
 
 export const shopTransactionList = async () => {
     try {
-        const response = await axiosInstance.get('/shop/shop-transactions/');
+        const response = await axiosInstance.get('/api/shop/shop-transactions/');
         console.log('the response of shopTransactionList ',response.data)
         return response.data;
     } catch (err) {
@@ -458,7 +458,7 @@ export const shopTransactionList = async () => {
 
 export const shopDashboard = async () => {
     try {
-        const response = await axiosInstance.get('/shop/shop-dashboard/');
+        const response = await axiosInstance.get('/api/shop/shop-dashboard/');
         return response.data;
     } catch (err) {
         console.error("Error while sending message", err);
@@ -469,7 +469,7 @@ export const shopDashboard = async () => {
 
 export const fetchShopNotifications = async () => {
     try {
-        const response = await axiosInstance.get('/shop/shop-notification/');
+        const response = await axiosInstance.get('/api/shop/shop-notification/');
         console.log('the response of fetchShopNotifications ',response.data)
         return response.data;
     } catch (err) {
@@ -480,7 +480,7 @@ export const fetchShopNotifications = async () => {
 
 export const markShopNotifications = async (id) => {
     try {
-        const response = await axiosInstance.put(`/shop/notifications/${id}/mark-as-read/`);
+        const response = await axiosInstance.put(`/api/shop/notifications/${id}/mark-as-read/`);
         console.log('the response of markShopNotifications ',response.data)
         return response.data;
     } catch (err) {
