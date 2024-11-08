@@ -9,7 +9,6 @@ import { Search } from "lucide-react";
 import stateData from "../../data/states-and-districts.json";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-
 const mapContainerStyle = {
   width: "100%",
   height: "400px",
@@ -64,7 +63,6 @@ const Shops = () => {
     setSelectedDistrict(e.target.value);
   };
 
-
   useEffect(() => {
     if (selectedState && selectedDistrict) {
       fetchShopsData();
@@ -91,7 +89,9 @@ const Shops = () => {
 
     if (query) {
       const filtered = shops.filter((shop) =>
-        shop.products.some((product) => product.name.toLowerCase().includes(query))
+        shop.products.some((product) =>
+          product.name.toLowerCase().includes(query)
+        )
       );
       setFilteredShops(filtered);
     } else {
@@ -104,16 +104,18 @@ const Shops = () => {
       <div className="flex flex-col min-h-screen">
         <UserNavBar />
 
-        <div className="flex-grow mt-10 ml-10 flex">
-          <div className="w-full pr-4 overflow-auto">
-            <div className="flex justify-between">
-              <h1 className="font-medium text-2xl ml-4 sm:ml-10 ">
+        <div className="flex-grow mt-10 ml-4 sm:ml-10 flex flex-col sm:flex-row">
+          <div className="w-full sm:w-2/3 pr-4 overflow-auto">
+            {/* Title and Controls (State, District, and Search) */}
+            <div className="flex flex-col sm:flex-row sm:justify-between">
+              <h1 className="font-medium text-2xl sm:ml-4 mb-4 sm:mb-0">
                 Sell Scrap
               </h1>
 
-              <div className="space-x-3">
+              {/* State and District Dropdowns */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-4 sm:mb-0">
                 <select
-                  className="rounded-full text-sm"
+                  className="rounded-full text-sm mb-2 sm:mb-0"
                   value={selectedState}
                   onChange={handleStateChange}
                 >
@@ -125,9 +127,12 @@ const Shops = () => {
                   ))}
                 </select>
 
-                {/* District Dropdown */}
-                {districts.length > 0  && ( 
-                  <select className="rounded-full text-sm" value={selectedDistrict} onChange={handleDistrictChange}>
+                {districts.length > 0 && (
+                  <select
+                    className="rounded-full text-sm"
+                    value={selectedDistrict}
+                    onChange={handleDistrictChange}
+                  >
                     <option value="">Select District</option>
                     {districts.map((district) => (
                       <option key={district} value={district}>
@@ -139,29 +144,28 @@ const Shops = () => {
               </div>
 
               {/* Search Bar for Products */}
-              <div className="flex items-center border rounded-full  ml-20 gap-3">
+              <div className="flex items-center border rounded-full p-2 gap-2 sm:ml-10 sm:w-1/3 lg:justify-end">
                 <Search size={15} />
                 <input
                   value={searchQuery}
                   onChange={handleSearchChange}
                   placeholder="Search for products..."
-                  className="border-none text-xs outline-none"
+                  className="border-none text-xs outline-none w-full"
                 />
               </div>
             </div>
 
-            <div>
-
-            <div className="flex">
-              <div className="w-2/6 m-9 text-sm">
+            <div className="flex flex-col sm:flex-row mt-4">
+              {/* Shop List */}
+              <div className="w-full sm:w-1/2 sm:m-4 text-sm">
                 {filteredShops.length > 0 ? (
                   filteredShops.map((shop) => (
                     <div
                       key={shop.id}
-                      className="flex rounded-lg shadow-lg p-3 items-center justify-between"
+                      className="flex flex-col sm:flex-row items-center justify-between rounded-lg shadow-lg p-3 mb-4"
                     >
-                      <div className="flex items-center space-x-3">
-                        <img src={Shop_image} alt="shop image" />
+                      <div className="flex items-center space-x-3 mb-3 sm:mb-0">
+                        <img src={Shop_image} alt="shop" />
                         <div>
                           <h2 className="uppercase font-bold">
                             {shop.shop_name}
@@ -169,7 +173,7 @@ const Shops = () => {
                           <h2>{shop.address}</h2>
                         </div>
                       </div>
-                      <div className="space-x-3">
+                      <div className="flex space-x-3 w-full sm:w-auto">
                         <button
                           className="bg-black text-white p-1 rounded-3xl text-xs w-full sm:w-24"
                           onClick={() => handleSellScrapClick(shop.id)}
@@ -194,32 +198,33 @@ const Shops = () => {
                 )}
               </div>
 
-              <div className="w-3/6 mt-9 ml-44">
-              <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU"> 
-                <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  zoom={10}
-                  center={defaultCenter}
-                >
-                  {filteredShops.length > 0 &&
-                    filteredShops.map((shop) => (
-                      <Marker
-                        key={shop.id}
-                        position={{
-                          lat: parseFloat(shop.latitude),
-                          lng: parseFloat(shop.longitude),
-                        }}
-                        title={shop.shop_name}
-                        onClick={() => navigate(`/scraplist/${shop.id}`)}
-                      />
-                    ))}
-                </GoogleMap>
-              </LoadScript>
+              {/* Google Map */}
+              <div className="w-full sm:w-1/2 mt-6 sm:mt-0 sm:ml-auto lg:justify-end">
+                <LoadScript googleMapsApiKey="AIzaSyDyghidkWq1RnG3XfrzM8pZBaNm3u71eeU">
+                  <GoogleMap
+                    mapContainerStyle={{
+                      width: "100%",
+                      height: "300px",
+                    }}
+                    zoom={10}
+                    center={defaultCenter}
+                  >
+                    {filteredShops.length > 0 &&
+                      filteredShops.map((shop) => (
+                        <Marker
+                          key={shop.id}
+                          position={{
+                            lat: parseFloat(shop.latitude),
+                            lng: parseFloat(shop.longitude),
+                          }}
+                          title={shop.shop_name}
+                          onClick={() => navigate(`/scraplist/${shop.id}`)}
+                        />
+                      ))}
+                  </GoogleMap>
+                </LoadScript>
               </div>
             </div>
-
-            </div>
-
           </div>
         </div>
 

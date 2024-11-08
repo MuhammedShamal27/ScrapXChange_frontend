@@ -53,24 +53,24 @@ const Home = () => {
         <UserNavBar />
 
         <div className="text-center m-10 flex flex-col justify-center items-center">
-          <h1 className="text-5xl font-bold m-3">
+          <h1 className="lg:text-5xl font-bold m-3 sm:text-4xl ">
             {" "}
             Efficient{" "}
             <span className="bg-homePageGreen rounded-3xl ">Scrap</span>{" "}
             Recycling{" "}
           </h1>
-          <h1 className="text-5xl font-bold m-3">Services Near You</h1>
+          <h1 className="lg:text-5xl font-bold sm:text-4xl">Services Near You</h1>
           <div className="text-center text-sm">
-            <h5>
+            <h5 className="text-xs">
               {" "}
               Discover efficient scrap recycling services right in your
               neighborhood! We're dedicated to providing convenient
             </h5>
-            <h5>
+            <h5 className="text-xs" >
               and reliable scrap recycling solutions to businesses and
               individuals alike. Whether you have metal, paper, plastic,
             </h5>
-            <h5>
+            <h5 className="text-xs">
               {" "}
               or electronics to recycle, our experienced team is here to help.
             </h5>
@@ -82,24 +82,28 @@ const Home = () => {
             </span>
           </Link>
         </div>
-        <div className="flex justify-between h-60 w-60 gap-7 items-center mt-20 ml-32 ">
-          <img className="h-32 rounded-xl" src={himage1} alt="" />
-          <img className="h-48 rounded-xl" src={himage2} alt="" />
-          <img className="rounded-xl" src={himage3} alt="" />
-          <img className="h-48 rounded-xl" src={himage4} alt="" />
-          <img className="h-32 rounded-xl" src={himage5} alt="" />
-        </div>
 
-        <div className="flex justify-evenly items-center m-20">
-          <h1 className="text-5xl font-bold">Transforming Scrap into Value</h1>
-          <div className="text-xs">
-            <h5>Discover efficient scrap recycling neighborhood!</h5>
-            <h5>We're dedicated to providing convenient reliable.</h5>
-          </div>
-        </div>
+        <div className="flex flex-col sm:flex-row lg:flex-row lg:justify-between sm:justify-between gap-7 items-center lg:m-20 sm:m-20 ">
+  <img className="h-36 w-40 sm:h-32 sm:w-auto lg:h-32 lg:w-auto rounded-xl" src={himage1} alt="" />
+  <img className="h-36 w-40 sm:h-48 sm:w-auto lg:h-48 lg:w-auto rounded-xl" src={himage2} alt="" />
+  <img className="h-36 w-40 sm:h-auto lg:w-auto rounded-xl" src={himage3} alt="" />
+  <img className="h-36 w-40 sm:h-48 sm:w-auto lg:h-48 lg:w-auto rounded-xl" src={himage4} alt="" />
+  <img className="h-36 w-40 sm:h-32 sm:w-auto lg:h-32 lg:w-auto rounded-xl" src={himage5} alt="" />
+</div>
+
+
+<div className="flex justify-evenly items-center m-20">
+  <h1 className="lg:text-5xl font-bold sm:text-3xl">Transforming Scrap into Value</h1>
+  <div className="text-xs">
+    {/* Hidden on Small Screens, Visible on Larger Screens */}
+    <h5 className="hidden lg:block">Discover efficient scrap recycling neighborhood!</h5>
+    <h5 className="hidden lg:block">We're dedicated to providing convenient reliable.</h5>
+  </div>
+</div>
+
 
         <div className="items-center m-20">
-          <h1 className="text-3xl font-bold ">
+          <h1 className="lg:text-3xl font-bold ">
             Make Our World Cleaner & Greener!
           </h1>
           <h5 className="text-xs mt-7">
@@ -112,65 +116,68 @@ const Home = () => {
           </h5>
         </div>
 
-        <div className="flex justify-between m-10">
-          <div className="flex bg-gray-200 rounded-md">
-            <div>
-              <h1 className="font-bold p-7">
-                Protect Our <br /> Animal{" "}
-              </h1>
-              <h5 className="text-xs pl-7">
-                Energy efficiency gains to <br /> 80% compared traditional{" "}
-                <br /> lighting system.
-              </h5>
-              <button className="flex p-7 rounded-full items-center text-xs gap-3">
-                read more{" "}
-                <span>
-                  <SquareArrowUpRight size={10} />
-                </span>
-              </button>
-            </div>
+        <div className="flex flex-col sm:flex-row lg:flex-row lg:justify-between sm:justify-between m-10 gap-5">
+  {/* First Card */}
+  <div className="flex flex-col sm:flex-row bg-gray-200 rounded-md">
+    <div>
+      <h1 className="font-bold p-5 sm:p-7">
+        Protect Our<br /> Animals
+      </h1>
+      <h5 className="text-xs px-5 sm:pl-7">
+        Energy efficiency gains to <br /> 80% compared to traditional <br /> lighting systems.
+      </h5>
+      <button className="flex p-5 sm:p-7 rounded-full items-center text-xs gap-3">
+        read more{" "}
+        <span>
+          <SquareArrowUpRight size={10} />
+        </span>
+      </button>
+    </div>
+    {/* Image Visible Only on Large Screens */}
+    <img className="p-5 sm:p-7 hidden lg:block w-auto h-auto object-cover" src={first} alt="Protect Our Animals" />
+  </div>
 
-            <img className="p-7" src={first} alt="" />
-          </div>
-          <div className="flex bg-homePageGreen rounded-md">
-            <div>
-              <h1 className="font-bold p-7">
-                Cleanup The <br /> Environment{" "}
-              </h1>
-              <h5 className="text-xs pl-7">
-                Energy efficiency gains to <br /> 80% compared traditional{" "}
-                <br /> lighting system.
-              </h5>
-              <button className="flex p-7 rounded-full items-center text-xs gap-3">
-                read more{" "}
-                <span>
-                  <SquareArrowUpRight size={10} />
-                </span>
-              </button>
-            </div>
+  {/* Second Card */}
+  <div className="flex flex-col sm:flex-row bg-homePageGreen rounded-md">
+    <div>
+      <h1 className="font-bold p-5 sm:p-7">
+        Cleanup The <br /> Environment
+      </h1>
+      <h5 className="text-xs px-5 sm:pl-7">
+        Energy efficiency gains to <br /> 80% compared to traditional <br /> lighting systems.
+      </h5>
+      <button className="flex p-5 sm:p-7 rounded-full items-center text-xs gap-3">
+        read more{" "}
+        <span>
+          <SquareArrowUpRight size={10} />
+        </span>
+      </button>
+    </div>
+    {/* Image Visible Only on Large Screens */}
+    <img className="p-5 sm:p-7 hidden lg:block w-auto h-auto object-cover" src={second} alt="Cleanup the Environment" />
+  </div>
 
-            <img className="p-7" src={second} alt="" />
-          </div>
-          <div className="flex bg-gray-200 rounded-md">
-            <div>
-              <h1 className="font-bold p-7">
-                Protect & Cleanup <br /> The Environment{" "}
-              </h1>
-              <h5 className="text-xs pl-7">
-                Energy efficiency gains to <br /> 80% compared traditional{" "}
-                <br /> lighting system.
-              </h5>
-              <button className="flex p-7 rounded-full items-center text-xs gap-3">
-                read more{" "}
-                <span>
-                  <SquareArrowUpRight size={10} />
-                </span>
-              </button>
-            </div>
+  {/* Third Card */}
+  <div className="flex flex-col sm:flex-row bg-gray-200 rounded-md">
+    <div>
+      <h1 className="font-bold p-5 sm:p-7">
+        Protect & Cleanup <br /> The Environment
+      </h1>
+      <h5 className="text-xs px-5 sm:pl-7">
+        Energy efficiency gains to <br /> 80% compared to traditional <br /> lighting systems.
+      </h5>
+      <button className="flex p-5 sm:p-7 rounded-full items-center text-xs gap-3">
+        read more{" "}
+        <span>
+          <SquareArrowUpRight size={10} />
+        </span>
+      </button>
+    </div>
+    {/* Image Visible Only on Large Screens */}
+    <img className="p-5 sm:p-7 hidden lg:block w-auto h-auto object-cover" src={third} alt="Protect and Cleanup the Environment" />
+  </div>
+</div>
 
-            <img className="p-7" src={third} alt="" />
-          </div>
-        </div>
 
       <UserFooter/>
       </div>

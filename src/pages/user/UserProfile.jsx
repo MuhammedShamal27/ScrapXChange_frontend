@@ -41,7 +41,7 @@ const UserProfile = () => {
   return (
     <>
       <UserNavBar />
-      <div className="userMainFont flex m-7  ">
+      <div className="userMainFont flex ">
         <UserSideBar />
 
         <div className="flex flex-1 justify-center bg-bgColor rounded-lg">
@@ -64,7 +64,7 @@ const UserProfile = () => {
               <h1 className="text-center text-blue-950 text-base m-7 font-semibold">
                 {profile.username}
               </h1>
-              <div className="grid grid-cols-2  gap-y-10 gap-7 m-5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 sm:gap-y-10 gap-7 m-5 text-xs sm:text-xs">
                 <div className="rounded-xl p-3 shadow ">
                   <p className="text-gray-500">Email</p>
                   <p className="text-black">{profile.email}</p>

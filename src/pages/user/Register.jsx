@@ -120,7 +120,7 @@ const Register = () => {
         className="userFont bg-myBlack flex flex-col justify-center items-center h-screen liner rounded-lg"
         onSubmit={handleSubmit}
       >
-        <h1 className="text-4xl text-white font-semibold">
+        <h1 className="text-4xl text-white font-semibold text-center">
           Register Your Account
         </h1>
 

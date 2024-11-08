@@ -77,12 +77,10 @@ const UserChat = () => {
     try {
       setSelectedShop(room.shop);
       setChatRoom(room);
-      // await new Promise((resolve) => setTimeout(resolve, 0));
       console.log('the chat that is navigating',chatRoom)
       setTimeout(() => {
         navigate(`/userChat/messages/${room.id}`);
       }, 0);
-      // navigate(`/userChat/messages/${room.id}`);
 
     } catch (error) {
       console.error("Error fetching messages for existing chat room", error);
@@ -95,12 +93,12 @@ const UserChat = () => {
   return (
     <>
       <UserNavBar />
-      <div className="userMainFont flex m-7">
+      <div className="userMainFont flex">
         <UserSideBar />
         <div className="bg-bgColor rounded-lg flex-grow">
-          <div className="flex bg-white m-7 p-5 gap-7 text-xs rounded-lg shadow-lg h-svh">
+          <div className="flex bg-white lg:m-7 p-5 gap-7 text-xs rounded-lg shadow-lg h-svh ">
             {/* Left Side - Shop List */}
-            <div className="flex flex-col border-r pr-5 w-1/3">
+            <div className="flex flex-col lg:border-r pr-5 w-full lg:w-1/3 sm:m-1">
               <h1 className="font-bold text-2xl mb-4 text-center">Message</h1>
               <div className="flex items-center border rounded-full mb-4 p-2">
                 <Search color="#a3aed0" size={20} />

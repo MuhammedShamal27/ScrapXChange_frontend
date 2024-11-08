@@ -1,59 +1,70 @@
-import React, { useEffect, useState } from 'react';
-import '../../styles/adminAndShop.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { loginShop } from '../../services/api/shop/shopApi';
-import { loginUser } from '../../services/api/user/userApi';
-import { adminLogin } from '../../services/api/admin/adminApi';
-import { shopLoginSuccess } from '../../redux/reducers/shopReducer';
-import { loginSuccess } from '../../redux/reducers/userReducer';
-import { adminLoginSuccess } from '../../redux/reducers/adminReducer';
-import { toast } from 'sonner';
-import { useSwipeable } from 'react-swipeable';
-import { MoveLeft, MoveRight } from 'lucide-react'; // Assuming this is a valid icon import
+import React, { useEffect, useState } from "react";
+import "../../styles/adminAndShop.css";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { loginShop } from "../../services/api/shop/shopApi";
+import { loginUser } from "../../services/api/user/userApi";
+import { adminLogin } from "../../services/api/admin/adminApi";
+import { shopLoginSuccess } from "../../redux/reducers/shopReducer";
+import { loginSuccess } from "../../redux/reducers/userReducer";
+import { adminLoginSuccess } from "../../redux/reducers/adminReducer";
+import { toast } from "sonner";
+import { useSwipeable } from "react-swipeable";
+import { MoveLeft, MoveRight } from "lucide-react";
 
-const roles = ['user', 'shop', 'admin'];  // Define available roles
+const roles = ["user", "shop", "admin"];
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const isShopAuthenticated = useSelector((state) => state.shop.isAuthenticated);
-  const isUserAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const isAdminAuthenticated = useSelector((state) => state.admin.isAuthenticated);
+  const isShopAuthenticated = useSelector(
+    (state) => state.shop.isAuthenticated
+  );
+  const isUserAuthenticated = useSelector(
+    (state) => state.auth.isAuthenticated
+  );
+  const isAdminAuthenticated = useSelector(
+    (state) => state.admin.isAuthenticated
+  );
 
-  const [roleIndex, setRoleIndex] = useState(0); // index to track current role
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
-  const currentRole = roles[roleIndex];  // Get current role based on index
+  const currentRole = roles[roleIndex];
 
   useEffect(() => {
     if (isShopAuthenticated) {
-      navigate('/shop/home');
+      navigate("/shop/home");
     } else if (isUserAuthenticated) {
-      navigate('/');
+      navigate("/");
     } else if (isAdminAuthenticated) {
-      navigate('/admin/home');
+      navigate("/admin/home");
     }
-  }, [isShopAuthenticated, isUserAuthenticated, isAdminAuthenticated, navigate]);
+  }, [
+    isShopAuthenticated,
+    isUserAuthenticated,
+    isAdminAuthenticated,
+    navigate,
+  ]);
 
   const validateField = (name, value) => {
     switch (name) {
-      case 'email':
+      case "email":
         if (!/\S+@\S+\.\S+/.test(value)) {
-          return 'Invalid email format.';
+          return "Invalid email format.";
         }
         break;
-      case 'password':
+      case "password":
         if (!/^\S{8,17}$/.test(value)) {
-          return 'Password should be 8-17 characters and should not include spaces.';
+          return "Password should be 8-17 characters and should not include spaces.";
         }
         break;
       default:
-        return '';
+        return "";
     }
-    return '';
+    return "";
   };
 
   const handleChange = (e) => {
@@ -79,17 +90,17 @@ const Login = () => {
     if (Object.keys(validationErrors).length === 0) {
       try {
         let response;
-        if (currentRole === 'shop') {
+        if (currentRole === "shop") {
           response = await loginShop(formData);
           if (response?.tokens?.access) {
             dispatch(shopLoginSuccess({ token: response.tokens.access }));
           }
-        } else if (currentRole === 'user') {
+        } else if (currentRole === "user") {
           response = await loginUser(formData);
           if (response?.tokens?.access) {
             dispatch(loginSuccess({ token: response.tokens.access }));
           }
-        } else if (currentRole === 'admin') {
+        } else if (currentRole === "admin") {
           response = await adminLogin(formData);
           if (response?.access) {
             dispatch(adminLoginSuccess({ token: response.access }));
@@ -97,52 +108,43 @@ const Login = () => {
         }
 
         if (!response || !response.tokens?.access) {
-          toast.error('Login failed. Please check your credentials and try again.');
+          toast.error(
+            "Login failed. Please check your credentials and try again."
+          );
         }
       } catch (err) {
-        toast.error('An unexpected error occurred. Please try again.');
+        toast.error("An unexpected error occurred. Please try again.");
       }
     }
   };
 
-  // Function to change role based on swipe or button click
   const handleSwipe = (direction) => {
-    if (direction === 'left') {
-      setRoleIndex((prevIndex) => (prevIndex + 1) % roles.length); // Swipe left -> next role
-    } else if (direction === 'right') {
-      setRoleIndex((prevIndex) => (prevIndex - 1 + roles.length) % roles.length); // Swipe right -> previous role
+    if (direction === "left") {
+      setRoleIndex((prevIndex) => (prevIndex + 1) % roles.length);
+    } else if (direction === "right") {
+      setRoleIndex(
+        (prevIndex) => (prevIndex - 1 + roles.length) % roles.length
+      );
     }
   };
 
-  // Proper swipe handler using useSwipeable
   const handlers = useSwipeable({
-    onSwipedLeft: () => handleSwipe('left'),
-    onSwipedRight: () => handleSwipe('right'),
+    onSwipedLeft: () => handleSwipe("left"),
+    onSwipedRight: () => handleSwipe("right"),
     preventDefaultTouchmoveEvent: true,
-    trackMouse: true // Enables swiping with a mouse for testing
+    trackMouse: true,
   });
 
   return (
-    <div className="relative userFont bg-myBlack flex flex-col justify-center items-center h-screen w-full overflow-hidden rounded-lg" {...handlers}>
-      {/* Left Arrow */}
-      <div
-        className="absolute left-0 top-0 h-full flex items-center cursor-pointer"
-        onClick={() => handleSwipe('right')}
-      >
-        <div
-          className="w-10 h-20 bg-gradient-to-r from-gray-900 to-transparent flex justify-center items-center rounded-r-md"
-        >
-          {/* Left Arrow Icon */}
-          <MoveLeft className="text-white" size={30} />
-        </div>
-      </div>
-
-      {/* Center Form Section */}
-      <h1 className="text-4xl text-white font-semibold">
+    <div
+      className="relative userFont bg-myBlack flex flex-col justify-center items-center h-screen w-full overflow-hidden rounded-lg"
+      {...handlers}
+    >
+      <h1 className="text-4xl text-white font-semibold mb-6 lg:mb-10">
         {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Login
       </h1>
 
-      <div className="flex flex-col h-auto w-3/12 mt-10 mb-10 gap-4">
+      <div className="flex flex-col h-auto w-10/12 sm:w-8/12 md:w-6/12 lg:w-3/12 mt-10 mb-10 gap-4">
         <div className="flex flex-col gap-1">
           <input
             className="text-sm text-white bg-inputBoxBlack p-5 rounded-lg"
@@ -172,36 +174,27 @@ const Login = () => {
       </div>
 
       <button
-        className="mt-5 bg-green-900 w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold"
+        className="mt-5 bg-green-900 w-10/12 sm:w-8/12 md:w-6/12 lg:w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold"
         type="submit"
         onClick={handleSubmit}
       >
         Login to Your Account <MoveRight size={30} />
       </button>
 
-      <p className="text-xs mt-3 text-gray-600">
-        Don't have an account yet?
-        <Link to="/register">
-          <span className="text-white ml-2 text-xs">Register Now!</span>
-        </Link>
-      </p>
+      {currentRole !== "admin" && (
+        <>
+          <p className="text-xs mt-3 text-gray-600">
+            Don't have an account yet?
+            <Link to={currentRole === "shop" ? "/shop/register" : "/register"}>
+              <span className="text-white ml-2 text-xs">Register Now!</span>
+            </Link>
+          </p>
 
-      <Link to="/email">
-        <p className="text-white underline mt-3">Forget Password?</p>
-      </Link>
-
-      {/* Right Arrow */}
-      <div
-        className="absolute right-0 top-0 h-full flex items-center cursor-pointer"
-        onClick={() => handleSwipe('left')}
-      >
-        <div
-          className="w-10 h-20 bg-gradient-to-l from-gray-900 to-transparent flex justify-center items-center rounded-l-md"
-        >
-          {/* Right Arrow Icon */}
-          <MoveRight className="text-white" size={30} />
-        </div>
-      </div>
+          <Link to="/email">
+            <p className="text-white underline mt-3">Forget Password?</p>
+          </Link>
+        </>
+      )}
     </div>
   );
 };

@@ -170,7 +170,7 @@ const Otp = () => {
           <button className="text-white  text-xs" onClick={handleResendOtp}>Resend OTP !</button>
         </div>
         <button
-          className="mt-3 bg-green-900  w-3/12 p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-between font-extrabold "
+          className="mt-3 bg-green-900 w-8/12 sm:w-8/12 md:w-6/12 lg:w-3/12 p-4 md:p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-center items-center font-extrabold"
           type="submit"
           onClick={handleSubmit}
         >

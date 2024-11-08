@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserSideBar from "../../componets/user/UserSideBar";
-import Edit_profile from "../../assets/Edit_profile.png";
+import profile from "../../assets/SA_profile.png";
 import "../../styles/user.css";
 import UserFooter from "../../componets/user/UserFooter";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
 // Base URL for API
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL || "http://127.0.0.1:8000";
+const baseURL = import.meta.env.SCRAPXCHANGE_API_URL;
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const EditProfile = () => {
     profile_picture: null,
   });
   const [loading, setLoading] = useState(true);
-  const [previewImage, setPreviewImage] = useState(Edit_profile);
+  const [previewImage, setPreviewImage] = useState(profile);
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
@@ -139,140 +139,141 @@ const EditProfile = () => {
   return (
     <>
       <UserNavBar />
-      <div className="userMainFont flex m-7">
+      <div className="userMainFont flex">
         <UserSideBar />
-        <div className="flex flex-1 justify-center bg-bgColor p-10 rounded-lg">
-          <form onSubmit={handleSubmit} className="bg-white w-full max-w-4xl p-10 rounded-lg shadow-lg">
-            <div className="flex justify-between items-center mb-8">
-              <div className="flex items-center gap-4">
-                <label htmlFor="profilePictureInput" className="cursor-pointer">
-                  <img
-                    className="w-24 h-24 rounded-full"
-                    src={previewImage}
-                    alt="Edit profile"
-                  />
-                </label>
-                <input
-                  id="profilePictureInput"
-                  type="file"
-                  name="profile_picture"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-                {errors.profile_picture && (
-                  <p className="text-red-500 text-xs italic">{errors.profile_picture}</p>
-                )}
-                <div className="flex flex-col">
-                  <h1 className="font-semibold text-xl">{formData.username}</h1>
-                  <h2 className="font-semibold text-sm text-gray-600">
-                    {formData.email}
-                  </h2>
-                </div>
-              </div>
-              <button
-                className="bg-black text-white py-2 px-4 rounded-3xl text-xs"
-                onClick={handleSubmit}
-              >
-                Update
-              </button>
-            </div>
-            <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">Username</label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    placeholder="Your Name"
-                  />
-                  {errors.username && (
-                    <p className="text-red-500 text-xs">{errors.username}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">Email</label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Your Email"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs">{errors.email}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">Address</label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Your Address"
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-xs">{errors.address}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">Pincode</label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="text"
-                    name="pincode"
-                    value={formData.pincode}
-                    onChange={handleChange}
-                    placeholder="Your Pincode"
-                  />
-                  {errors.pincode && (
-                    <p className="text-red-500 text-xs">{errors.pincode}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">Phone</label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Your Phone"
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-xs">{errors.phone}</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-xs">
-                    Alternative Phone
-                  </label>
-                  <input
-                    className="bg-gray-100 border-0 rounded-lg text-xs p-3"
-                    type="text"
-                    name="alternative_phone"
-                    value={formData.alternative_phone}
-                    onChange={handleChange}
-                    placeholder="Alternative Phone"
-                  />
-                  {errors.alternative_phone && (
-                    <p className="text-red-500 text-xs">
-                      {errors.alternative_phone}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="mt-8">
-
-              </div>
-            </div>
-          </form>
+        <div className="flex flex-1 justify-center bg-bgColor p-5 sm:p-10 rounded-lg">
+  <form onSubmit={handleSubmit} className="bg-white w-full max-w-4xl sm:max-w-3xl p-5 sm:p-10 rounded-lg shadow-lg">
+    <div className="flex justify-between items-center mb-6 sm:mb-8">
+      <div className="flex items-center gap-4">
+        <label htmlFor="profilePictureInput" className="cursor-pointer">
+          <img
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full"
+            src={previewImage}
+            alt="Edit profile"
+          />
+        </label>
+        <input
+          id="profilePictureInput"
+          type="file"
+          name="profile_picture"
+          className="hidden"
+          onChange={handleImageChange}
+        />
+        {errors.profile_picture && (
+          <p className="text-red-500 text-xs italic">{errors.profile_picture}</p>
+        )}
+        <div className="flex flex-col">
+          <h1 className="font-semibold text-lg sm:text-xl">{formData.username}</h1>
+          <h2 className="font-semibold text-xs sm:text-sm text-gray-600">
+            {formData.email}
+          </h2>
         </div>
+      </div>
+      <button
+        className="bg-black text-white py-2 px-4 rounded-3xl text-xs sm:text-sm"
+        onClick={handleSubmit}
+      >
+        Update
+      </button>
+    </div>
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 text-xs sm:text-sm">
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">Username</label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Your Name"
+          />
+          {errors.username && (
+            <p className="text-red-500 text-xs">{errors.username}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">Email</label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Your Email"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs">{errors.email}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">Address</label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Your Address"
+          />
+          {errors.address && (
+            <p className="text-red-500 text-xs">{errors.address}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">Pincode</label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="text"
+            name="pincode"
+            value={formData.pincode}
+            onChange={handleChange}
+            placeholder="Your Pincode"
+          />
+          {errors.pincode && (
+            <p className="text-red-500 text-xs">{errors.pincode}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">Phone</label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Your Phone"
+          />
+          {errors.phone && (
+            <p className="text-red-500 text-xs">{errors.phone}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-xs sm:text-sm">
+            Alternative Phone
+          </label>
+          <input
+            className="bg-gray-100 border-0 rounded-lg text-xs sm:text-sm p-3"
+            type="text"
+            name="alternative_phone"
+            value={formData.alternative_phone}
+            onChange={handleChange}
+            placeholder="Alternative Phone"
+          />
+          {errors.alternative_phone && (
+            <p className="text-red-500 text-xs">
+              {errors.alternative_phone}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="mt-6 sm:mt-8">
+        {/* Other content can go here */}
+      </div>
+    </div>
+  </form>
+</div>
+
       </div>
       <UserFooter />
     </>

@@ -56,7 +56,7 @@ const Dashboard = () => {
   return (
     <>
       <UserNavBar />
-      <div className="userMainFont flex m-7">
+      <div className="userMainFont flex">
         <UserSideBar />
         <div className="bg-bgColor w-full rounded-lg">
           {/* Cards */}
@@ -135,7 +135,7 @@ const Dashboard = () => {
               )}
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm lg:w-5/12 w-full p-4">
+            <div className="bg-white rounded-lg shadow-sm lg:w-5/12 w-full p-4 hidden lg:block">
               <h1 className="text-xl font-semibold">Calendar</h1>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <StaticDatePicker
@@ -155,32 +155,33 @@ const Dashboard = () => {
 
           {/* Transaction Table */}
           <div className="bg-white rounded-lg shadow-sm w-11/12 p-4 m-4">
-            <div className="flex justify-between mb-4">
-              <h1 className="text-xl font-semibold">Transaction Table</h1>
-              <p className="bg-bgColor rounded-md p-1">
-                <Ellipsis color="#a3aed0" />
-              </p>
-            </div>
-            <div className="flex flex-col space-y-3 text-sm">
-              <div className="flex justify-between border-b pb-2">
-                <h1 className="w-1/4">Name</h1>
-                <h1 className="w-1/4 text-center">Quantity</h1>
-                <h1 className="w-1/4 text-center">Price</h1>
-                <h1 className="w-1/4 text-center">Payment method</h1>
-                <h1 className="w-1/4 text-right">Date</h1>
-              </div>
+  <div className="flex justify-between mb-4">
+    <h1 className="text-xl font-semibold">Transaction Table</h1>
+    <p className="bg-bgColor rounded-md p-1">
+      <Ellipsis color="#a3aed0" />
+    </p>
+  </div>
+  <div className="flex flex-col space-y-3 text-sm">
+    <div className="flex justify-between border-b pb-2">
+      <h1 className="w-1/2 sm:w-1/4">Name</h1>
+      <h1 className="hidden sm:block w-1/4 text-center">Quantity</h1>
+      <h1 className="w-1/2 sm:w-1/4 text-center">Price</h1>
+      <h1 className="hidden sm:block w-1/4 text-center">Payment method</h1>
+      <h1 className="hidden sm:block w-1/4 text-right">Date</h1>
+    </div>
 
-              {data.transactions.slice(0, 5).map((transaction, index) => (
-                <div key={index} className="flex justify-between ">
-                  <h1 className="w-1/4">{transaction.shop_name}</h1>
-                  <h1 className="w-1/4 text-center">{transaction.total_quantity} kg</h1>
-                  <h1 className="w-1/4 text-center">₹ {transaction.total_price}</h1>
-                  <h1 className="w-1/4 text-center">{transaction.payment_method}</h1>
-                  <h1 className="w-1/4 text-right">{transaction.date_picked}</h1>
-                </div>
-              ))}
-            </div>
-          </div>
+    {data.transactions.slice(0, 5).map((transaction, index) => (
+      <div key={index} className="flex justify-between">
+        <h1 className="w-1/2 sm:w-1/4">{transaction.shop_name}</h1>
+        <h1 className="hidden sm:block w-1/4 text-center">{transaction.total_quantity} kg</h1>
+        <h1 className="w-1/2 sm:w-1/4 text-center">₹ {transaction.total_price}</h1>
+        <h1 className="hidden sm:block w-1/4 text-center">{transaction.payment_method}</h1>
+        <h1 className="hidden sm:block w-1/4 text-right">{transaction.date_picked}</h1>
+      </div>
+    ))}
+  </div>
+</div>
+
         </div>
       </div>
       <UserFooter />

@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
 import { baseURL } from "../../utils/constant";
-import {sendNotificationToShop} from '../../services/api/notificationApi'
+import { sendNotificationToShop } from "../../services/api/notificationApi";
 
 const ScrapList = () => {
   const { id } = useParams(); // Get shop_id from URL
@@ -198,7 +198,7 @@ const ScrapList = () => {
                 (category) =>
                   category.products.length > 0 && (
                     <div key={category.id} className="m-10">
-                      <h1 className="text-2xl font-semibold mb-4 text-center">
+                      <h1 className="text-2xl font-semibold mb-4 text-left">
                         {category.name}
                       </h1>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 m-7 w-6/12">
@@ -241,10 +241,11 @@ const ScrapList = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="flex justify-around m-7 shadow-lg rounded-lg"
+          className="flex flex-col lg:flex-row justify-around m-7 shadow-lg rounded-lg"
         >
+          {/* Selected Items Section */}
           {selectedItems.length > 0 && (
-            <div className="rounded-lg w-1/4">
+            <div className="rounded-lg w-full lg:w-1/4 mb-6 lg:mb-0">
               <h1 className="font-medium text-lg m-7">Selected Items</h1>
               <div className="flex flex-col m-7 space-y-1">
                 {selectedItems.map((item) => (
@@ -258,11 +259,13 @@ const ScrapList = () => {
               </div>
             </div>
           )}
+
+          {/* Date Picker Section */}
           {selectedItems.length > 0 && (
-            <div>
+            <div className="mb-6 lg:mb-0">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <StaticDatePicker
-                  orientation="landscape"
+                  orientation="portrait"
                   value={selectedDate}
                   onChange={(newValue) => setSelectedDate(newValue)}
                   minDate={tomorrow}
@@ -272,13 +275,14 @@ const ScrapList = () => {
             </div>
           )}
 
-          <div>
+          {/* Address Form Section */}
+          <div className="w-full lg:w-1/3">
             {selectedItems.length > 0 && (
               <div className="space-y-5 rounded-lg">
                 <div className="p-3">
                   <h1 className="font-medium text-lg">Add The Address</h1>
                 </div>
-                <div className="grid grid-cols-2 gap-7 p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-7 p-3">
                   <input
                     className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
@@ -299,7 +303,7 @@ const ScrapList = () => {
                     className="bg-gray-100 border-0 rounded-lg text-xs"
                     type="text"
                     name="landmark"
-                    placeholder="landmark"
+                    placeholder="Landmark"
                     value={formDetails.landmark}
                     onChange={handleInputChange}
                   />
@@ -328,7 +332,7 @@ const ScrapList = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className=" p-3">
+                <div className="p-3">
                   <input
                     className="bg-gray-100 border-0 rounded-lg text-xs w-full h-14"
                     type="text"
@@ -338,8 +342,8 @@ const ScrapList = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="flex justify-between items-center text-xs font-bold p-3">
-                  <div className="flex space-x-3">
+                <div className="flex flex-col sm:flex-row justify-between items-center text-xs font-bold p-3 space-y-4 sm:space-y-0">
+                  <div className="flex space-x-3 items-center">
                     <input
                       type="checkbox"
                       name="confirmDetails"
