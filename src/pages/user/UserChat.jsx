@@ -3,11 +3,14 @@ import UserNavBar from "../../componets/user/UserNavBar";
 import UserSideBar from "../../componets/user/UserSideBar";
 import UserFooter from "../../componets/user/UserFooter";
 import "../../styles/user.css";
-import {Search} from "lucide-react";
+import { Search } from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
-import {createOrFetchChatRoom,fetchAllShop,fetchUserChatRooms,} from "../../services/api/user/userApi";
-import { Outlet,useNavigate } from "react-router-dom";  // Import Outlet and useNavigate
-
+import {
+  createOrFetchChatRoom,
+  fetchAllShop,
+  fetchUserChatRooms,
+} from "../../services/api/user/userApi";
+import { Outlet, useNavigate } from "react-router-dom"; // Import Outlet and useNavigate
 
 const UserChat = () => {
   const [shops, setShops] = useState([]);
@@ -15,7 +18,8 @@ const UserChat = () => {
   const [selectedShop, setSelectedShop] = useState(null);
   const [chatRoom, setChatRoom] = useState(null);
   const [chatRooms, setChatRooms] = useState([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
     const fetchShops = async () => {
@@ -71,24 +75,22 @@ const UserChat = () => {
     } catch (error) {
       console.error("Error creating or fetching chat room", error);
     }
+    setIsSidebarVisible(false);
   };
 
   const handleExistingChatClick = async (room) => {
     try {
       setSelectedShop(room.shop);
       setChatRoom(room);
-      console.log('the chat that is navigating',chatRoom)
+      console.log("the chat that is navigating", chatRoom);
       setTimeout(() => {
         navigate(`/userChat/messages/${room.id}`);
       }, 0);
-
     } catch (error) {
       console.error("Error fetching messages for existing chat room", error);
     }
+    setIsSidebarVisible(false);
   };
-
-
-
 
   return (
     <>
@@ -98,7 +100,11 @@ const UserChat = () => {
         <div className="bg-bgColor rounded-lg flex-grow">
           <div className="flex bg-white lg:m-7 p-5 gap-7 text-xs rounded-lg shadow-lg h-svh ">
             {/* Left Side - Shop List */}
-            <div className="flex flex-col lg:border-r pr-5 w-full lg:w-1/3 sm:m-1">
+            <div
+              className={`flex flex-col lg:border-r pr-5 w-full lg:w-1/3 sm:m-1 ${
+                isSidebarVisible ? "block" : "hidden"
+              } lg:block`}
+            >
               <h1 className="font-bold text-2xl mb-4 text-center">Message</h1>
               <div className="flex items-center border rounded-full mb-4 p-2">
                 <Search color="#a3aed0" size={20} />
@@ -136,7 +142,6 @@ const UserChat = () => {
                   <h2 className="font-semibold mb-2">Your Chats</h2>
                   {chatRooms.length > 0 ? (
                     chatRooms.map((room) => {
-
                       return (
                         <div
                           key={room.id}
@@ -185,7 +190,7 @@ const UserChat = () => {
             </div>
 
             {/* Right Side - Chat Area */}
-            <Outlet context={{ selectedShop, chatRoom }}/>
+            <Outlet context={{ selectedShop, chatRoom }} />
           </div>
         </div>
       </div>

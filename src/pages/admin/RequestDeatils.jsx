@@ -8,7 +8,6 @@ import { useParams } from "react-router-dom";
 import { ShopRequestDetails } from "../../services/api/admin/adminApi";
 
 const RequestDeatils = () => {
-
   const { id } = useParams();
   const [shopRequestDetails, setShopRequestDetails] = useState(null);
   const [loading, setLoading] = useState(true);

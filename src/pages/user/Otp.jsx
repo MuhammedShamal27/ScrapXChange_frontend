@@ -22,7 +22,6 @@ const Otp = () => {
   const inputRefs = useRef([]);
   const context = location.state?.context || "registration";
 
-
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
     if (storedEmail) {
@@ -32,33 +31,30 @@ const Otp = () => {
     }
 
     const storedTimer = localStorage.getItem("otpTimer");
-    if (storedTimer){
+    if (storedTimer) {
       setTimer(Number(storedTimer));
-    }else{
-      localStorage.setItem("otpTimer",60);
-    }
-  
-    return  () =>{
-      localStorage.removeItem("otpTimer");
+    } else {
+      localStorage.setItem("otpTimer", 60);
     }
 
+    return () => {
+      localStorage.removeItem("otpTimer");
+    };
   }, []);
 
-  useEffect( () => {
-    if (timer <=0) return;
+  useEffect(() => {
+    if (timer <= 0) return;
 
     const timerId = setInterval(() => {
-      setTimer((prev) =>{
-        const newTime = prev-1;
-        localStorage.setItem("otpTimer",newTime);
+      setTimer((prev) => {
+        const newTime = prev - 1;
+        localStorage.setItem("otpTimer", newTime);
         return newTime;
-      })
-    },1000)
+      });
+    }, 1000);
 
-    return ()=> clearInterval(timerId)
-  },[timer])
-
-
+    return () => clearInterval(timerId);
+  }, [timer]);
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -97,7 +93,7 @@ const Otp = () => {
         console.log("the response", response);
 
         if (response) {
-          console.log('coming to put the token')
+          console.log("coming to put the token");
           dispatch(loginSuccess({ token: response.access }));
 
           console.log("is coming");
@@ -106,9 +102,9 @@ const Otp = () => {
           toast.error("Invalid OTP.");
         }
       } else if (context === "passwordReset") {
-        console.log('coming in to passwordotp')
+        console.log("coming in to passwordotp");
         const response = await passwordOtp({ email, otp: otpString });
-        console.log("Password reset otp response",response)
+        console.log("Password reset otp response", response);
         if (response) {
           navigate("/resetPassword");
         } else {
@@ -121,24 +117,22 @@ const Otp = () => {
     }
   };
 
-
-
-  const handleResendOtp = async (e) =>{
+  const handleResendOtp = async (e) => {
     e.preventDefault();
     try {
       console.log("Resending OTP to email:", email);
       const response = await resendOtp(email);
-      console.log("the response coming inside",response)
-      if (response){
-        toast.success("OTP sent successfully.")
+      console.log("the response coming inside", response);
+      if (response) {
+        toast.success("OTP sent successfully.");
 
         setTimer(60);
-        localStorage.setItem("otpTimer",60);
-      }else{
-        toast.error("Failed to resend OTP.")
+        localStorage.setItem("otpTimer", 60);
+      } else {
+        toast.error("Failed to resend OTP.");
       }
-    }catch (err){
-      console.log("Failed to resend OTP.",err);
+    } catch (err) {
+      console.log("Failed to resend OTP.", err);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -163,11 +157,13 @@ const Otp = () => {
           ))}
         </div>
         <div className="flex justify-between mt-3 items-center gap-7">
-          <p className="text-xs  text-gray-500 font-bold">{` 00:${timer.toString().padStart(2,'0')}`}</p>
-          <p className="text-xs  text-gray-600 ">
-            Don't get OTP yet ?{" "}
-          </p>
-          <button className="text-white  text-xs" onClick={handleResendOtp}>Resend OTP !</button>
+          <p className="text-xs  text-gray-500 font-bold">{` 00:${timer
+            .toString()
+            .padStart(2, "0")}`}</p>
+          <p className="text-xs  text-gray-600 ">Don't get OTP yet ? </p>
+          <button className="text-white  text-xs" onClick={handleResendOtp}>
+            Resend OTP !
+          </button>
         </div>
         <button
           className="mt-3 bg-green-900 w-8/12 sm:w-8/12 md:w-6/12 lg:w-3/12 p-4 md:p-5 bg-gradient-to-r from-lightGreen to-darkGreen rounded-lg flex justify-center items-center font-extrabold"

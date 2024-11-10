@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import userReducer from "../../redux/reducers/userReducer";
 import LineGraph from "../../utils/LineGraph";
-import todaypending from "../../assets/todaypending.png";
+import todaypending from "../../assets/test.png";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
@@ -40,7 +40,7 @@ const ShopHome = () => {
     pending_requests: [],
     today_pending_collections: [],
     transactions: [],
-    total_collected:[],
+    total_collected: [],
   });
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const navigate = useNavigate();
@@ -68,16 +68,16 @@ const ShopHome = () => {
   );
 
   const handleTransactions = () => {
-    navigate('/shop/transactions/')
-  }
+    navigate("/shop/transactions/");
+  };
 
   const handleTodayPendings = () => {
-    navigate('/shop/todaysPending/')
-  }
+    navigate("/shop/todaysPending/");
+  };
 
   const handleRequests = () => {
-    navigate('/shop/scrapRequests/')
-  }
+    navigate("/shop/scrapRequests/");
+  };
 
   return (
     <>
@@ -106,7 +106,9 @@ const ShopHome = () => {
                 </div>
                 <div>
                   <p className="text-sm">Total Amount</p>
-                  <h1 className="font-semibold">₹ {dashboardData.total_collected}</h1>
+                  <h1 className="font-semibold">
+                    ₹ {dashboardData.total_collected}
+                  </h1>
                 </div>
               </div>
 
@@ -163,7 +165,7 @@ const ShopHome = () => {
                         />
                         <h1>{request.name}</h1>
                       </div>
-                      <p >
+                      <p>
                         <div className="flex gap-1 items-center">
                           {/* Conditional rendering of status icons based on request properties */}
                           {request.is_rejected ? (
@@ -194,7 +196,10 @@ const ShopHome = () => {
               <div className="bg-white rounded-lg lg:w-5/12 w-full">
                 <div className="flex justify-between p-3">
                   <h1 className="text-xl font-semibold">Today Pending</h1>
-                  <p onClick={handleTodayPendings} className="bg-bgColor rounded-md">
+                  <p
+                    onClick={handleTodayPendings}
+                    className="bg-bgColor rounded-md"
+                  >
                     <Ellipsis color="#a3aed0" />
                   </p>
                 </div>
@@ -226,7 +231,7 @@ const ShopHome = () => {
                 )}
               </div>
 
-              <div className="bg-white rounded-lg lg:w-7/12 w-full">
+              <div className="bg-white rounded-lg lg:w-7/12 w-full hidden lg:block">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <StaticDatePicker
                     orientation="landscape"
@@ -244,7 +249,10 @@ const ShopHome = () => {
               <div className="bg-white flex flex-col justify-between lg:w-full w-full p-3">
                 <div className="flex justify-between">
                   <h1 className="text-xl font-semibold">Transaction Table</h1>
-                  <p onClick={handleTransactions} className="bg-bgColor rounded-md">
+                  <p
+                    onClick={handleTransactions}
+                    className="bg-bgColor rounded-md"
+                  >
                     <Ellipsis color="#a3aed0" />
                   </p>
                 </div>
@@ -252,13 +260,16 @@ const ShopHome = () => {
                 {/* Table Header */}
                 <div className="flex justify-between border-b p-2 font-semibold">
                   <div className="w-2/12 text-left">Name</div>
-                  <div className="w-2/12 text-left">Quantity</div>
+                  <div className="w-2/12 text-left hidden lg:block">
+                    Quantity
+                  </div>
                   <div className="w-2/12 text-left">Price</div>
-                  <div className="w-3/12 text-left">Payment Method</div>
-                  <div className="w-3/12 text-left">Date</div>
+                  <div className="w-3/12 text-left hidden lg:block">
+                    Payment Method
+                  </div>
+                  <div className="w-3/12 text-left hidden lg:block">Date</div>
                 </div>
 
-                {/* Table Rows */}
                 <div className="flex flex-col">
                   {dashboardData.transactions
                     .slice(0, 5)
@@ -267,16 +278,16 @@ const ShopHome = () => {
                         <div className="w-2/12 text-left">
                           {transaction.collection_request.name}
                         </div>
-                        <div className="w-2/12 text-left">
+                        <div className="w-2/12 text-left hidden lg:block">
                           {transaction.total_quantity}kg
                         </div>
                         <div className="w-2/12 text-left">
                           ₹ {transaction.total_price}
                         </div>
-                        <div className="w-3/12 text-left">
+                        <div className="w-3/12 text-left hidden lg:block">
                           {transaction.payment_method}
                         </div>
-                        <div className="w-3/12 text-left">
+                        <div className="w-3/12 text-left hidden lg:block">
                           {transaction.date_picked}
                         </div>
                       </div>

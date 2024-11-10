@@ -209,7 +209,9 @@ export const fetchMessages = async (roomId) => {
 
 export const sendMessage = async (formData) => {
     try {
-        console.log('the formdata inside the user api',formData)
+        for (let [key, value] of formData.entries()) {
+            console.log("this is inside the api call",`${key}: ${value}`);
+          }
         const roomId = formData.get('room_id');
         console.log('the formdata inside the user api',roomId)
 

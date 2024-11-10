@@ -10,7 +10,7 @@ import {
   EllipsisVertical,
 } from "lucide-react";
 import UserFooter from "../../componets/user/UserFooter";
-import todaypending from "../../assets/todaypending.png";
+import todaypending from "../../assets/test.png";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
@@ -34,11 +34,11 @@ const Dashboard = () => {
     const fetchDashboard = async () => {
       try {
         const response = await fetchUserDashboard();
-        console.log('the response is', response);
+        console.log("the response is", response);
         setData(response);
         filterPickupsForDate(dayjs(), response.pending_pickups); // Filter pickups for the current date
       } catch (error) {
-        console.error('the error is ', error);
+        console.error("the error is ", error);
       }
     };
     fetchDashboard();
@@ -67,7 +67,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Collected</p>
-                <h1 className="font-semibold text-lg">{data.total_collections.length}</h1>
+                <h1 className="font-semibold text-lg">
+                  {data.total_collections.length}
+                </h1>
               </div>
             </div>
 
@@ -77,7 +79,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Amount</p>
-                <h1 className="font-semibold text-lg">₹ {data.total_collected_value}</h1>
+                <h1 className="font-semibold text-lg">
+                  ₹ {data.total_collected_value}
+                </h1>
               </div>
             </div>
 
@@ -87,7 +91,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Today Scheduled</p>
-                <h1 className="font-semibold text-lg">{data.today_pending_pickups.length}</h1>
+                <h1 className="font-semibold text-lg">
+                  {data.today_pending_pickups.length}
+                </h1>
               </div>
             </div>
 
@@ -97,7 +103,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Pending Requests</p>
-                <h1 className="font-semibold text-lg">{data.pending_requests.length}</h1>
+                <h1 className="font-semibold text-lg">
+                  {data.pending_requests.length}
+                </h1>
               </div>
             </div>
           </div>
@@ -147,7 +155,7 @@ const Dashboard = () => {
                   }}
                   disablePast
                   minDate={dayjs()} // Today's date
-                  maxDate={dayjs().add(7, 'day')} // One week from today
+                  maxDate={dayjs().add(7, "day")} // One week from today
                 />
               </LocalizationProvider>
             </div>
@@ -155,33 +163,42 @@ const Dashboard = () => {
 
           {/* Transaction Table */}
           <div className="bg-white rounded-lg shadow-sm w-11/12 p-4 m-4">
-  <div className="flex justify-between mb-4">
-    <h1 className="text-xl font-semibold">Transaction Table</h1>
-    <p className="bg-bgColor rounded-md p-1">
-      <Ellipsis color="#a3aed0" />
-    </p>
-  </div>
-  <div className="flex flex-col space-y-3 text-sm">
-    <div className="flex justify-between border-b pb-2">
-      <h1 className="w-1/2 sm:w-1/4">Name</h1>
-      <h1 className="hidden sm:block w-1/4 text-center">Quantity</h1>
-      <h1 className="w-1/2 sm:w-1/4 text-center">Price</h1>
-      <h1 className="hidden sm:block w-1/4 text-center">Payment method</h1>
-      <h1 className="hidden sm:block w-1/4 text-right">Date</h1>
-    </div>
+            <div className="flex justify-between mb-4">
+              <h1 className="text-xl font-semibold">Transaction Table</h1>
+              <p className="bg-bgColor rounded-md p-1">
+                <Ellipsis color="#a3aed0" />
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3 text-sm">
+              <div className="flex justify-between border-b pb-2">
+                <h1 className="w-1/2 sm:w-1/4">Name</h1>
+                <h1 className="hidden sm:block w-1/4 text-center">Quantity</h1>
+                <h1 className="w-1/2 sm:w-1/4 text-center">Price</h1>
+                <h1 className="hidden sm:block w-1/4 text-center">
+                  Payment method
+                </h1>
+                <h1 className="hidden sm:block w-1/4 text-right">Date</h1>
+              </div>
 
-    {data.transactions.slice(0, 5).map((transaction, index) => (
-      <div key={index} className="flex justify-between">
-        <h1 className="w-1/2 sm:w-1/4">{transaction.shop_name}</h1>
-        <h1 className="hidden sm:block w-1/4 text-center">{transaction.total_quantity} kg</h1>
-        <h1 className="w-1/2 sm:w-1/4 text-center">₹ {transaction.total_price}</h1>
-        <h1 className="hidden sm:block w-1/4 text-center">{transaction.payment_method}</h1>
-        <h1 className="hidden sm:block w-1/4 text-right">{transaction.date_picked}</h1>
-      </div>
-    ))}
-  </div>
-</div>
-
+              {data.transactions.slice(0, 5).map((transaction, index) => (
+                <div key={index} className="flex justify-between">
+                  <h1 className="w-1/2 sm:w-1/4">{transaction.shop_name}</h1>
+                  <h1 className="hidden sm:block w-1/4 text-center">
+                    {transaction.total_quantity} kg
+                  </h1>
+                  <h1 className="w-1/2 sm:w-1/4 text-center">
+                    ₹ {transaction.total_price}
+                  </h1>
+                  <h1 className="hidden sm:block w-1/4 text-center">
+                    {transaction.payment_method}
+                  </h1>
+                  <h1 className="hidden sm:block w-1/4 text-right">
+                    {transaction.date_picked}
+                  </h1>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <UserFooter />

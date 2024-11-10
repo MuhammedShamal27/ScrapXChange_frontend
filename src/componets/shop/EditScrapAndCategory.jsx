@@ -87,7 +87,7 @@ const EditScrapAndCategory = ({ id, type }) => {
       }
     } catch (err) {
       console.error("Error details:", err);
-  
+
       if (err.name) {
         setError({ name: err.name });
         toast.error(err.name); // Show the error as a toast notification
@@ -99,14 +99,16 @@ const EditScrapAndCategory = ({ id, type }) => {
       }
     }
   };
-  
 
   return (
-    <div className="bg-white m-10 w-8/12 rounded-2xl">
-      <h1 className="text-blue-950 font-bold text-2xl m-7">
+    <div className="bg-white m-4 sm:m-10 w-full sm:w-8/12 rounded-2xl">
+      <h1 className="text-blue-950 font-bold text-xl sm:text-2xl m-5 sm:m-7">
         {type === "scrap" ? "Edit Scrap" : "Edit Category"}
       </h1>
-      <form className="grid grid-cols-2 m-7 text-xs" onSubmit={handleSubmit}>
+      <form
+        className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-0 m-5 sm:m-7 text-xs"
+        onSubmit={handleSubmit}
+      >
         <div className="flex flex-col p-3">
           <label htmlFor="">Name</label>
           <input
@@ -133,9 +135,12 @@ const EditScrapAndCategory = ({ id, type }) => {
               type="text"
               placeholder="Description"
             />
-            {error.description && <p className="text-red-700">{error.description}</p>}
+            {error.description && (
+              <p className="text-red-700">{error.description}</p>
+            )}
           </div>
         )}
+
         {type === "scrap" && (
           <>
             <div className="flex flex-col p-3">
@@ -167,10 +172,13 @@ const EditScrapAndCategory = ({ id, type }) => {
                   </option>
                 ))}
               </select>
-              {error.category && <p className="text-red-700">{error.category}</p>}
+              {error.category && (
+                <p className="text-red-700">{error.category}</p>
+              )}
             </div>
           </>
         )}
+
         <div className="flex flex-col p-3">
           <p>Image</p>
           <div className="border rounded-md placeholder:text-xs mt-3">
@@ -192,7 +200,7 @@ const EditScrapAndCategory = ({ id, type }) => {
         </div>
 
         <button
-          className="text-center rounded-md bg-myBlue text-white m-3 p-3 h-10 mt-10"
+          className="text-center rounded-md bg-myBlue text-white mx-auto sm:m-3 p-3 h-10 mt-10 w-full sm:w-auto"
           type="submit"
         >
           Submit

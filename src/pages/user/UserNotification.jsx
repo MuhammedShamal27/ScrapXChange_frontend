@@ -3,7 +3,10 @@ import UserNavBar from "../../componets/user/UserNavBar";
 import UserSideBar from "../../componets/user/UserSideBar";
 import main_profile from "../../assets/main_profile.png";
 import "../../styles/user.css";
-import { fecthUserNotification, markReadNotification } from "../../services/api/user/userApi";
+import {
+  fecthUserNotification,
+  markReadNotification,
+} from "../../services/api/user/userApi";
 import { FaCheckCircle } from "react-icons/fa"; // Import a check icon
 
 const UserNotification = () => {
@@ -14,7 +17,7 @@ const UserNotification = () => {
       try {
         const response = await fecthUserNotification();
         console.log("the response is ", response);
-        setData(response);  // The response data should be set correctly
+        setData(response); // The response data should be set correctly
       } catch (err) {
         console.error("the error is ", err);
       }
@@ -29,7 +32,9 @@ const UserNotification = () => {
       // Update the notification state to mark the notification as read locally
       setData((prevData) =>
         prevData.map((notification) =>
-          notification.id === id ? { ...notification, is_read: true } : notification
+          notification.id === id
+            ? { ...notification, is_read: true }
+            : notification
         )
       );
     } catch (err) {
@@ -58,7 +63,9 @@ const UserNotification = () => {
                   className="w-16 h-16 rounded-full"
                 />
                 <div className="flex-1">
-                  <p className="text-sm text-gray-600">{notification.message}</p>
+                  <p className="text-sm text-gray-600">
+                    {notification.message}
+                  </p>
                   <p className="text-xs text-gray-400">
                     {new Date(notification.created_at).toLocaleString()}
                   </p>

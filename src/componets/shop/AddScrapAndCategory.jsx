@@ -101,19 +101,18 @@ const AddScrapAndCategory = ({ type }) => {
       try {
         let response;
         if (type === "scrap") {
-          console.log('ivan')
+          console.log("ivan");
           response = await addScrap(scrapFormData);
           navigate("/shop/scraplist");
         } else {
-          console.log('ivanalla')
-          console.log('categoryformData is sending ',categoryFormData)
+          console.log("ivanalla");
+          console.log("categoryformData is sending ", categoryFormData);
           response = await addCategory(categoryFormData);
           navigate("/shop/categorylist");
         }
       } catch (err) {
-        
         console.error(err.name);
-        setErrors({name: err.name[0] });
+        setErrors({ name: err.name[0] });
       }
     } else {
       setErrors(validationErrors);
@@ -132,13 +131,15 @@ const AddScrapAndCategory = ({ type }) => {
             <label htmlFor="name">Name</label>
             <input
               name="name"
-              value={type === "scrap" ? scrapFormData.name : categoryFormData.name}
+              value={
+                type === "scrap" ? scrapFormData.name : categoryFormData.name
+              }
               className="border-gray-300 rounded-md placeholder:text-xs mt-3"
               onChange={handleChange}
               type="text"
               placeholder="Name to display"
             />
-            {errors.name && <p className='text-red-700'>{errors.name}</p>}
+            {errors.name && <p className="text-red-700">{errors.name}</p>}
           </div>
           {type === "category" && (
             <div className="flex flex-col p-3">
@@ -151,7 +152,9 @@ const AddScrapAndCategory = ({ type }) => {
                 type="text"
                 placeholder="Description"
               />
-              {errors.description && <p className='text-red-700'>{errors.description}</p>}
+              {errors.description && (
+                <p className="text-red-700">{errors.description}</p>
+              )}
             </div>
           )}
           {type === "scrap" && (
@@ -166,7 +169,7 @@ const AddScrapAndCategory = ({ type }) => {
                   type="text"
                   placeholder="Price"
                 />
-                {errors.price && <p className='text-red-700'>{errors.price}</p>}
+                {errors.price && <p className="text-red-700">{errors.price}</p>}
               </div>
               <div className="flex flex-col p-3">
                 <label htmlFor="category">Category</label>
@@ -185,7 +188,9 @@ const AddScrapAndCategory = ({ type }) => {
                     </option>
                   ))}
                 </select>
-                {errors.category && <p className='text-red-700'>{errors.category}</p>}
+                {errors.category && (
+                  <p className="text-red-700">{errors.category}</p>
+                )}
               </div>
             </>
           )}
@@ -194,10 +199,10 @@ const AddScrapAndCategory = ({ type }) => {
             <div className="border rounded-md placeholder:text-xs mt-3">
               <input type="file" name="image" onChange={handleChange} />
             </div>
-            {errors.image && <p className='text-red-700'>{errors.image}</p>}
+            {errors.image && <p className="text-red-700">{errors.image}</p>}
           </div>
-          {type ==="scrap" &&(<div></div>)}
-          
+          {type === "scrap" && <div></div>}
+
           <button
             className="text-center rounded-md bg-myBlue text-white m-3 p-3 h-10 mt-10"
             type="submit"

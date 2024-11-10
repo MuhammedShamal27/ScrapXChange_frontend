@@ -8,7 +8,6 @@ import { useParams } from "react-router-dom";
 import { fetchShopDetails } from "../../services/api/admin/adminApi";
 
 const ShopDetails = () => {
-
   const { id } = useParams();
   const [shopDetails, setShopDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +40,6 @@ const ShopDetails = () => {
             <DetailsPages details={shopDetails} type="shop" />
           </div>
         </div>
-        
       </div>
       <FooterOfAdminAndShop />
     </>

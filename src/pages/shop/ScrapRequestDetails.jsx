@@ -41,14 +41,14 @@ const ScrapRequestDetails = () => {
     try {
       const response = await scheduleRequest(id);
       console.log("request sheduled successfully", response);
-      console.log('the user id is',requestDetails.user)
-      const createRoom = await shopCreateOrFetchChatRoom (requestDetails.user)
-      console.log("the response of create room",createRoom)
-      socket.emit('notification', {
-        sender_id: createRoom.shop.user,  
-        receiver_id: createRoom.user.id,   
-        message: 'A  scrap collection request has been Approved', 
-        notification_type : 'general',
+      console.log("the user id is", requestDetails.user);
+      const createRoom = await shopCreateOrFetchChatRoom(requestDetails.user);
+      console.log("the response of create room", createRoom);
+      socket.emit("notification", {
+        sender_id: createRoom.shop.user,
+        receiver_id: createRoom.user.id,
+        message: "A  scrap collection request has been Approved",
+        notification_type: "general",
       });
       toast("Scheduled successfully");
       navigate("/shop/scrapRequests");
@@ -100,30 +100,33 @@ const ScrapRequestDetails = () => {
           <div className="flex flex-1 justify-center items-center bg-bgColor rounded-lg">
             <div className="bg-white rounded-2xl">
               <div className="flex flex-col">
-                <div className="flex flex-col relative">
+                {/* Image container, hidden on small screens */}
+                <div className="flex flex-col relative ">
                   <img
                     className="m-3"
                     src={Background_image}
                     alt="Profile_image"
                   />
- 
                 </div>
-                {/* <h1 className="text-center text-blue-950 text-lg m-7 font-bold">
-                  {requestDetails.name}
-                </h1> */}
+
+                {/* Selected Items */}
                 <div className="flex flex-col rounded-lg shadow-md m-3 gap-3 items-center text-sm">
-                  <h1 className="font-bold text-blue-950 text-lg">Selected Items</h1>
-                  <p className="text-black">
+                  <h1 className="font-bold text-blue-950 text-lg">
+                    Selected Items
+                  </h1>
+                  <p className="text-black text-center sm:text-left">
                     {requestDetails.products
                       .map((product) => product.name)
                       .join(", ")}
                   </p>
-                  <div className="flex">
-                    <p className="font-bold">Note : </p>
-                    <p> {requestDetails.add_note}</p>
+                  <div className="flex flex-col sm:flex-row text-center sm:text-left">
+                    <p className="font-bold">Note:</p>
+                    <p className="ml-1">{requestDetails.add_note}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-y-10 gap-7 m-5 text-xs">
+
+                {/* Details grid, stack items on small screens */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-3 m-3 sm:m-5 text-xs">
                   <div className="rounded-xl p-3 shadow">
                     <p className="text-gray-500">Name</p>
                     <p className="text-black">{requestDetails.name}</p>
@@ -154,22 +157,23 @@ const ScrapRequestDetails = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-evenly p-3 items-center">
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row justify-evenly p-3 gap-2 sm:gap-0 items-center">
                   <button
                     onClick={handleShedule}
-                    className="bg-green-500 text-white rounded-3xl text-xs h-7 w-36"
+                    className="bg-green-500 text-white rounded-3xl text-xs h-8 w-full sm:w-36"
                   >
                     Schedule
                   </button>
                   <button
                     onClick={openResheduleModal}
-                    className="bg-myBlue text-white rounded-3xl text-xs h-7 w-36"
+                    className="bg-myBlue text-white rounded-3xl text-xs h-8 w-full sm:w-36"
                   >
                     Reschedule
                   </button>
                   <button
                     onClick={handleReject}
-                    className="bg-red-700 text-white rounded-3xl text-xs h-7 w-36"
+                    className="bg-red-700 text-white rounded-3xl text-xs h-8 w-full sm:w-36"
                   >
                     Reject
                   </button>

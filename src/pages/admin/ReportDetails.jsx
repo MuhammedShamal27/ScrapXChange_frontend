@@ -78,8 +78,8 @@ const ReportDetails = () => {
   };
 
   const hanldeGoBack = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <div className="adminFont flex bg-bgColor flex-col lg:flex-row">
@@ -103,21 +103,27 @@ const ReportDetails = () => {
                 <h1>Reason :</h1>
                 <p>{report ? report.reason : "Loading..."}</p>
               </div>
-                {report && report.reason === "other" && (
-                    <div className="flex items-center text-sm space-x-7">
-                    <h1>Description :</h1>
-                    <p>{report.description}</p>
-                    </div>
-                )}
+              {report && report.reason === "other" && (
+                <div className="flex items-center text-sm space-x-7">
+                  <h1>Description :</h1>
+                  <p>{report.description}</p>
+                </div>
+              )}
               <div className="flex items-center text-sm space-x-7">
                 <h1>Date :</h1>
-                <p>{report ? new Date(report.timestamp).toLocaleDateString() : "Loading..."}</p>
+                <p>
+                  {report
+                    ? new Date(report.timestamp).toLocaleDateString()
+                    : "Loading..."}
+                </p>
               </div>
             </div>
 
             <div className="flex justify-around text-sm p-3">
-              <button className="rounded-2xl bg-black text-white w-1/6 h-7"
-                onClick={hanldeGoBack}>
+              <button
+                className="rounded-2xl bg-black text-white w-1/6 h-7"
+                onClick={hanldeGoBack}
+              >
                 Go Back
               </button>
               {!isBlocked && (
@@ -185,7 +191,6 @@ const ReportDetails = () => {
             <h1>Towards</h1>
             <h1>Reason</h1>
             <h1>Date</h1>
-
           </div>
 
           {reportReason && reportReason.similar_reports.length > 0 ? (
@@ -197,7 +202,9 @@ const ReportDetails = () => {
                 <h1>{similarReport.sender__username}</h1>
                 <h1>{similarReport.receiver__username}</h1>
                 <h1>{similarReport.reason}</h1>
-                <h1>{new Date(similarReport.timestamp).toLocaleDateString()}</h1>
+                <h1>
+                  {new Date(similarReport.timestamp).toLocaleDateString()}
+                </h1>
               </div>
             ))
           ) : (

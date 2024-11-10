@@ -3,7 +3,10 @@ import ShopNavBar from "../../componets/shop/ShopNavBar";
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
 import "../../styles/adminAndShop.css";
-import { fetchShopNotifications, markShopNotifications } from "../../services/api/shop/shopApi";
+import {
+  fetchShopNotifications,
+  markShopNotifications,
+} from "../../services/api/shop/shopApi";
 import { Check, CheckCheck } from "lucide-react";
 import main_profile from "../../assets/main_profile.png";
 
@@ -66,7 +69,9 @@ const ShopNotifications = () => {
                       className="w-12 h-12 rounded-full"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{notification.message}</p>
+                      <p className="text-sm font-medium">
+                        {notification.message}
+                      </p>
                       <p className="text-xs text-gray-400">
                         {new Date(notification.created_at).toLocaleString()}
                       </p>
@@ -84,7 +89,9 @@ const ShopNotifications = () => {
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-600">No notifications available.</p>
+              <p className="text-center text-gray-600">
+                No notifications available.
+              </p>
             )}
           </div>
         </div>

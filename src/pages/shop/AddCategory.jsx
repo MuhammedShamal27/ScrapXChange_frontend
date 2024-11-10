@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import ShopNavBar from "../../componets/shop/ShopNavBar";
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
@@ -12,12 +12,12 @@ const AddCategory = () => {
         <ShopNavBar />
         <div className="w-4/5 flex flex-col">
           <HeadingAndProfile />
-          <AddAndEditScrapAndCategory type="category"/>
+          <AddAndEditScrapAndCategory type="category" />
         </div>
       </div>
       <FooterOfAdminAndShop />
     </>
-  )
-}
+  );
+};
 
-export default AddCategory
+export default AddCategory;

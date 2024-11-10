@@ -70,21 +70,21 @@ const AdminHome = () => {
     <>
       <div className="adminFont flex bg-bgColor ">
         <AdminNavBar />
-        <div className="w-full ">
+        <div className="w-9/12 ">
           <HeadingAndProfile isAdmin={true} />
           {/* {admin && <div>Welcome, {admin.username}!</div>} */}
 
-          <div className="m-7">
+          <div className="ml-7 mt-7">
             {/* Header Section */}
-            <div className="grid grid-cols-3 gap-6 mb-6 w-8/12">
-              <div className="flex bg-white  rounded-lg shadow items-center space-x-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 w-full sm:w-8/12">
+              <div className="flex bg-white rounded-lg shadow items-center space-x-3">
                 <User
                   color="#a3aed0"
                   size={40}
                   className="bg-bgColor m-3 p-2 rounded-full"
                 />
                 <div>
-                  <p className="">Total User</p>
+                  <p>Total User</p>
                   <h1 className="font-semibold">{dashboardData.total_users}</h1>
                 </div>
               </div>
@@ -95,7 +95,7 @@ const AdminHome = () => {
                   className="bg-bgColor m-3 p-2 rounded-full"
                 />
                 <div>
-                  <p className="">Total Shops</p>
+                  <p>Total Shops</p>
                   <h1 className="font-semibold">{dashboardData.total_shops}</h1>
                 </div>
               </div>
@@ -106,7 +106,7 @@ const AdminHome = () => {
                   className="bg-bgColor m-3 p-2 rounded-full"
                 />
                 <div>
-                  <p className="">Pending Reports</p>
+                  <p>Pending Reports</p>
                   <h1 className="font-semibold">
                     {dashboardData.pending_reports.length}
                   </h1>
@@ -115,11 +115,11 @@ const AdminHome = () => {
             </div>
 
             {/* Main Content */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Users Section */}
               <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between mb-4 ">
-                  <h2 className="text-xl font-bold ">Users</h2>
+                <div className="flex justify-between mb-4">
+                  <h2 className="text-xl font-bold">Users</h2>
                   <button
                     onClick={handleUser}
                     className="bg-bgColor rounded-md"
@@ -152,7 +152,6 @@ const AdminHome = () => {
               </div>
 
               {/* Request Table Section */}
-
               <div className="bg-white rounded-lg p-6 shadow">
                 <div className="flex justify-between">
                   <h1 className="text-xl font-bold">Report Table</h1>
@@ -171,7 +170,6 @@ const AdminHome = () => {
                   </div>
                   {dashboardData.pending_reports &&
                   dashboardData.pending_reports.length > 0 ? (
-                    // Show only the first 5 pending reports
                     dashboardData.pending_reports.slice(0, 5).map((report) => (
                       <div key={report.id} className="flex justify-between">
                         <h1>{report.sender_name}</h1>
@@ -187,11 +185,11 @@ const AdminHome = () => {
             </div>
 
             {/* Bottom Section */}
-            <div className="grid grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
               {/* Shops Section */}
               <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between mb-4 ">
-                  <h2 className="text-xl font-bold ">Shop</h2>
+                <div className="flex justify-between mb-4">
+                  <h2 className="text-xl font-bold">Shop</h2>
                   <button
                     onClick={handleShop}
                     className="bg-bgColor rounded-md"
@@ -224,7 +222,6 @@ const AdminHome = () => {
               </div>
 
               {/* Today Pending Section */}
-
               <div className="bg-white p-6 rounded-lg shadow">
                 <h2 className="text-xl font-bold mb-4">Request Pending</h2>
                 <div className="flex flex-col space-y-3 text-sm">

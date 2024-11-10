@@ -18,63 +18,85 @@ const UserNavBar = () => {
 
   const goToHome = () => {
     navigate("/");
-  }
+  };
 
   const handleNotification = () => {
-    navigate("/notifications")
-  }
+    navigate("/notifications");
+  };
 
   return (
-<div className="flex flex-col sm:flex-row justify-between items-center p-5">
-  {/* Logo and App Name */}
-  <div className="flex gap-3 items-center mb-4 sm:mb-0">
-    <img onClick={goToHome} className="h-8 w-8 cursor-pointer" src={logo} alt="logo" />
-    <h1 onClick={goToHome} className="font-extrabold text-xl cursor-pointer">ScrapXChange</h1>
-  </div>
+    <div className="flex flex-col sm:flex-row justify-between items-center p-5">
+      {/* Logo and App Name */}
+      <div className="flex gap-3 items-center mb-4 sm:mb-0">
+        <img
+          onClick={goToHome}
+          className="h-8 w-8 cursor-pointer"
+          src={logo}
+          alt="logo"
+        />
+        <h1
+          onClick={goToHome}
+          className="font-extrabold text-xl cursor-pointer"
+        >
+          ScrapXChange
+        </h1>
+      </div>
 
-  {/* Navigation Links */}
-  <div className="flex gap-7 items-center mb-4 sm:mb-0">
-    <Link className="font-semibold" to="/">Home</Link>
-    <Link className="font-semibold" to="/shops">Sell Scrap</Link>
-    <Link className="font-semibold">About Us</Link>
-  </div>
-
-  {/* User Controls (Profile, Notification, Search) */}
-  <div className="flex gap-5 items-center">
-    {isAuthenticated ? (
-      <>
-        <p onClick={handleNotification}>
-          <Bell size={20} />
-        </p>
-        
-        {/* Hide search icon on small screens */}
-        <p className="hidden sm:block">
-          <Search size={20} />
-        </p>
-        
-        <Link to="/profile">
-          <img
-            className="w-10 h-10 cursor-pointer rounded-full"
-            src={user?.profile_picture ? `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${user.profile_picture}` : profile}
-            alt="profile picture of user"
-          />
+      {/* Navigation Links */}
+      <div className="flex gap-7 items-center mb-4 sm:mb-0">
+        <Link className="font-semibold" to="/">
+          Home
         </Link>
-      </>
-    ) : (
-      <>
-        <button onClick={handleSignUp} className="bg-black text-white p-3 rounded-3xl text-xs w-24">
-          Sign Up
-        </button>
-        
-        {/* Hide search icon on small screens */}
-        <p className="hidden sm:block">
-          <Search size={20} />
-        </p>
-      </>
-    )}
-  </div>
-</div>
+        <Link className="font-semibold" to="/shops">
+          Sell Scrap
+        </Link>
+        <Link className="font-semibold">About Us</Link>
+      </div>
 
+      {/* User Controls (Profile, Notification, Search) */}
+      <div className="flex gap-5 items-center">
+        {isAuthenticated ? (
+          <>
+            <p onClick={handleNotification}>
+              <Bell size={20} />
+            </p>
+
+            {/* Hide search icon on small screens */}
+            <p className="hidden sm:block">
+              <Search size={20} />
+            </p>
+
+            <Link to="/profile">
+              <img
+                className="w-10 h-10 cursor-pointer rounded-full"
+                src={
+                  user?.profile_picture
+                    ? `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                        user.profile_picture
+                      }`
+                    : profile
+                }
+                alt="profile picture of user"
+              />
+            </Link>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={handleSignUp}
+              className="bg-black text-white p-3 rounded-3xl text-xs w-24"
+            >
+              Sign Up
+            </button>
+
+            {/* Hide search icon on small screens */}
+            <p className="hidden sm:block">
+              <Search size={20} />
+            </p>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

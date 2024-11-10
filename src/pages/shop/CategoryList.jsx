@@ -9,16 +9,15 @@ import { Search } from "lucide-react";
 import { fetchCategoryList } from "../../services/api/shop/shopApi";
 
 const ScrapCategoryList = () => {
+  const [category, setCategory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [category,setCategory] = useState([]);
-  const [loading,setLoading] = useState(true);
-  const [error , setError] = useState(null);
-
-  useEffect (() => {
+  useEffect(() => {
     const loadCategory = async () => {
-      try{
+      try {
         const data = await fetchCategoryList();
-        setCategory(Array.isArray(data) ? data: []);
+        setCategory(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -26,14 +25,14 @@ const ScrapCategoryList = () => {
       }
     };
     loadCategory();
-  },[])
+  }, []);
 
-  if (loading){
-    return <div> Loading ...</div>
+  if (loading) {
+    return <div> Loading ...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -42,7 +41,7 @@ const ScrapCategoryList = () => {
         <ShopNavBar />
         <div className="w-4/5">
           <HeadingAndProfile />
-          <CategoryAndScrapList list={category} type="category"/>
+          <CategoryAndScrapList list={category} type="category" />
         </div>
       </div>
       <FooterOfAdminAndShop />

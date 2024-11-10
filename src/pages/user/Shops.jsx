@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
-import Shop_image from "../../assets/Shop_requests.png";
+import test from "../../assets/test.png";
 import { fetchshops, shopScrapList } from "../../services/api/user/userApi";
 import ReportMessage from "../../componets/ReportMessage";
 import { Search } from "lucide-react";
@@ -165,7 +165,7 @@ const Shops = () => {
                       className="flex flex-col sm:flex-row items-center justify-between rounded-lg shadow-lg p-3 mb-4"
                     >
                       <div className="flex items-center space-x-3 mb-3 sm:mb-0">
-                        <img src={Shop_image} alt="shop" />
+                        <img src={test} alt="shop" />
                         <div>
                           <h2 className="uppercase font-bold">
                             {shop.shop_name}

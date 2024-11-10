@@ -11,8 +11,8 @@ import { userProfile } from "../services/api/user/userApi";
 
 const HeadingAndProfile = ({ isAdmin }) => {
   const token = useSelector((state) => state.shop.token);
-  const [profile , setProfile] = useState(null);
-  const navigate = useNavigate()
+  const [profile, setProfile] = useState(null);
+  const navigate = useNavigate();
 
   let shop = null;
   if (token) {
@@ -25,43 +25,53 @@ const HeadingAndProfile = ({ isAdmin }) => {
     }
   }
 
-  useEffect(()=> {
-    const fetchProfile = async() => {
-      try{
-        const response = await fetchShopHome()
-        setProfile(response)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetchShopHome();
+        setProfile(response);
         // console.log('the profile',response)
-      }catch(error){
+      } catch (error) {
         // console.error('the error is ',error)
       }
-    }
+    };
     fetchProfile();
-  },[])
+  }, []);
 
-  const handleProfile = ()=> {
-    navigate('/shop/shopProfile/')
-  }
+  const handleProfile = () => {
+    navigate("/shop/shopProfile/");
+  };
 
-  const handleNotifications = ()=> {
-    navigate( isAdmin ? '/admin/notifications/' : '/shop/notifications/')
-  }
-
+  const handleNotifications = () => {
+    navigate(isAdmin ? "/admin/notifications/" : "/shop/notifications/");
+  };
 
   return (
     <>
-      <div className="flex justify-between ">
-        <h2 className="text-2xl text-blue-950 font-bold m-11">ScrapXChange</h2>
-        <div className="flex bg-white h-14 w-80 rounded-full space-x-5 items-center mt-7 absolute left-3/4 cursor-pointer">
-          <div className="flex bg-bgColor rounded-full ml-3 p-1 items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between items-center">
+        <h2 className="text-2xl text-blue-950 font-bold m-4 sm:m-11">
+          ScrapXChange
+        </h2>
+        <div className="flex items-center bg-white h-14 w-full sm:w-80 rounded-full space-x-5 mt-3 sm:mt-7 sm:mr-11 cursor-pointer">
+          <div className="flex bg-bgColor rounded-full ml-3 p-1 items-center w-full sm:w-auto">
             <Search color="#a3aed0" size={20} />
-            <input className="bg-bgColor rounded-full border-none outline-none" placeholder="Search" />
+            <input
+              className="bg-bgColor rounded-full border-none outline-none w-full sm:w-auto"
+              placeholder="Search"
+            />
           </div>
           <p onClick={handleNotifications}>
-            < Bell color="#a3aed0" size={20} />
+            <Bell color="#a3aed0" size={20} />
           </p>
           <img
             className="w-9 h-9 rounded-full"
-            src={profile?.user_profile ? `${baseURL}${profile.user_profile}` : SA_profile}
+            src={
+              profile?.user_profile
+                ? `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                    profile.user_profile
+                  }`
+                : SA_profile
+            }
             alt="profile_picture"
             onClick={handleProfile}
           />

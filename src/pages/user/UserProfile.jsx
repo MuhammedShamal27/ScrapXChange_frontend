@@ -4,7 +4,7 @@ import main_profile from "../../assets/main_profile.png";
 import UserNavBar from "../../componets/user/UserNavBar";
 import UserFooter from "../../componets/user/UserFooter";
 import { userProfile } from "../../services/api/user/userApi";
-import {toast} from 'sonner'
+import { toast } from "sonner";
 import "../../styles/user.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -55,9 +55,11 @@ const UserProfile = () => {
                 />
                 <img
                   className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 rounded-full w-14 h-14"
-                  src={profile.profile_picture
-                    ? `${baseURL}${profile.profile_picture}`
-                    : main_profile}
+                  src={
+                    profile.profile_picture
+                      ? `${baseURL}${profile.profile_picture}`
+                      : main_profile
+                  }
                   alt="Profile"
                 />
               </div>

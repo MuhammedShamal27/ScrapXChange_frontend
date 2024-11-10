@@ -1,6 +1,6 @@
 import {io} from "socket.io-client"
 
-const socket = io("http://127.0.0.1:8000", {
+const socket = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, {
     transports: ["websocket"],
     debug: true,
   });

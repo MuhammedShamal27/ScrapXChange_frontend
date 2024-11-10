@@ -16,9 +16,8 @@ import { fetchMessages, sendMessage } from "../../services/api/user/userApi";
 import { useSelector } from "react-redux";
 import { useOutletContext, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { Outlet,useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import AudioCallModal from "../AudioCallModal";
-
 
 const UserMessageBox = () => {
   const { roomId } = useParams();
@@ -27,10 +26,6 @@ const UserMessageBox = () => {
   const [newMessage, setNewMessage] = useState("");
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const audioRef = useRef(null);  
   const fileInputRef = useRef(null);
   const token = useSelector((state) => state.auth.token);
   const [showModal, setShowModal] = useState(false); // Modal state
@@ -39,7 +34,6 @@ const UserMessageBox = () => {
   const scrollRef = useRef();
   const navigate = useNavigate();
 
-  
   let user = null;
   if (token) {
     try {
@@ -54,42 +48,43 @@ const UserMessageBox = () => {
     scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
 
-    // Fetch old messages when the component mounts
-    useEffect(() => {
+  // Fetch old messages when the component mounts
+  useEffect(() => {
     if (roomId) {
-        fetchMessages(roomId).then((fetchedMessages) => {
-        setMessages(fetchedMessages);
-        }).catch((err) => console.error("Error fetching messages:", err));
+      fetchMessages(roomId)
+        .then((fetchedMessages) => {
+          setMessages(fetchedMessages);
+        })
+        .catch((err) => console.error("Error fetching messages:", err));
     }
-    }, [roomId]);
+  }, [roomId]);
 
   useEffect(() => {
     if (!roomId) return;
-  
+
     let reconnectInterval;
-  
+
     console.log("Attempting WebSocket connection to:", roomId);
-  
+
     socket.current = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, {
       transports: ["websocket"],
       debug: true,
     });
-  
+
     console.log("WebSocket reference:", socket.current);
-  
+
     socket.current.emit("join_room", { room_id: roomId, user_id: user });
-  
+
     socket.current.on("connect", () => {
       console.log("Connected to Socket.IO server");
       clearInterval(reconnectInterval);
     });
 
-  
     socket.current.on("connect_error", (error) => {
       console.error("Socket.IO connection error:", error);
       clearInterval(reconnectInterval);
     });
-  
+
     socket.current.on("disconnect", () => {
       console.log("Socket.IO disconnected");
       reconnectInterval = setInterval(() => {
@@ -97,7 +92,7 @@ const UserMessageBox = () => {
         socket.current.connect();
       }, 5000);
     });
-  
+
     return () => {
       console.log("Closing WebSocket connection...");
       socket.current.disconnect();
@@ -105,85 +100,76 @@ const UserMessageBox = () => {
     };
   }, [roomId]);
 
-
   useEffect(() => {
     if (!socket.current) return;
-  
+
     const handleMessage = (data) => {
       console.log("User Received message:", data);
       setMessages((prevMessages) => [...prevMessages, data]);
     };
-  
+
     socket.current.on("receive_message", handleMessage);
-  
+
     return () => {
       socket.current.off("receive_message", handleMessage); // Cleanup listener
     };
   }, []); // Empty dependency array because you only want this to run once
-  
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "" && !selectedFile && !audioBlob) return;
+    if (newMessage.trim() === "" && !selectedFile) return;
     const currentTimestamp = new Date().toISOString();
 
     try {
-        let messagePayload = {
-          message: newMessage,
-          room_id: roomId,
-          sender_id: user,
-          receiver_id: selectedShop.user,
-          timestamp: currentTimestamp,
-        };
-    
-        // Handle file sending via API
-        if (selectedFile || audioBlob || newMessage) {
-          const formData = new FormData();
-          formData.append("room_id", roomId);
-          formData.append("receiver_id", selectedShop.id);
-          formData.append("message", newMessage);
-    
-          if (selectedFile) {
-            formData.append("file", selectedFile);
-          }
-    
-          if (audioBlob) {
-            formData.append("audio", audioBlob, "audio.webm");
-          }
-    
-          // Send the file via API and get the response
-          const response = await sendMessage(formData); // API call
-          console.log('the response comming for shop send message',response)
+      let messagePayload = {
+        message: newMessage,
+        room_id: roomId,
+        sender_id: user,
+        receiver_id: selectedShop.user,
+        timestamp: currentTimestamp,
+      };
 
-          // Add the file URL to the WebSocket payload based on response
-          if (response.image) {
-            messagePayload.image = response.image;
-          }
-          if (response.video) {
-            messagePayload.video = response.video;
-          }
-          if (response.audio) {
-              console.log('is audio')
-            messagePayload.audio = response.audio;
-          }
-    
-          // Reset file and audio input after sending
-          setSelectedFile(null);
-          setAudioBlob(null);
+      // Handle file sending via API
+      if (selectedFile || newMessage) {
+        const formData = new FormData();
+        formData.append("room_id", roomId);
+        formData.append("receiver_id", selectedShop.id);
+        formData.append("message", newMessage);
+
+        if (selectedFile) {
+          formData.append("file", selectedFile);
         }
-    
-        // WebSocket send logic
-        if (socket.current && socket.current.connected) {
-          console.log('the message sending includes',messagePayload);
-          socket.current.emit("send_message", messagePayload);
-          
-        } else {
-          console.error("Socket.IO is not connected. Message not sent.");
+
+        for (let [key, value] of formData.entries()) {
+          console.log("formdata console,", `${key}:`, value);
         }
-    
-        setNewMessage(""); // Clear the message input
-      } catch (error) {
-        console.error("Error sending message:", error);
+
+        // Send the file via API and get the response
+        const response = await sendMessage(formData); // API call
+        console.log("the response comming for shop send message", response);
+
+        // Add the file URL to the WebSocket payload based on response
+        if (response.image) {
+          messagePayload.image = response.image;
+        }
+        if (response.video) {
+          messagePayload.video = response.video;
+        }
+
+        setSelectedFile(null);
       }
+
+      // WebSocket send logic
+      if (socket.current && socket.current.connected) {
+        console.log("the message sending includes", messagePayload);
+        socket.current.emit("send_message", messagePayload);
+      } else {
+        console.error("Socket.IO is not connected. Message not sent.");
+      }
+
+      setNewMessage(""); // Clear the message input
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   const handlePaperclipClick = () => {
@@ -200,129 +186,82 @@ const UserMessageBox = () => {
     }
   };
 
-  const handleMicClick = () => {
-    if (isRecording) {
-      mediaRecorder.stop();
-      console.log("the recording is stopped", mediaRecorder);
-    } else {
-      startRecording();
-    }
-  };
-
-  const startRecording = () => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        console.log("started the audio recording");
-        const recorder = new MediaRecorder(stream);
-        setMediaRecorder(recorder);
-        recorder.ondataavailable = (event) => {
-          setAudioBlob(event.data);
-          setIsRecording(false);
-        };
-        recorder.start();
-        setMediaRecorder(recorder);
-        setIsRecording(true);
-      })
-      .catch((error) => {
-        console.error("Error accessing microphone", error);
-      });
-  };
-
-  useEffect(() => {
-    if (mediaRecorder) {
-      mediaRecorder.onstop = async () => {
-        setIsRecording(false);
-        if (audioBlob) {
-          console.log("Audio Blob:", audioBlob);
-          await handleSendMessage();
-        }
-      };
-    }
-  }, [mediaRecorder]);
-
   //---audio call
 
   // Generate random ID
   const randomID = (len = 5) => {
     let result = "";
-    const chars = "12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP";
+    const chars =
+      "12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP";
     for (let i = 0; i < len; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
   };
 
-
-  
   const handlePhoneClick = () => {
     const callId = randomID(); // Generate random ID for the call
-    setCallId(callId)
+    setCallId(callId);
     if (callId) {
       socket.current.emit("audio_call", {
         callId,
         sender_id: user,
-        receiver_id: selectedShop.user, 
+        receiver_id: selectedShop.user,
         room_id: roomId,
-        message: "Calling"
+        message: "Calling",
       });
       navigate(`/audioCall/${roomId}/${callId}`);
-    };
-    
     }
+  };
 
-  const handleAcceptCall = () => { 
-    if (callId){
+  const handleAcceptCall = () => {
+    if (callId) {
       socket.current.emit("audio_call", {
         callId,
         sender_id: user, // Shop accepting the call
-        receiver_id: selectedShop.user, 
+        receiver_id: selectedShop.user,
         room_id: roomId,
-        message: "call_accepted"
+        message: "call_accepted",
       });
       navigate(`/audioCall/${roomId}/${callId}`);
-    };
     }
-
-  
+  };
 
   const handleDeclineCall = () => {
     socket.current.emit("audio_call", {
       message: "call_declined",
       sender_id: user,
       receiver_id: selectedShop.id,
-      room_id: roomId
+      room_id: roomId,
     });
     setShowModal(false);
   };
 
   useEffect(() => {
     if (!socket.current) return;
-  
+
     const handleAudioMessage = (data) => {
-      console.log('the data comming to the handle message',data)
+      console.log("the data comming to the handle message", data);
 
-          // Check if the current user/shop is the receiver
-    if (data.message === "Calling" && data.receiver_id === user) {
-      setCallId(data.callId);
-      // Show the incoming call modal
-      setShowModal(true);
-    } 
+      // Check if the current user/shop is the receiver
+      if (data.message === "Calling" && data.receiver_id === user) {
+        setCallId(data.callId);
+        // Show the incoming call modal
+        setShowModal(true);
+      }
 
-    if (data.message === "call_declined" && data.receiver_id === user) {
-      alert("The call was declined.");
-      setShowModal(false);
-    }
+      if (data.message === "call_declined" && data.receiver_id === user) {
+        alert("The call was declined.");
+        setShowModal(false);
+      }
     };
-  
+
     socket.current.on("receive_message", handleAudioMessage);
-  
+
     return () => {
       socket.current.off("receive_message", handleAudioMessage); // Cleanup listener
     };
   }, [user]);
-
-
 
   return (
     <div className="flex flex-col flex-grow">
@@ -341,16 +280,22 @@ const UserMessageBox = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-                <Phone  color="#a3aed0" size={20} onClick={handlePhoneClick} className="cursor-pointer"  />
+              <Phone
+                color="#a3aed0"
+                size={20}
+                onClick={handlePhoneClick}
+                className="cursor-pointer"
+              />
               <Search color="#a3aed0" size={20} />
             </div>
           </div>
 
           {showModal && (
             <AudioCallModal
-            callId={callId}
-            handleAcceptCall={handleAcceptCall}
-            handleDeclineCall={handleDeclineCall} />
+              callId={callId}
+              handleAcceptCall={handleAcceptCall}
+              handleDeclineCall={handleDeclineCall}
+            />
           )}
 
           <div className="flex flex-col flex-grow overflow-y-auto space-y-4 mb-4">
@@ -359,7 +304,10 @@ const UserMessageBox = () => {
                 <div
                   key={index}
                   ref={index === messages.length - 1 ? scrollRef : null} // Add ref to the last message
-                  className={`flex ${ msg.sender === user ? "justify-end" : "justify-start" }`} >
+                  className={`flex ${
+                    msg.sender === user ? "justify-end" : "justify-start"
+                  }`}
+                >
                   <div
                     className={`p-3 rounded-lg ${
                       msg.sender === user
@@ -370,24 +318,23 @@ const UserMessageBox = () => {
                     {msg.message}
                     {msg.image && (
                       <img
-                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.image}`}
+                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                          msg.image
+                        }`}
                         alt="image"
-                        className="max-w-xs mt-2 rounded-lg"
+                        className="w-full sm:max-w-xs mt-2 rounded-lg"
                       />
                     )}
                     {msg.video && (
                       <video
-                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.video}`}
+                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                          msg.video
+                        }`}
                         controls
                         className="max-w-xs mt-2 rounded-lg"
                       />
                     )}
-                    {msg.audio && (
-                      <audio
-                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${msg.audio}`}
-                        controls
-                      />
-                    )}
+
                     <span className="text-xs text-black ml-7">
                       {new Date(msg.timestamp).toLocaleTimeString([], {
                         hour: "2-digit",
@@ -400,7 +347,7 @@ const UserMessageBox = () => {
               ))}
           </div>
 
-          <div className="flex items-center border rounded-full relative gap-3">
+          <div className="flex items-center border rounded-full relative gap-3 p-1">
             <div>
               <Paperclip
                 color="#a3aed0"
@@ -436,21 +383,7 @@ const UserMessageBox = () => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
             />
-            {newMessage.trim() === "" && !isRecording && !showMediaOptions ? (
-              <div
-                className="bg-lightGreen p-3 rounded-full cursor-pointer"
-                onClick={handleMicClick}
-              >
-                <Mic color="#ffffff" />
-              </div>
-            ) : isRecording ? (
-              <div
-                className="bg-lightGreen p-3 rounded-full cursor-pointer"
-                onClick={handleMicClick}
-              >
-                <CircleStop color="#ffffff" />
-              </div>
-            ) : (
+            {(newMessage.trim() !== "" || showMediaOptions) && (
               <div
                 className="bg-lightGreen p-3 rounded-full cursor-pointer"
                 onClick={handleSendMessage}
@@ -461,7 +394,7 @@ const UserMessageBox = () => {
           </div>
         </>
       ) : (
-        <div className="flex items-center justify-center h-full text-gray-500">
+        <div className="hidden sm:flex items-center justify-center h-full text-gray-500">
           Select a shop to start chatting
         </div>
       )}

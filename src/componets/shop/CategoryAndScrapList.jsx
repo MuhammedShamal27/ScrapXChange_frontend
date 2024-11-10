@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Search, Plus, Pencil, IndianRupee } from "lucide-react";
 import { useDebounce } from "../../utils/hooks/Debounce"; // Import your useDebounce hook
-import Shop_requests from "../../assets/Shop_requests.png";
+import test from "../../assets/test.png";
 import { Link } from "react-router-dom";
 
 const CategoryAndScrapList = ({ list, type }) => {
   const itemsPerPage = 5; // Number of items per page
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500); // Debounce the search query
   const [filteredItems, setFilteredItems] = useState(list);
 
   useEffect(() => {
     // Filter the list based on the debounced search query
-    const filtered = list.filter(item => {
-      const nameMatch = item.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-      if (type === 'category') {
-        return nameMatch || item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+    const filtered = list.filter((item) => {
+      const nameMatch = item.name
+        .toLowerCase()
+        .includes(debouncedSearchQuery.toLowerCase());
+      if (type === "category") {
+        return (
+          nameMatch ||
+          item.description
+            .toLowerCase()
+            .includes(debouncedSearchQuery.toLowerCase())
+        );
       } else {
-        return nameMatch || item.category_name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+        return (
+          nameMatch ||
+          item.category_name
+            .toLowerCase()
+            .includes(debouncedSearchQuery.toLowerCase())
+        );
       }
     });
     setFilteredItems(filtered);
@@ -27,7 +39,10 @@ const CategoryAndScrapList = ({ list, type }) => {
 
   // Calculate the current items to display
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = filteredItems.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Calculate total pages
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -77,7 +92,7 @@ const CategoryAndScrapList = ({ list, type }) => {
 
         <div className="flex text-myBlue  border-b pb-2">
           <p className="w-1/4">Name</p>
-          {type === 'category' ? (
+          {type === "category" ? (
             <p className="w-2/4">Description</p>
           ) : (
             <>
@@ -90,26 +105,42 @@ const CategoryAndScrapList = ({ list, type }) => {
 
         <div className="flex flex-col mt-5">
           {currentItems.map((item) => (
-            <div key={item.id} className="flex items-center m-2 p-3 shadow-xl rounded-lg">
+            <div
+              key={item.id}
+              className="flex items-center m-2 p-3 shadow-xl rounded-lg"
+            >
               <div className="w-1/4 flex items-center space-x-3">
                 <img
-                  src={type === 'category' ? item.image : item.image || Shop_requests}
+                  src={
+                    type === "category"
+                      ? item.image
+                      : item.image ||
+                        `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}/test`
+                  }
                   alt="profile"
                   className="w-16 h-16 object-cover rounded-full"
                 />
-                <p>{item.name || 'N/A'}</p>
+                <p>{item.name || "N/A"}</p>
               </div>
-              {type === 'category' ? (
-                <p className="w-2/4">{item.description || 'N/A'}</p>
+              {type === "category" ? (
+                <p className="w-2/4">{item.description || "N/A"}</p>
               ) : (
                 <>
-                  <p className="w-1/4">{item.category_name || 'N/A'}</p>
+                  <p className="w-1/4">{item.category_name || "N/A"}</p>
                   <p className="w-1/4 flex items-center">
-                    <IndianRupee color="#a3aed0" size={15} /> {item.price || 'N/A'}
+                    <IndianRupee color="#a3aed0" size={15} />{" "}
+                    {item.price || "N/A"}
                   </p>
                 </>
               )}
-              <Link to={type === "category" ? `/shop/editCategory/${item.id}` : `/shop/editScrap/${item.id}`} className=" flex justify-center">
+              <Link
+                to={
+                  type === "category"
+                    ? `/shop/editCategory/${item.id}`
+                    : `/shop/editScrap/${item.id}`
+                }
+                className=" flex justify-center"
+              >
                 <Pencil color="#a3aed0" />
               </Link>
             </div>
@@ -119,14 +150,20 @@ const CategoryAndScrapList = ({ list, type }) => {
       {totalPages > 1 && (
         <div className="flex justify-center rounded-lg bg-white w-2/12  ml-20 mt-4 space-x-3 text-black">
           {currentPage > 1 && (
-            <button onClick={handlePrevClick} className=" rounded-lg p-2 text-gray-500">
+            <button
+              onClick={handlePrevClick}
+              className=" rounded-lg p-2 text-gray-500"
+            >
               Prev |
             </button>
           )}
           <p className="rounded-lg p-2 text-gray-500">{currentPage}</p>
           {currentPage < totalPages && (
-            <button onClick={handleNextClick} className="rounded-lg p-2 text-gray-500">
-             | Next
+            <button
+              onClick={handleNextClick}
+              className="rounded-lg p-2 text-gray-500"
+            >
+              | Next
             </button>
           )}
         </div>

@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import AdminNavBar from "../../componets/admin/AdminNavBar";
 import main_profile from "../../assets/main_profile.png";
-import { fetchAdminNotification, markNotificationRead } from "../../services/api/admin/adminApi";
+import {
+  fetchAdminNotification,
+  markNotificationRead,
+} from "../../services/api/admin/adminApi";
 import { Check, CheckCheck } from "lucide-react"; // Ensure you are importing the icons
 
 const AdminNotification = () => {
@@ -85,7 +88,9 @@ const AdminNotification = () => {
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-600">No notifications available.</p>
+              <p className="text-center text-gray-600">
+                No notifications available.
+              </p>
             )}
           </div>
         </div>
