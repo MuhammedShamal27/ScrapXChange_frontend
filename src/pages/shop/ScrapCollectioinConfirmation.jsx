@@ -10,7 +10,6 @@ import {
   VerifyPayment,
 } from "../../services/api/shop/shopApi";
 import success from "../../assets/success.png";
-// import {loadRazorpayScript} from '../../utils/razorpay'
 
 const ScrapCollectioinConfirmation = () => {
   const { id } = useParams();
@@ -24,7 +23,7 @@ const ScrapCollectioinConfirmation = () => {
     const fetchCollectionReport = async () => {
       try {
         const response = await ConfirmCollection(id);
-        console.log("the response ", response);
+        console.log("the response ConfirmCollection ", response);
         setTransaction(response);
       } catch (err) {
         console.error("There is an error", err);

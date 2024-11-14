@@ -69,6 +69,7 @@ const ScrapCollection = () => {
     try {
       console.log("formData", formData, id);
       const Data = { id, formData };
+      console.log('the sending data',Data)
       const response = await scrapCollected(id, Data);
       console.log("the response", response);
       const t_id = response.id;

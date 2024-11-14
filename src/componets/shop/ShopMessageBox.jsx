@@ -31,6 +31,7 @@ const ShopMessageBox = () => {
   const fileInputRef = useRef(null);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [showModal, setShowModal] = useState(false); // Modal state
+  const [selectedFile, setSelectedFile] = useState(null);
   const socket = useRef();
   const navigate = useNavigate();
   const token = useSelector((state) => state.shop.token);
@@ -318,8 +319,8 @@ const ShopMessageBox = () => {
                     {msg.image && (
                       <img
                         src={`${
-                          import.meta.env.VITE_SCRAPXCHANGE_API_URL
-                        }msg.image}`}
+                          import.meta.env.VITE_MEDIA_API_URL
+                        }${msg.image}`}
                         alt="image"
                         className="w-full sm:max-w-xs mt-2 rounded-lg"
                       />
@@ -328,8 +329,8 @@ const ShopMessageBox = () => {
                     {msg.video && (
                       <video
                         src={`${
-                          import.meta.env.VITE_SCRAPXCHANGE_API_URL
-                        }{msg.video}`}
+                          import.meta.env.VITE_MEDIA_API_URL
+                        }${msg.video}`}
                         controls
                         className="max-w-xs mt-2 rounded-lg"
                       />

@@ -6,7 +6,10 @@ import {
   createUserNotification,
   reportUser,
 } from "../services/api/user/userApi";
-import { reportShop } from "../services/api/shop/shopApi";
+import {
+  CreateShopNotifications,
+  reportShop,
+} from "../services/api/shop/shopApi";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 import socket from "../utils/hooks/Socket";
@@ -80,14 +83,14 @@ const ReportMessage = ({ onClose, Name, receiver, type }) => {
           description,
         });
 
-        // const notification = {
-        //     receiver : receiver,
-        //     sender : shopId,
-        //     message : `A Report is submitted  aganist ${Name}.`,
-        //     notification_type : 'report'
-        //   }
+        const notification = {
+          receiver: receiver,
+          sender: shopId,
+          message: `A Report is submitted  aganist ${Name}.`,
+          notification_type: "report",
+        };
       }
-
+      const sendNotification = await CreateShopNotifications(notification);
       toast.success("Report sent successfully");
       onClose(); // Close the modal on success
     } catch (err) {

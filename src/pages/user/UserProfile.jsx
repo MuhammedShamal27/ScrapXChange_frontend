@@ -9,7 +9,6 @@ import "../../styles/user.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserSideBar from "../../componets/user/UserSideBar";
-import { baseURL } from "../../utils/constant";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -57,7 +56,7 @@ const UserProfile = () => {
                   className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 rounded-full w-14 h-14"
                   src={
                     profile.profile_picture
-                      ? `${baseURL}${profile.profile_picture}`
+                      ? `${import.meta.env.VITE_MEDIA_API_URL}${profile.profile_picture}`
                       : main_profile
                   }
                   alt="Profile"

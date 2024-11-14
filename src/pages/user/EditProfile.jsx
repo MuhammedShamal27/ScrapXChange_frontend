@@ -9,9 +9,6 @@ import { editUserProfile, userProfile } from "../../services/api/user/userApi";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
-// Base URL for API
-const baseURL = import.meta.env.SCRAPXCHANGE_API_URL;
-
 const EditProfile = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -33,7 +30,7 @@ const EditProfile = () => {
         const userData = await userProfile(token);
         setFormData(userData);
         if (userData.profile_picture) {
-          setPreviewImage(`${baseURL}${userData.profile_picture}`);
+          setPreviewImage(`${import.meta.env.VITE_MEDIA_API_URL}${userData.profile_picture}`);
         }
       } catch (error) {
         console.error("Error fetching user profile data:", error);
@@ -119,9 +116,12 @@ const EditProfile = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        console.log("comming");
-        console.log("Form data being submitted:", formData);
-        await editUserProfile(formData);
+        const formDataToSend = new FormData();
+        Object.keys(formData).forEach((key) => {
+          formDataToSend.append(key, formData[key]);
+        });
+        const response = await editUserProfile(formDataToSend);
+        console.log('the response',response)
         toast.success("Profile updated successfully!");
         navigate("/profile");
       } catch (error) {

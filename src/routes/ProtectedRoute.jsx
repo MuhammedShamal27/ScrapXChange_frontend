@@ -9,7 +9,7 @@ function ProtectedRoute({ children, shop, admin }) {
   );
   useEffect(() => {
     if (!isToken) {
-      navigate(admin ? "/admin/login" : shop ? "/shop/login" : "/login");
+      navigate(admin ? "/login" : shop ? "/login" : "/login");
     }
   }, [isToken, navigate, shop, admin]);
 

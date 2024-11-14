@@ -3,17 +3,33 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import {
+  CreateShopNotifications,
   reScheduleRequest,
   shopCreateOrFetchChatRoom,
 } from "../../services/api/shop/shopApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import socket from "../../utils/hooks/Socket";
+import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
+
 
 const RescheduleModal = ({ isOpen, id, userDetails, onClose }) => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
   console.log("user", userDetails);
+  const shopToken = useSelector((state) => state.shop.token);
+  let shopId = null;
+
+  if (shopToken) {
+    try {
+      const decodedShopToken = jwtDecode(shopToken);
+      shopId = decodedShopToken.user_id;
+      console.log("the shop", shopId);
+    } catch (error) {
+      console.error("Invalid shop token:", error);
+    }
+  }
 
   const handleReShedule = async (e) => {
     e.preventDefault();
@@ -22,14 +38,9 @@ const RescheduleModal = ({ isOpen, id, userDetails, onClose }) => {
       console.log(date);
       const response = await reScheduleRequest(id, date);
       console.log("the response is ", response);
-      const createRoom = await shopCreateOrFetchChatRoom(userDetails.user);
-      console.log("the response of create room", createRoom);
+      // const createRoom = await shopCreateOrFetchChatRoom(userDetails.user);
+      // console.log("the response of create room", createRoom);
 
-      socket.emit("notification", {
-        sender_id: createRoom.shop.user, // Assuming `user` is the logged-in user's ID
-        receiver_id: createRoom.user.id, // Shop ID to notify
-        message: "A  scrap collection request has been Approved", // Customize the message
-      });
       // const room_id=createRoom.id
       // const shop=createRoom.shop.user
       // const user=createRoom.user.id
@@ -37,13 +48,14 @@ const RescheduleModal = ({ isOpen, id, userDetails, onClose }) => {
       // const message = `${username} has accepted the collection request .`;
       // console.log(`the room_id ${room_id},the shop id is ${shop}`)
 
-      // socket.emit("notification",{
-      //   room_id : room_id,
-      //   sender_id : shop,
-      //   receiver_id : user,
-      //   message : message,
-      // })
-      // toast("Scheduled successfully.");
+      const notification = {
+        sender: shopId,
+        receiver: userDetails.user,
+        message: "A  scrap collection request has been Approved",
+        notification_type: "general",
+      }
+      const sendNotification =  await CreateShopNotifications(notification)
+      toast("Scheduled successfully.");
       onClose();
       navigate("/shop/scrapRequests");
     } catch (err) {

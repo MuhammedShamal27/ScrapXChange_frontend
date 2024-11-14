@@ -108,9 +108,7 @@ export const userProfile = async () =>{
 
 
 export const editUserProfile = async (formData) =>{
-    try{
-        console.log('here');
-        
+    try{        
         const response = await axiosInstance.put('/api/user/edit-profile/',formData );
         console.log("the response api of editProfile",response)
         return response.data

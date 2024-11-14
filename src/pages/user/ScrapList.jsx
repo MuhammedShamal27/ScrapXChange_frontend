@@ -18,7 +18,6 @@ import socket from "../../utils/hooks/Socket";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
-import { baseURL } from "../../utils/constant";
 import { sendNotificationToShop } from "../../services/api/notificationApi";
 
 const ScrapList = () => {
@@ -161,7 +160,17 @@ const ScrapList = () => {
     try {
       console.log("the form data", formData);
       const response = await collectionRequest(formData);
-      const sendNotification = await sendNotificationToShop(id);
+      const fetchRoom = await createOrFetchChatRoom(id);
+      console.log('the response is ',fetchRoom)
+      const notification = {
+        receiver : fetchRoom.shop.user,
+        sender : user,
+        notification_type : 'general',
+        message : "A new scrap collection request."
+      }
+      console.log('going notification',notification)
+      const sendNotification = await createUserNotification(notification)
+      console.log('the response is of sending notification ',sendNotification)
       toast("Submitted successfully");
       setShowSuccessModal(true);
       setSelectedItems([]);
@@ -217,7 +226,7 @@ const ScrapList = () => {
                             <div className="flex justify-center">
                               <img
                                 className="w-24 h-24"
-                                src={`${baseURL}${product.image}`}
+                                src={`${import.meta.env.VITE_MEDIA_API_URL}${product.image}`}
                                 alt={product.name}
                               />
                             </div>

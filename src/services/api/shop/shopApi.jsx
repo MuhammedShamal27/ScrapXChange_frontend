@@ -58,8 +58,13 @@ export const fetchCategoryList = async () => {
 
 export const addCategory = async (categoryData) => {
     try {
-        console.log('is going to backend', categoryData);
-        const response = await axiosInstance.post('/api/shop/category-creation/', categoryData);
+        const formData = new FormData();
+        Object.keys(categoryData).forEach(key => {
+            formData.append(key, categoryData[key]);
+        });
+
+        console.log('Sending to backend:', formData);
+        const response = await axiosInstance.post('/api/shop/category-creation/', formData);
         console.log("the add category response data", response.data);
         return response.data;
     } catch (err) {
@@ -126,7 +131,13 @@ export const fetchScrapList = async () => {
 
 export const addScrap = async (scrapData) => {
     try {
-        const response = await axiosInstance.post ('/api/shop/product-creation/',scrapData)
+        const formData = new FormData();
+        Object.keys(scrapData).forEach(key => {
+            formData.append(key, scrapData[key]);
+        });
+
+        console.log('Sending to backend:', formData);
+        const response = await axiosInstance.post ('/api/shop/product-creation/',formData)
         console.log("the scrap list response data", response.data)
         return response.data
     } catch (err) {
@@ -466,6 +477,17 @@ export const shopDashboard = async () => {
     }
 };
 
+
+export const CreateShopNotifications = async (notification) => {
+    try {
+        const response = await axiosInstance.post('/api/shop/shop-notifications/create/',notification);
+        console.log('the response of CreateShopNotifications ',response.data)
+        return response.data;
+    } catch (err) {
+        console.error("Error while sending message", err);
+        throw err;
+    }
+};
 
 export const fetchShopNotifications = async () => {
     try {

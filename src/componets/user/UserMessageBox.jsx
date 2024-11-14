@@ -318,7 +318,7 @@ const UserMessageBox = () => {
                     {msg.message}
                     {msg.image && (
                       <img
-                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                        src={`${import.meta.env.VITE_MEDIA_API_URL}${
                           msg.image
                         }`}
                         alt="image"
@@ -327,7 +327,7 @@ const UserMessageBox = () => {
                     )}
                     {msg.video && (
                       <video
-                        src={`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
+                        src={`${import.meta.env.VITE_MEDIA_API_URL}${
                           msg.video
                         }`}
                         controls

@@ -115,7 +115,7 @@ const CategoryAndScrapList = ({ list, type }) => {
                     type === "category"
                       ? item.image
                       : item.image ||
-                        `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}/test`
+                        test
                   }
                   alt="profile"
                   className="w-16 h-16 object-cover rounded-full"
@@ -126,7 +126,7 @@ const CategoryAndScrapList = ({ list, type }) => {
                 <p className="w-2/4">{item.description || "N/A"}</p>
               ) : (
                 <>
-                  <p className="w-1/4">{item.category_name || "N/A"}</p>
+                  <p className="w-1/4">{item.category.name || "N/A"}</p>
                   <p className="w-1/4 flex items-center">
                     <IndianRupee color="#a3aed0" size={15} />{" "}
                     {item.price || "N/A"}

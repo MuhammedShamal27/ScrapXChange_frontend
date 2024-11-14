@@ -164,7 +164,7 @@ const Shops = () => {
                       key={shop.id}
                       className="flex flex-col sm:flex-row items-center justify-between rounded-lg shadow-lg p-3 mb-4"
                     >
-                      <div className="flex items-center space-x-3 mb-3 sm:mb-0">
+                      <div className="flex items-center w-24 h-24 justify-between space-x-3 mb-3 sm:mb-0">
                         <img src={test} alt="shop" />
                         <div>
                           <h2 className="uppercase font-bold">

@@ -4,6 +4,7 @@ import ShopNavBar from "../../componets/shop/ShopNavBar";
 import HeadingAndProfile from "../../componets/HeadingAndProfile";
 import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
 import {
+  CreateShopNotifications,
   getScrapRequestDetails,
   rejectRequest,
   scheduleRequest,
@@ -14,6 +15,9 @@ import { toast } from "sonner";
 import MessageModal from "../../componets/shop/MessageModal";
 import ResheduleModal from "../../componets/shop/RescheduleModal";
 import socket from "../../utils/hooks/Socket";
+import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
+
 
 const ScrapRequestDetails = () => {
   const { id } = useParams();
@@ -23,6 +27,18 @@ const ScrapRequestDetails = () => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isResheduleModalOpen, setIsResheduleModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const shopToken = useSelector((state) => state.shop.token);
+  let shopId = null;
+
+  if (shopToken) {
+    try {
+      const decodedShopToken = jwtDecode(shopToken);
+      shopId = decodedShopToken.user_id;
+      console.log("the shop", shopId);
+    } catch (error) {
+      console.error("Invalid shop token:", error);
+    }
+  }
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -41,15 +57,16 @@ const ScrapRequestDetails = () => {
     try {
       const response = await scheduleRequest(id);
       console.log("request sheduled successfully", response);
-      console.log("the user id is", requestDetails.user);
-      const createRoom = await shopCreateOrFetchChatRoom(requestDetails.user);
-      console.log("the response of create room", createRoom);
-      socket.emit("notification", {
-        sender_id: createRoom.shop.user,
-        receiver_id: createRoom.user.id,
+      // console.log("the user id is", requestDetails.user);
+      // const createRoom = await shopCreateOrFetchChatRoom(requestDetails.user);
+      // console.log("the response of create room", createRoom);
+      const notification = {
+        sender: shopId,
+        receiver: requestDetails.user,
         message: "A  scrap collection request has been Approved",
         notification_type: "general",
-      });
+      }
+      const sendNotification =  await CreateShopNotifications(notification)
       toast("Scheduled successfully");
       navigate("/shop/scrapRequests");
     } catch (err) {
