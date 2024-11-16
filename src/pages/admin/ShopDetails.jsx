@@ -6,6 +6,7 @@ import DetailsPages from "../../componets/admin/DetailsPages";
 import "../../styles/adminAndShop.css";
 import { useParams } from "react-router-dom";
 import { fetchShopDetails } from "../../services/api/admin/adminApi";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const ShopDetails = () => {
   const { id } = useParams();
@@ -35,7 +36,7 @@ const ShopDetails = () => {
       <div className="adminFont flex bg-bgColor min-h-screen ">
         <AdminNavBar />
         <div className="flex flex-col w-full">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />
           <div className="flex justify-center">
             <DetailsPages details={shopDetails} type="shop" />
           </div>

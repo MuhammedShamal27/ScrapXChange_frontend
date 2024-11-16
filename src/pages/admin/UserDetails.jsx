@@ -8,6 +8,7 @@ import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
 import DetailsPages from "../../componets/admin/DetailsPages";
 import { useParams } from "react-router-dom";
 import { fetchUserDetails } from "../../services/api/admin/adminApi";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -38,7 +39,7 @@ const UserDetails = () => {
       <div className="adminFont flex bg-bgColor min-h-screen ">
         <AdminNavBar />
         <div className="flex flex-col w-full">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />
           <div className="flex justify-center">
             <DetailsPages details={userDetails} type="user" />
           </div>

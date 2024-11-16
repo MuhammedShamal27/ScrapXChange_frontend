@@ -67,9 +67,7 @@ const HeadingAndProfile = ({ isAdmin }) => {
             className="w-9 h-9 rounded-full"
             src={
               profile?.user_profile
-                ? `${import.meta.env.VITE_SCRAPXCHANGE_API_URL}${
-                    profile.user_profile
-                  }`
+                ?  profile.user_profile 
                 : SA_profile
             }
             alt="profile_picture"

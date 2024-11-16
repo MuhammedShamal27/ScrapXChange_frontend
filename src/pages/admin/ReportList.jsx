@@ -6,6 +6,7 @@ import { ReportBlockUnblock, Reports } from "../../services/api/admin/adminApi";
 import { toast } from "sonner";
 import { EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const ReportList = () => {
   const [reports, setReports] = useState([]);
@@ -32,7 +33,7 @@ const ReportList = () => {
       <div className="adminFont flex bg-bgColor ">
         <AdminNavBar />
         <div className="w-10/12">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />
           <div className=" bg-white m-7 rounded-lg">
             <h1 className="text-xl font-semibold p-3 ml-7">Reports</h1>
             <div className="flex flex-col ml-7">

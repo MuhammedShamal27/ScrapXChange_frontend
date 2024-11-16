@@ -19,7 +19,7 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       try {
         const userData = await userProfile(token);
-        console.log("Profile Picture URL:", userData.profile_picture);
+        console.log("Profile Picture URL:", userData);
         setProfile(userData);
       } catch (error) {
         toast.error("Failed to load user profile.");
@@ -32,6 +32,7 @@ const UserProfile = () => {
   const handleEditProfile = () => {
     navigate("/editProfile");
   };
+
 
   if (!profile) {
     return <p>Loading...</p>;
@@ -56,7 +57,7 @@ const UserProfile = () => {
                   className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 rounded-full w-14 h-14"
                   src={
                     profile.profile_picture
-                      ? `${import.meta.env.VITE_MEDIA_API_URL}${profile.profile_picture}`
+                      ? profile.profile_picture
                       : main_profile
                   }
                   alt="Profile"

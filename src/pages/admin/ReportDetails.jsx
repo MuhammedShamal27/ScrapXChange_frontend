@@ -7,6 +7,7 @@ import {
   ReportBlockUnblock,
   ReportReasons,
 } from "../../services/api/admin/adminApi";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const ReportDetails = () => {
   const { id } = useParams();
@@ -85,8 +86,7 @@ const ReportDetails = () => {
     <div className="adminFont flex bg-bgColor flex-col lg:flex-row">
       <AdminNavBar />
       <div className="w-full lg:w-10/12">
-        <HeadingAndProfile />
-
+        <AdminHeadingAndProfile />
         <div className="flex flex-col lg:flex-row m-10 gap-10">
           <div className="bg-white w-full lg:w-6/12 rounded-lg flex flex-col justify-around">
             <div className="ml-7 space-y-3 p-3">

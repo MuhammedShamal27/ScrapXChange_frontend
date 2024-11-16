@@ -66,7 +66,12 @@ const UserMessageBox = () => {
 
     console.log("Attempting WebSocket connection to:", roomId);
 
-    socket.current = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, {
+    // socket.current = io(`${import.meta.env.VITE_SCRAPXCHANGE_API_URL}`, {
+    //   transports: ["websocket"],
+    //   debug: true,
+    // });
+
+    socket.current = io('https://royalsofa.online', {
       transports: ["websocket"],
       debug: true,
     });
@@ -139,6 +144,11 @@ const UserMessageBox = () => {
           formData.append("file", selectedFile);
         }
 
+        if (selectedFile) {
+          messagePayload.image = selectedFile;
+          console.log("messagePayload", messagePayload.image);
+        }
+
         for (let [key, value] of formData.entries()) {
           console.log("formdata console,", `${key}:`, value);
         }
@@ -176,8 +186,45 @@ const UserMessageBox = () => {
     setShowMediaOptions(!showMediaOptions);
   };
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const cloudinaryConfig = {
+      cloud_name: "dqffglvoq",
+      upload_preset: "ml_default",
+    };
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", cloudinaryConfig.upload_preset);
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      console.log("Image uploaded successfully:", data);
+
+      // Set the uploaded file URL
+      setSelectedFile(data.secure_url);
+
+      // Reset the file input after successful upload
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
   };
 
   const handleIconClick = () => {
@@ -318,18 +365,14 @@ const UserMessageBox = () => {
                     {msg.message}
                     {msg.image && (
                       <img
-                        src={`${import.meta.env.VITE_MEDIA_API_URL}${
-                          msg.image
-                        }`}
+                        src={msg.image}
                         alt="image"
                         className="w-full sm:max-w-xs mt-2 rounded-lg"
                       />
                     )}
                     {msg.video && (
                       <video
-                        src={`${import.meta.env.VITE_MEDIA_API_URL}${
-                          msg.video
-                        }`}
+                        src={msg.video}
                         controls
                         className="max-w-xs mt-2 rounded-lg"
                       />
@@ -372,6 +415,7 @@ const UserMessageBox = () => {
 
               <input
                 type="file"
+                accept="image/*,video/*"
                 ref={fileInputRef}
                 style={{ display: "none" }}
                 onChange={handleFileChange}

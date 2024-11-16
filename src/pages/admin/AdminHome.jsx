@@ -14,6 +14,7 @@ import {
   User,
 } from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const AdminHome = () => {
   const [admin, setAdmin] = useState(null);
@@ -71,7 +72,7 @@ const AdminHome = () => {
       <div className="adminFont flex bg-bgColor ">
         <AdminNavBar />
         <div className="w-9/12 ">
-          <HeadingAndProfile isAdmin={true} />
+          <AdminHeadingAndProfile />
           {/* {admin && <div>Welcome, {admin.username}!</div>} */}
 
           <div className="ml-7 mt-7">

@@ -89,18 +89,44 @@ const EditProfile = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMessage }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    setFormData({ ...formData, profile_picture: file });
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+  
+    const cloudinaryConfig = {
+      cloud_name: 'dqffglvoq',
+      upload_preset: 'ml_default', // Use your actual preset name here
+    };
+  
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', cloudinaryConfig.upload_preset);
+  
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+      console.log('the response of image.',response)
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+  
+      const data = await response.json();
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        profile_picture: data.secure_url, 
+      }));
+      setPreviewImage(data.secure_url); 
+    } catch (error) {
+      console.error('Error uploading image:', error);
     }
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

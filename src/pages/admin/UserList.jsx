@@ -10,6 +10,7 @@ import {
 } from "../../services/api/admin/adminApi";
 import "../../styles/adminAndShop.css";
 import { useDebounce } from "../../utils/hooks/Debounce";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -56,7 +57,7 @@ const UserList = () => {
       <div className="adminFont flex bg-bgColor ">
         <AdminNavBar />
         <div className="w-8/12">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />
           <div>
             <UserAndAdminList
               list={users}

@@ -7,6 +7,7 @@ import FooterOfAdminAndShop from "../../componets/FooterOfAdminAndShop";
 import "../../styles/adminAndShop.css";
 import { ShopRequestList as fetchShopRequests } from "../../services/api/admin/adminApi";
 import { useNavigate } from "react-router-dom";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const ShopRequestList = () => {
   const [shopRequests, setShopRequests] = useState([]);
@@ -36,8 +37,7 @@ const ShopRequestList = () => {
         <AdminNavBar />
 
         <div className="w-full lg:w-4/5">
-          <HeadingAndProfile />
-
+          <AdminHeadingAndProfile />
           <div className="bg-white lg:ml-11 rounded-2xl p-6">
             <div className="flex justify-between lg:ml-9 mb-4">
               <h5 className="text-blue-950 font-bold text-2xl m-3">List</h5>

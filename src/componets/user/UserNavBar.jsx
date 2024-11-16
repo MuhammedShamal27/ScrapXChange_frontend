@@ -69,9 +69,8 @@ const UserNavBar = () => {
             <Link to="/profile">
               <img
                 className="w-10 h-10 cursor-pointer rounded-full"
-                src={user?.profile_picture? `${import.meta.env.VITE_MEDIA_API_URL}${
+                src={user?.profile_picture?
                         user.profile_picture
-                      }`
                     : profile
                 }
                 alt="profile picture of user"

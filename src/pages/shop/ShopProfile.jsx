@@ -20,7 +20,15 @@ const ShopProfile = () => {
       try {
         const response = await fetchShopProfile();
         console.log("the shop response", response);
+
+        if (response.profile_picture && response.profile_picture.includes("image/upload/")) {
+          response.profile_picture = response.profile_picture.includes("https")
+            ? response.profile_picture.substring(response.profile_picture.indexOf("https"))
+            : response.profile_picture;
+        }
+        
         setShopProfile(response);
+        console.log('setshop',shopProfile)
 
         // Check if the profile_picture, latitude, and longitude are already set
         if (
@@ -68,7 +76,7 @@ const ShopProfile = () => {
                     className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 rounded-full w-14 h-14"
                     src={
                       shopProfile.profile_picture
-                        ? `${baseURL}${shopProfile.profile_picture}`
+                        ? shopProfile.profile_picture
                         : main_profile
                     }
                     alt="Profile"

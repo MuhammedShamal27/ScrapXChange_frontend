@@ -8,6 +8,7 @@ import {
   markNotificationRead,
 } from "../../services/api/admin/adminApi";
 import { Check, CheckCheck } from "lucide-react"; // Ensure you are importing the icons
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const AdminNotification = () => {
   const [data, setData] = useState([]); // State for notifications
@@ -49,7 +50,7 @@ const AdminNotification = () => {
       <div className="adminFont flex bg-bgColor">
         <AdminNavBar />
         <div className="flex-grow">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />
           <div className="flex flex-col m-4">
             {data.length > 0 ? (
               data.map((notification) => (

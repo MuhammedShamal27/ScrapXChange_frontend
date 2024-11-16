@@ -17,7 +17,14 @@ const ScrapList = () => {
     const loadScrap = async () => {
       try {
         const data = await fetchScrapList();
-        setScrap(Array.isArray(data) ? data : []);
+        // Preprocess the image URLs
+        const processedData = data.map((item) => ({
+          ...item,
+          image: item.image.includes("https")
+            ? item.image.substring(item.image.indexOf("https"))
+            : item.image, // Extract only the part starting with "https"
+        }));
+        setScrap(Array.isArray(processedData) ? processedData : []);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -26,6 +33,7 @@ const ScrapList = () => {
     };
     loadScrap();
   }, []);
+  
 
   if (loading) {
     return <div>Loading ...</div>;

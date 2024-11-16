@@ -226,7 +226,11 @@ const ScrapList = () => {
                             <div className="flex justify-center">
                               <img
                                 className="w-24 h-24"
-                                src={`${import.meta.env.VITE_MEDIA_API_URL}${product.image}`}
+                                src={
+                                  product.image.indexOf('https://') !== -1
+                                    ? product.image.slice(product.image.indexOf('https://'))
+                                    : ''
+                                }
                                 alt={product.name}
                               />
                             </div>

@@ -63,20 +63,48 @@ const AddScrapAndCategory = ({ type }) => {
     return "";
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
     if (name === "image" && files && files[0]) {
-      if (type === "scrap") {
-        setScrapFormData({ ...scrapFormData, [name]: files[0] });
-      } else {
-        setCategoryFormData({ ...categoryFormData, [name]: files[0] });
+      const file = files[0];
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default"); 
+
+      try {
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dqffglvoq/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const data = await response.json();
+        console.log('data',data)
+        const secureUrl = data.secure_url;
+
+        if (type === "scrap") {
+          setScrapFormData((prev) => ({ ...prev, image: secureUrl }));
+        } else {
+          setCategoryFormData((prev) => ({ ...prev, image: secureUrl }));
+        }
+
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Failed to upload image.");
       }
     } else {
       if (type === "scrap") {
-        setScrapFormData({ ...scrapFormData, [name]: value });
+        setScrapFormData((prev) => ({ ...prev, [name]: value }));
       } else {
-        setCategoryFormData({ ...categoryFormData, [name]: value });
+        setCategoryFormData((prev) => ({ ...prev, [name]: value }));
       }
     }
 
@@ -101,11 +129,9 @@ const AddScrapAndCategory = ({ type }) => {
       try {
         let response;
         if (type === "scrap") {
-          console.log('ivan')
           response = await addScrap(scrapFormData);
           navigate("/shop/scraplist");
         } else {
-          console.log('ivanalla')
           console.log('categoryformData is sending ',categoryFormData)
           response = await addCategory(categoryFormData);
           navigate("/shop/categorylist");

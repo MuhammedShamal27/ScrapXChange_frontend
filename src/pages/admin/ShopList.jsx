@@ -10,6 +10,7 @@ import {
   fetchUnblockedShopList,
 } from "../../services/api/admin/adminApi";
 import { useDebounce } from "../../utils/hooks/Debounce";
+import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
 
 const ShopList = () => {
   const [shops, setShops] = useState([]);
@@ -56,7 +57,7 @@ const ShopList = () => {
       <div className="adminFont flex bg-bgColor ">
         <AdminNavBar />
         <div className="w-8/12">
-          <HeadingAndProfile />
+          <AdminHeadingAndProfile />{" "}
           <div>
             <UserAndAdminList
               list={shops}

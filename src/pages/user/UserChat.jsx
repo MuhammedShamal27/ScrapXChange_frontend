@@ -153,7 +153,11 @@ const UserChat = () => {
                           onClick={() => handleExistingChatClick(room)}
                         >
                           <img
-                            src={SA_profile}
+                            src={
+                              room.shop.profile_picture.indexOf('https://') !== -1
+                                ? room.shop.profile_picture.slice(room.shop.profile_picture.indexOf('https://'))
+                                : ''
+                            }
                             alt=""
                             className="w-12 h-12 rounded-full mr-3"
                           />
