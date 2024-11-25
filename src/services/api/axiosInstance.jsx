@@ -7,10 +7,6 @@ import { loginSuccess, logout } from '../../redux/reducers/userReducer';
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_SCRAPXCHANGE_API_URL,
     timeout: 10000,
-    // headers:{
-    //     'Content-Type' : 'application/json',
-    //     'Content-Type' : 'multipart/form-data',
-    // },
 });
 
 axiosInstance.interceptors.request.use(

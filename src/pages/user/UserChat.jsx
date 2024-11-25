@@ -123,8 +123,8 @@ const UserChat = () => {
                     onClick={() => handleShopClick(shop)}
                   >
                     <img
-                      src={SA_profile}
-                      alt=""
+                      src={shop.shop.profile_picture}
+                      alt="https://freesvg.org/img/abstract-user-flat-4.png"
                       className="w-12 h-12 rounded-full mr-3"
                     />
                     <div className="flex-1">
@@ -154,9 +154,9 @@ const UserChat = () => {
                         >
                           <img
                             src={
-                              room.shop.profile_picture.indexOf('https://') !== -1
-                                ? room.shop.profile_picture.slice(room.shop.profile_picture.indexOf('https://'))
-                                : ''
+                              room.shop.profile_picture
+                                ? room.shop.profile_picture
+                                : 'https://freesvg.org/img/abstract-user-flat-4.png'
                             }
                             alt=""
                             className="w-12 h-12 rounded-full mr-3"

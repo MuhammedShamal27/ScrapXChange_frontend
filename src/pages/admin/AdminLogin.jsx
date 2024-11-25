@@ -1,58 +1,43 @@
-import React, { useEffect, useState } from "react";
-import Shop_login_img from "../../assets/test.png";
-import "../../styles/adminAndShop.css";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Added useNavigate
 import { adminLogin } from "../../services/api/admin/adminApi";
-import { loginSuccess } from "../../redux/reducers/userReducer";
-import { toast } from "sonner";
 import { adminLoginSuccess } from "../../redux/reducers/adminReducer";
+import { toast } from "sonner";
 
 const AdminLogin = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const isAuthenticated = useSelector((state) => state.admin.isAuthenticated);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const navigate = useNavigate(); // Initialize navigate
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/admin/home");
-    }
-  }, [isAuthenticated, navigate]);
-
+  // Validation function for email and password
   const validateField = (name, value) => {
-    switch (name) {
-      case "email":
-        if (!/\S+@\S+\.\S+/.test(value)) {
-          return "Invalid email format.";
-        }
-        break;
-      case "password":
-        if (!/^\S{8,17}$/.test(value)) {
-          return "Password should be 8-17 characters and should not include spaces.";
-        }
-        break;
-      default:
-        return "";
+    if (name === "email") {
+      if (!/\S+@\S+\.\S+/.test(value)) {
+        return "Invalid email format.";
+      }
+    } else if (name === "password") {
+      if (!/^\S{8,17}$/.test(value)) {
+        return "Password must be 8-17 characters and contain no spaces.";
+      }
     }
     return "";
   };
 
+  // Update formData and validate fields on input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
     const errorMessage = validateField(name, value);
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMessage }));
-    console.log("Form data on Change", formData);
   };
 
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate all fields before submitting
     const validationErrors = {};
     Object.keys(formData).forEach((key) => {
       const errorMessage = validateField(key, formData[key]);
@@ -63,85 +48,68 @@ const AdminLogin = () => {
 
     setErrors(validationErrors);
 
+    // Proceed only if there are no validation errors
     if (Object.keys(validationErrors).length === 0) {
       try {
-        console.log("coming");
         const response = await adminLogin(formData);
-        console.log("the response in the adminlogin", response);
-        if (response.access) {
-          console.log("coming to if ");
-          console.log("response acees in if", response.access);
+
+        if (response?.access) {
           dispatch(adminLoginSuccess({ token: response.access }));
-          navigate("/admin/home", { replace: true });
+          toast.success("Login successful!");
+          navigate("/admin/home", { replace: true }); // Navigate to admin home
+        } else {
+          toast.error("Invalid credentials. Please try again.");
         }
       } catch (err) {
-        if (err.email) {
-          toast.error(`Email error: ${err.email[0]}`);
-        }
-        if (err.password) {
-          toast.error(`Password error: ${err.password[0]}`);
-        } else {
-          toast.error("An unexpected error occurred, please try again.");
-        }
+        toast.error("An unexpected error occurred. Please try again.");
       }
     }
   };
-  return (
-    <>
-      <div className="adminFont ">
-        <div className="flex">
-          <div className="w-11/12">
-            <h1 className="text-3xl text-blue-950 font-bold text-center m-7">
-              Scrap X Change
-            </h1>
-            <div className="flex flex-col mx-96">
-              <h1 className="text-2xl text-blue-950 font-extrabold mt-10 ">
-                Login
-              </h1>
-              <p className="text-xs text-gray-400 ">
-                Enter your email and password to sign in!
-              </p>
 
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col mt-10 text-xs gap-y-3"
-              >
-                <h5 className="">Email</h5>
-                <input
-                  className="border rounded-md w-80 h-9 px-5 text-xs"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="mail@pegasus.com"
-                />
-                {errors.email && <p className="text-red-700">{errors.email}</p>}
-                <h5 className="">Password</h5>
-                <input
-                  className="border rounded-md w-80 h-9 px-5 text-xs"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Min. 8 characters"
-                />
-                {errors.password && (
-                  <p className="text-red-700">{errors.password}</p>
-                )}
-                <button
-                  className="text-xs bg-myBlue text-white w-80 h-9 border rounded-md mt-7"
-                  type="submit"
-                >
-                  Sign in
-                </button>
-              </form>
-            </div>
-          </div>
-          <div>
-            <img className="w-full h-svh" src={Shop_login_img} />
-          </div>
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl font-bold mb-8">Admin Login</h1>
+      <form className="w-full max-w-sm" onSubmit={handleSubmit}>
+        {/* Email Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2">Email</label>
+          <input
+            className="w-full p-2 border rounded"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+          />
+          {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
         </div>
-      </div>
-    </>
+
+        {/* Password Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2">Password</label>
+          <input
+            className="w-full p-2 border rounded"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+          />
+          {errors.password && (
+            <p className="text-red-500 text-xs">{errors.password}</p>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <button
+          className="w-full p-2 bg-blue-500 text-white rounded"
+          type="submit"
+        >
+          Login
+        </button>
+      </form>
+    </div>
   );
 };
 

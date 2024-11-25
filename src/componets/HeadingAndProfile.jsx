@@ -29,6 +29,7 @@ const HeadingAndProfile = ({ isAdmin }) => {
     const fetchProfile = async () => {
       try {
         const response = await fetchShopHome();
+        console.log(response)
         setProfile(response);
         // console.log('the profile',response)
       } catch (error) {

@@ -4,15 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginShop } from "../../services/api/shop/shopApi";
 import { loginUser } from "../../services/api/user/userApi";
-import { adminLogin } from "../../services/api/admin/adminApi";
 import { shopLoginSuccess } from "../../redux/reducers/shopReducer";
 import { loginSuccess } from "../../redux/reducers/userReducer";
-import { adminLoginSuccess } from "../../redux/reducers/adminReducer";
 import { toast } from "sonner";
 import { useSwipeable } from "react-swipeable";
-import { MoveLeft, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 
-const roles = ["user", "shop", "admin"];
+const roles = ["user", "shop"];
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -23,9 +21,6 @@ const Login = () => {
   );
   const isUserAuthenticated = useSelector(
     (state) => state.auth.isAuthenticated
-  );
-  const isAdminAuthenticated = useSelector(
-    (state) => state.admin.isAuthenticated
   );
 
   const [roleIndex, setRoleIndex] = useState(0);
@@ -39,15 +34,8 @@ const Login = () => {
       navigate("/shop/home");
     } else if (isUserAuthenticated) {
       navigate("/");
-    } else if (isAdminAuthenticated) {
-      navigate("/admin/home");
     }
-  }, [
-    isShopAuthenticated,
-    isUserAuthenticated,
-    isAdminAuthenticated,
-    navigate,
-  ]);
+  }, [isShopAuthenticated, isUserAuthenticated, navigate]);
 
   const validateField = (name, value) => {
     switch (name) {
@@ -99,11 +87,6 @@ const Login = () => {
           response = await loginUser(formData);
           if (response?.tokens?.access) {
             dispatch(loginSuccess({ token: response.tokens.access }));
-          }
-        } else if (currentRole === "admin") {
-          response = await adminLogin(formData);
-          if (response?.access) {
-            dispatch(adminLoginSuccess({ token: response.access }));
           }
         }
 
@@ -181,20 +164,16 @@ const Login = () => {
         Login to Your Account <MoveRight size={30} />
       </button>
 
-      {currentRole !== "admin" && (
-        <>
-          <p className="text-xs mt-3 text-gray-600">
-            Don't have an account yet?
-            <Link to={currentRole === "shop" ? "/shop/register" : "/register"}>
-              <span className="text-white ml-2 text-xs">Register Now!</span>
-            </Link>
-          </p>
+      <p className="text-xs mt-3 text-gray-600">
+        Don't have an account yet?
+        <Link to={currentRole === "shop" ? "/shop/register" : "/register"}>
+          <span className="text-white ml-2 text-xs">Register Now!</span>
+        </Link>
+      </p>
 
-          <Link to="/email">
-            <p className="text-white underline mt-3">Forget Password?</p>
-          </Link>
-        </>
-      )}
+      <Link to="/email">
+        <p className="text-white underline mt-3">Forget Password?</p>
+      </Link>
     </div>
   );
 };

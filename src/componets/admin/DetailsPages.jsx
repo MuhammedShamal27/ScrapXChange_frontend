@@ -111,7 +111,7 @@ const DetailsPages = ({ details, type }) => {
             className="absolute -bottom-7 ml-60 rounded-full w-16 h-16"
             src={
               type === "user"
-                ? details.user_profile?.profile_picture
+                ? details.user_profile?.profile_picture || "https://freesvg.org/img/abstract-user-flat-4.png"
                 : details.shop?.profile_picture || main_profile
             }
             alt=""

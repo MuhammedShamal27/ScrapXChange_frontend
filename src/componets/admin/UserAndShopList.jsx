@@ -94,8 +94,8 @@ const UserAndShoplist = ({ list, type, setFilter, setSearchQuery }) => {
                     className="w-10 h-10 rounded-full"
                     src={
                       type === "users"
-                        ? item.user_profile?.profile_picture
-                        : item.shop?.profile_picture || main_profile
+                        ? item.user_profile?.profile_picture || "https://freesvg.org/img/abstract-user-flat-4.png"
+                        : item.shop?.profile_picture || "https://freesvg.org/img/abstract-user-flat-4.png"
                     }
                     alt="profile"
                   />

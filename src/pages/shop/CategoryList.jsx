@@ -17,14 +17,8 @@ const ScrapCategoryList = () => {
     const loadCategory = async () => {
       try {
         const data = await fetchCategoryList();
-        // Preprocess the image URL
-        const processedData = data.map((item) => ({
-          ...item,
-          image: item.image.includes("https")
-            ? item.image.substring(item.image.indexOf("https"))
-            : item.image, // Extract only the part starting with "https"
-        }));
-        setCategory(Array.isArray(processedData) ? processedData : []);
+        console.log(data)
+        setCategory(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);

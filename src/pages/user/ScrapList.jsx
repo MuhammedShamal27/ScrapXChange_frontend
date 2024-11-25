@@ -227,9 +227,9 @@ const ScrapList = () => {
                               <img
                                 className="w-24 h-24"
                                 src={
-                                  product.image.indexOf('https://') !== -1
-                                    ? product.image.slice(product.image.indexOf('https://'))
-                                    : ''
+                                  product.image
+                                    ? product.image
+                                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHFObkWAGLTGo2Q2enoCfPRNuTZKOdqbGnSQ&s'
                                 }
                                 alt={product.name}
                               />

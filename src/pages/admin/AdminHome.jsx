@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import SA_profile from "../../assets/SA_profile.png";
 import AdminHeadingAndProfile from "../../componets/AdminHeadingAndProfile";
+import { updateAdmin } from "../../redux/reducers/adminReducer";
 
 const AdminHome = () => {
   const [admin, setAdmin] = useState(null);
@@ -33,16 +34,17 @@ const AdminHome = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const adminData = await adminHome(); // Fetch admin data using API
+        const adminData = await adminHome(); 
+        console.log(adminData)
         setAdmin(adminData);
-        dispatch(updateAdmin({ admin: adminData })); // Dispatch action to update admin in the state
+        // dispatch(updateAdmin({ admin: adminData })); 
       } catch (error) {
         console.error("Failed to fetch admin data:", error);
       }
     };
 
     fetchAdminData();
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -136,9 +138,9 @@ const AdminHome = () => {
                   >
                     <div className="flex space-x-3 text-sm">
                       <img
-                        src={SA_profile}
+                        src={user.profile_picture?user.profile_picture:SA_profile}
                         alt="userImage"
-                        className="h-10 w-10"
+                        className="h-10 w-10 rounded-full"
                       />
                       <div>
                         <h1>{user.username}</h1>
@@ -206,9 +208,9 @@ const AdminHome = () => {
                   >
                     <div className="flex space-x-3 text-sm">
                       <img
-                        src={SA_profile}
+                        src={shop.profile_picture?shop.profile_picture:SA_profile}
                         alt="shopImage"
-                        className="h-10 w-10"
+                        className="h-10 w-10 rounded-full"
                       />
                       <div>
                         <h1>{shop.shop_name}</h1>

@@ -17,7 +17,7 @@ const AdminNavBar = () => {
 
   const handleLogout = () => {
     dispatch(adminLogout());
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   return (

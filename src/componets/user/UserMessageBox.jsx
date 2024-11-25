@@ -119,7 +119,7 @@ const UserMessageBox = () => {
       socket.current.off("receive_message", handleMessage); // Cleanup listener
     };
   }, []); // Empty dependency array because you only want this to run once
-
+  console.log('selected shop ',selectedShop)
   const handleSendMessage = async () => {
     if (newMessage.trim() === "" && !selectedFile) return;
     const currentTimestamp = new Date().toISOString();
@@ -137,7 +137,7 @@ const UserMessageBox = () => {
       if (selectedFile || newMessage) {
         const formData = new FormData();
         formData.append("room_id", roomId);
-        formData.append("receiver_id", selectedShop.id);
+        formData.append("receiver_id", selectedShop.user);
         formData.append("message", newMessage);
 
         if (selectedFile) {
@@ -317,7 +317,7 @@ const UserMessageBox = () => {
           <div className="flex justify-between items-center border-b pb-4 mb-4">
             <div className="flex items-center">
               <img
-                src={SA_profile}
+                src={selectedShop.profile_picture?selectedShop.profile_picture:"https://freesvg.org/img/abstract-user-flat-4.png"}
                 alt=""
                 className="w-12 h-12 rounded-full mr-3"
               />
@@ -350,7 +350,7 @@ const UserMessageBox = () => {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  ref={index === messages.length - 1 ? scrollRef : null} // Add ref to the last message
+                  ref={index === messages.length - 1 ? scrollRef : null} 
                   className={`flex ${
                     msg.sender === user ? "justify-end" : "justify-start"
                   }`}
